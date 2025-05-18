@@ -6,7 +6,7 @@ const authTokens = localStorage.getItem("adminToken")
   : null;
 
 export const axiosAPIInstance = axios.create({
-  baseURL: '/admins',
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/admins',
   headers: { Authorization: `Bearer ${authTokens?.access}` },
 });
 

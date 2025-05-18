@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Button, Form, Input, Select, AutoComplete } from 'antd';
 import { MdOutlineCloudUpload } from 'react-icons/md';
 import { addAssets } from '@/api/operatorsApi';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 
 interface AddAssetProps {

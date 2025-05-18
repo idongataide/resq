@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Table, type ColumnDefinition } from '@/components/ui/Table';
-import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
+import { FaTrash, FaPlus } from 'react-icons/fa';
 import { MdOutlineEdit } from "react-icons/md";
 import { getStatusStyle } from '@/components/ui/statusStyles';
 import AddAsset from './addAssets';

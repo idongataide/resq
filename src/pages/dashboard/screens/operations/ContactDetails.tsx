@@ -11,7 +11,7 @@ const ContactDetails: React.FC = () => {
   const [form] = Form.useForm();
   const [show2FAModal, setShow2FAModal] = React.useState(false);
   const [otpRequestId, setOtpRequestId] = React.useState<string | undefined>(undefined);
-  const { setFormData, formData, setNavPath } = useOnboardingStore();
+  const { setFormData, formData } = useOnboardingStore();
   const navigate = useNavigate()
 
   const handleFinish = async (values: any) => {

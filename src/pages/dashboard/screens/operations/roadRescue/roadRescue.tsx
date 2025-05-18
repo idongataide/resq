@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaAngleLeft } from 'react-icons/fa';
 import CompanyProfileCard from './bioData';
 import VehicleAssets from './assetsList';

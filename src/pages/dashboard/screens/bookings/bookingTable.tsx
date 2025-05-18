@@ -12,8 +12,8 @@ import { FaAngleLeft } from "react-icons/fa6";
 const BookingTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-  const [selectedRequest, setSelectedRequest] = useState<BookingRequest | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [selectedRequest, setSelectedRequest] = useState<BookingRequest | null>(null);
+  // const [isModalOpen, setIsModalOpen] = useState(false);
   const [bookingData, setBookingData] = useState<BookingRequest[]>([]);
   const [title, setTitle] = useState('');
 
@@ -29,8 +29,9 @@ const BookingTable: React.FC = () => {
   }, [status]);
 
   const handleViewRequest = (request: BookingRequest) => {
-    setSelectedRequest(request);
-    setIsModalOpen(true);
+    // setSelectedRequest(request);
+    // setIsModalOpen(true);
+    console.log(request)
   };
 
   const handleApprove = (request: BookingRequest) => {

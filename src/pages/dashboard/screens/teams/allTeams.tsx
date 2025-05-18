@@ -27,7 +27,6 @@ const AllTeams: React.FC<AllTeamsProps> = ({data}) => {
   const [pageSize, setPageSize] = useState(5);
 
   const handleEditOperator = (id: string) => {
-    const team = data.find(op => op.id === id);
     navigate(`/teams/${id}`);
 };
 

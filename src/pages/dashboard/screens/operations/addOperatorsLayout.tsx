@@ -4,7 +4,7 @@ import UploadOperatorsForm from './UploadOperatorsForm';
 import AddOperatorsForm from './AddOperatorsForm';
 import { FaAngleLeft, FaCloudUploadAlt, FaPlus } from "react-icons/fa";
 import { useOnboardingStore } from '@/global/store';
-import toast, { Toaster } from "react-hot-toast";
+import  { Toaster } from "react-hot-toast";
 
 const AddOperatorLayout: React.FC = () => {
   const [selected, setSelected] = useState<'upload' | 'add'>('upload');

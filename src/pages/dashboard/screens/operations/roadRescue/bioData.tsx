@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaRegCalendarAlt } from 'react-icons/fa';
 import { FiEdit2, FiMail, FiPhone, FiMapPin, FiCreditCard } from 'react-icons/fi';
 import { useOperatorData } from '@/hooks/useAdmin';

@@ -1,7 +1,6 @@
 import React from 'react';
 import { IoClose } from 'react-icons/io5';
 import OtpInput from 'react-otp-input';
-import { useNavigate } from 'react-router-dom';
 import { confirmOtp } from '@/api/otpApi';
 import toast from 'react-hot-toast';
 
@@ -12,7 +11,6 @@ interface ConfirmOperatorProps {
 }
 
 const ConfirmOperator: React.FC<ConfirmOperatorProps> = ({ onClose, onSuccess, otpRequestId }) => {
-  const navigate = useNavigate();
   const [otp, setOtp] = React.useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {

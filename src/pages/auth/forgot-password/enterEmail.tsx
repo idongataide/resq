@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import { Helmet } from "react-helmet-async";
 import { Form, Input, Button } from "antd";
 import Images from "../../../components/images";

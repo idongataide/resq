@@ -3,13 +3,13 @@ import { useOnboardingStore } from "../global/store";
 import DashboardLayout from "../layouts/dashboardLayout";
 
 const MainRouter: React.FC = () => {
-  const { accessToken, isAuthorized } = useOnboardingStore();
+  const { token, isAuthorized } = useOnboardingStore();
 
   useEffect(() => {
     // Add any initialization logic here if needed
   }, []);
 
-  if (!accessToken || !isAuthorized) {
+  if (!token || !isAuthorized) {
     return <DashboardLayout />;
   }
 

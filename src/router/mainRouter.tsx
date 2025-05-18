@@ -8,7 +8,7 @@ const MainRouter: React.FC = () => {
   const { token } = useOnboardingStore();
 
   useEffect(() => {
-    // Add any initialization logic here if 
+    // Add any initialization logic 
   }, []);
 
   if (token) {

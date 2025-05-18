@@ -43,7 +43,7 @@ const CompanyProfileCard = () => {
           </div>
 
           {/* Company Details Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <div className="flex items-center justify-center mb-2 w-12 h-12 rounded-full bg-[#F2F4F7] text-[#101828] font-medium">
@@ -55,7 +55,7 @@ const CompanyProfileCard = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 mt-2">
+              <div className="flex items-center gap-2 mt-4">
                 <div className="flex items-center justify-center mb-2 w-12 h-12 rounded-full bg-[#F2F4F7] text-[#101828] font-medium">
                   <FaRegCalendarAlt className="w-5 h-5 text-[#667085]" />
                 </div> 
@@ -78,7 +78,7 @@ const CompanyProfileCard = () => {
                   <p className="text-xs text-[#667085] font-normal">Phone number</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 mt-3">
                 <div className="flex items-center justify-center mb-2 w-12 h-12 rounded-full bg-[#F2F4F7] text-[#101828] font-medium">
                   <FiMapPin className="w-5 h-5 text-[#667085]" />
                 </div>

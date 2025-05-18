@@ -32,7 +32,7 @@ const OperationsLayout: React.FC = () => {
                 </div>
             </div>
             <Link to="/operators/add">
-            <button className="flex items-center gap-2 px-4 py-2 text-[16px] bg-[#FF6C2D] text-white rounded-lg hover:bg-[#FF6C2D] transition-colors">
+            <button className="flex items-center gap-2 cursor-pointer px-4 py-2 text-[16px] bg-[#FF6C2D] text-white rounded-lg hover:bg-[#FF6C2D] transition-colors">
               <FaPlus className="text-white" />
               <span> Add new</span>
             </button>

@@ -111,7 +111,7 @@ const CompanyProfileCard = () => {
         
         {/* Second section: smaller */}
         <div className="w-full md:w-full lg:w-1/4 bg-white rounded-2xl p-6">
-          <div className="bg-[#F9FAFB] rounded-lg p-4 mb-1">
+          <div className="bg-[#F9FAFB] rounded-lg p-2 mb-2">
             <h3 className="text-sm font-medium text-[#475467]">Contact person</h3>
           </div>
           

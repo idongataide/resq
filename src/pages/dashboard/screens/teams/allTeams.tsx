@@ -1,0 +1,115 @@
+import React, { useState } from 'react';
+import { Table, type ColumnDefinition } from '@/components/ui/Table';
+import Images from '@/components/images';
+import { FaArrowRight } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+
+interface TeamMember {
+  id: string;
+  name: string;
+  first_name: string;
+  last_name:string;
+  email: string;
+  phone_number: string;
+  role: string;
+  createdAt: string;
+  action?: string;
+}
+
+interface AllTeamsProps {
+  data: TeamMember[];
+}
+
+const AllTeams: React.FC<AllTeamsProps> = ({data}) => {
+  console.log(data,'s')
+  const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+
+  const handleEditOperator = (id: string) => {
+    const team = data.find(op => op.id === id);
+    navigate(`/teams/${id}`);
+};
+
+  const columns: Array<ColumnDefinition<TeamMember>> = [
+  
+    {
+   
+      title: "Name",
+      dataIndex: "first_name",
+      key: "name",
+      render: (_, data) => (
+        <div className="flex items-center gap-2">           
+          <span className='font-medium text-[#475467]'>{`${data.first_name} ${data.last_name}`}</span>
+        </div>
+      ),
+    },
+    {
+      title: "Email address",
+      dataIndex: "email",
+      key: "email",
+    },
+    {
+      title: "Phone number",
+      dataIndex: "phone_number",
+      key: "phone_number",
+    },
+    {
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
+    },
+    {
+      title: "Date onboarded",
+      dataIndex: "createdAt",
+      key: "createdAt",
+    },
+    {
+      title: "Actions",
+      dataIndex: "action",
+      key: "actions",
+      render: (_, record) => (
+        <button 
+          onClick={() => handleEditOperator(record.id)}
+          className="text-[#667085] text-sm font-medium flex items-center gap-2 cursor-pointer"
+        >
+          View <FaArrowRight className='ml-2' />
+        </button>
+      ),
+    },
+  ];
+
+
+
+  const handlePageChange = (page: number, size: number) => {
+    setCurrentPage(page);
+    setPageSize(size);
+  };
+
+  return (
+    <div className="mb-6">
+      <div className="py-2 px-4 bg-white rounded-md border-[#E5E9F0] flex justify-between items-center">
+        <h1 className="text-lg font-medium mb-0 text-[#344054]">Team Members</h1>
+        <button className="flex items-center gap-2 px-4 py-2 text-[#667085] bg-[#F9FAFB] rounded-lg border border-[#E5E9F0] hover:bg-gray-50">
+          <img src={Images.icon.filter} alt="Filter" className="w-4 h-4" />
+          <span>Filter</span>          
+        </button>
+      </div>
+      
+      <Table
+        columns={columns}
+        data={data?.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
+        pagination={{
+          current: currentPage,
+          pageSize: pageSize,
+          total: data?.length,
+          onChange: handlePageChange,
+        }}
+        showActions
+        onRowClick={(id) => handleEditOperator(id)}
+      />
+    </div>
+  );
+};
+
+export default AllTeams;

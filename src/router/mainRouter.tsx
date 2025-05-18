@@ -1,19 +1,25 @@
 import React, { useEffect } from "react";
 import { useOnboardingStore } from "../global/store";
 import DashboardLayout from "../layouts/dashboardLayout";
+import Login from "@/pages/auth/login/login";
+import OnboardingLayout from "@/layouts/OnboardingLayout";
 
 const MainRouter: React.FC = () => {
-  const { token, isAuthorized } = useOnboardingStore();
+  const { token } = useOnboardingStore();
 
   useEffect(() => {
     // Add any initialization logic here if needed
   }, []);
 
-  if (!token || !isAuthorized) {
+  if (token) {
     return <DashboardLayout />;
   }
 
-  return <div>Please login to access the dashboard</div>;
+  return (
+    <OnboardingLayout>
+      <Login />
+    </OnboardingLayout>
+  );
 };
 
 export default MainRouter;

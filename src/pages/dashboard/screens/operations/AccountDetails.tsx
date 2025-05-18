@@ -4,6 +4,7 @@ import { useOnboardingStore } from '@/global/store';
 import { useBanksList } from '@/hooks/useAdmin';
 import { verifyAccount } from '@/api/banks';
 import toast from 'react-hot-toast';
+import { DefaultOptionType } from 'antd/es/select';
 
 const { Option } = Select;
 
@@ -127,13 +128,18 @@ const AccountDetails: React.FC = () => {
           name="bankName" 
           rules={[{ required: true, message: 'Please select a bank' }]}>
           <Select 
+            showSearch
             placeholder="Select bank" 
             size="large"
             loading={isLoadingBanks}
             onChange={handleBankNameChange} 
+            filterOption={(input: string, option?: DefaultOptionType) => {
+              const childrenText = option?.children as string | undefined;
+              return childrenText ? childrenText.toLowerCase().includes(input.toLowerCase()) : false;
+            }}
           >
-            {bankList?.map((bank: Bank, index: number) => (
-              <Option key={index} value={bank.name}>
+            {bankList?.map((bank: Bank) => (
+              <Option key={bank.code} value={bank.name}>
                 {bank.name}
               </Option>
             ))}

@@ -138,8 +138,8 @@ const AccountDetails: React.FC = () => {
               return childrenText ? childrenText.toLowerCase().includes(input.toLowerCase()) : false;
             }}
           >
-            {bankList?.map((bank: Bank) => (
-              <Option key={bank.code} value={bank.name}>
+            {bankList?.map((bank: Bank, index: number) => (
+              <Option key={index} value={bank.name}>
                 {bank.name}
               </Option>
             ))}

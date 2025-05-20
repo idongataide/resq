@@ -3,7 +3,7 @@ import { Table, type ColumnDefinition } from '@/components/ui/Table';
 import Images from '@/components/images';
 import { getStatusStyle, getAvatarColor } from '@/components/ui/statusStyles';
 import { FaArrowRight, FaCheck, FaTimes } from 'react-icons/fa';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { FaAngleLeft } from "react-icons/fa6";
 import { useAllBookings } from "@/hooks/useAdmin";
@@ -67,7 +67,6 @@ interface BookingData {
 
 const BookingTable: React.FC = () => {
   const { status } = useParams<{ status: string }>();
-  const navigate = useNavigate();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
@@ -211,13 +210,13 @@ const BookingTable: React.FC = () => {
                 onClick={() => handleApprove(record)}
                 className="text-[#667085] text-sm font-medium flex items-center gap-2 cursor-pointer "
               >
-                <FaCheck className="w-4 h-4" /> Approve
+                <FaCheck className="w-4 h-4 font-medium" /> Approve
               </button>
               <button 
                 onClick={() => handleReject(record)}
                 className="text-[#667085] text-sm font-medium flex items-center gap-2 cursor-pointer "
               >
-                <FaTimes className="w-4 h-4" /> Reject
+                <FaTimes className="w-4 h-4 font-medium" /> Reject
               </button>
             </div>
           ) : (

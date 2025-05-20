@@ -1,47 +1,47 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { 
-  pendingRequests, 
-  acceptedRequests, 
-  ongoingRequests, 
-  completedRequests, 
-  rejectedRequests 
-} from "@/data/bookingData";
+import { useAllBookings } from "@/hooks/useAdmin";
 
 const BookingCategory: React.FC = () => {
   const navigate = useNavigate();
+  
+  const { data: pendingData } = useAllBookings('0');
+  const { data: approvedData } = useAllBookings('1');
+  const { data: arrivedData } = useAllBookings('2');
+  const { data: completedData } = useAllBookings('3');
+  const { data: cancelledData } = useAllBookings('4');
 
   const bookingCategories = [
     {
-      count: pendingRequests.length.toString().padStart(2, '0'),
+      count: pendingData?.length?.toString().padStart(2, '0') || '00',
       title: "Pending request",
       description: "Manage incoming requests for customer tow booking",
       action: "View →",
       path: "pending"
     },
     {
-      count: acceptedRequests.length.toString().padStart(2, '0'),
+      count: approvedData?.length?.toString().padStart(2, '0') || '00',
       title: "Accepted request",
       description: "Manage and assign operators to customer requests",
       action: "View →",
       path: "accepted"
     },
     {
-      count: ongoingRequests.length.toString().padStart(2, '0'),
+      count: arrivedData?.length?.toString().padStart(2, '0') || '00',
       title: "Ongoing request",
       description: "Monitor ongoing request and mark as completed when done",
       action: "View →",
       path: "ongoing"
     },
     {
-      count: completedRequests.length.toString().padStart(2, '0'),
+      count: completedData?.length?.toString().padStart(2, '0') || '00',
       title: "Completed request",
       description: "Overview of completed customer requests",
       action: "View →",
       path: "completed"
     },
     {
-      count: rejectedRequests.length.toString().padStart(2, '0'),
+      count: cancelledData?.length?.toString().padStart(2, '0') || '00',
       title: "Rejected requests",
       description: "Overview of rejected customer requests",
       action: "View →",

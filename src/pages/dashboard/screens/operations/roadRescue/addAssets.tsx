@@ -162,7 +162,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ showModal, setShowModal, onAssetAdd
       } else {
         toast.success('Asset added successfully!');
         handleClose();
-        if (onAssetAdded) onAssetAdded();
+    if (onAssetAdded) onAssetAdded();
       }
     } catch (error: any) {
       toast.error(error.message || 'An error occurred while adding asset.');
@@ -189,20 +189,20 @@ const AddAsset: React.FC<AddAssetProps> = ({ showModal, setShowModal, onAssetAdd
           <div className="px-10 pt-3 mt-8">
             <div className="text-[#475467] font-medium mb-4">Road Rescue</div>
             <div className="border border-[#E5E9F0] rounded-xl p-6 mb-6">
-              <div className="bg-[#FCFCFD] border border-[#F2F4F7] rounded-xl p-6 mb-6">
+                <div className="bg-[#FCFCFD] border border-[#F2F4F7] rounded-xl p-6 mb-6">
                 <div className="flex items-center gap-4 mb-2">
-                  <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#FFF3ED]">
+                    <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#FFF3ED]">
                     <MdOutlineCloudUpload className="text-[#FF6C2D] tex t-2xl" />
-                  </span>
-                  <div>
+                    </span>
+                    <div>
                     <div className="text-[#475467] font-medium text-base">Upload Assets</div>
                     <div className="text-[#667085] text-sm">Upload an csv file to add assets</div>
-                  </div>
+                    </div>
                 </div>              
               </div>
-              <div className="text-[#475467] text-sm mt-2">
+            <div className="text-[#475467] text-sm mt-2">
                 Get a template to upload assets. <a href="#" className="text-[#FF6C2D] underline font-medium">Download now</a>
-              </div>
+                </div>
             </div>
             <Form
               form={form}

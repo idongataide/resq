@@ -1,4 +1,3 @@
-
 import { axiosAPIInstance } from "./interceptor";
 
 export const getOperators = async () => {
@@ -98,6 +97,17 @@ export const getDrivers = async () => {
   }
 };
 
+export const getDriversByOperatorId = async (operatorId: string) => {
+  try {
+    return await axiosAPIInstance
+      .get(`/users/drivers?operator_id=${operatorId}`)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};
 
 export const deleteDriver = async (uid: string) => {
   try {

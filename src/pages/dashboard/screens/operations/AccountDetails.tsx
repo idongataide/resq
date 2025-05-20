@@ -170,19 +170,19 @@ const AccountDetails: React.FC = () => {
         )}
 
         <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
+            <Button
+                type="primary"
+                htmlType="submit"
             loading={isVerifying} 
             disabled={isVerifying || !accountName} // Disable submit until account is verified
             className="h-[46px]! px-10! mt-5! rounded-lg bg-[#FF6C2D] text-[#FF6C2D] font-medium text-lg hover:bg-gray-300 transition border-0"
-          >
-            Proceed
-          </Button>
+            >
+                Proceed
+            </Button>
         </Form.Item>
       </Form>
     </div>
   );
 };
 
-export default AccountDetails;
+export default AccountDetails; 

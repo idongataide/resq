@@ -79,7 +79,7 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
           <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">
             <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
               <div className=''>
-                <p className="font-medium mb-2">Pickup</p>
+                <p className="font-medium mb-2">Pickups</p>
                 <p className="font-medium mb-2">Destination</p>
                 <p className="font-medium">Pickup landmark</p>
 

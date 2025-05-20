@@ -45,26 +45,11 @@ const RejectBookingSidebar: React.FC<RejectBookingSidebarProps> = ({
         <div className='overflow-y-auto flex flex-col h-[calc(100vh-160px)] slide-in scrollbar-hide hover:scrollbar-show px-7 py-4'>
 
           {/* Booking and Customer Details added here */}
-           <div className="flex justify-between items-center mb-2">
+           <div className="flex justify-between items-center mb-3">
                 <h3 className="text-sm font-medium text-[#475467]">Booking ID {booking?.booking_ref}</h3>
                 {/* Assuming status might still be relevant */}
-                {/* <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800">Pending</span> */}
-          </div>
-           <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">
-            <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
-              <div className=''>
-                <p className="font-medium mb-2">Pickup</p>
-                <p className="font-medium mb-2">Destination</p>
-                <p className="font-medium">Pickup landmark</p>
-
-              </div>
-              <div className='text-right'>
-                <p className='mb-2 capitalize'>{booking?.start_address}</p>
-                <p className='mb-2 capitalize'>{booking?.end_address}</p>
-                <p className='capitalize'>{booking?.landmark}</p>
-              </div>
-            </div>
-          </div>
+                <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+          </div>          
 
           <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">
              <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
@@ -99,6 +84,21 @@ const RejectBookingSidebar: React.FC<RejectBookingSidebarProps> = ({
                 </div>
              </div>
           </div>
+          <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">
+            <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
+              <div className=''>
+                <p className="font-medium mb-2">Pickup</p>
+                <p className="font-medium mb-2">Destination</p>
+                <p className="font-medium">Pickup landmark</p>
+
+              </div>
+              <div className='text-right'>
+                <p className='mb-2 capitalize'>{booking?.start_address}</p>
+                <p className='mb-2 capitalize'>{booking?.end_address}</p>
+                <p className='capitalize'>{booking?.landmark}</p>
+              </div>
+            </div>
+          </div>
 
           <Form layout="vertical"> {/* Using a form just for item layout, no submit */}
              <Form.Item label="Reason for rejection" rules={[{ required: true, message: 'Please select a rejection reason!' }]}> {/* Added required rule */}
@@ -112,8 +112,8 @@ const RejectBookingSidebar: React.FC<RejectBookingSidebarProps> = ({
           </Form>
 
           <div className="py-4 flex justify-end"> {/* Buttons below the form item */}
-             <Button onClick={handleReject} className="h-[46px]! px-10! rounded-lg border border-[#FF6C2D] bg-[#FF6C2D]
-               py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 " disabled={!rejectionReason}> {/* Disable if no reason selected */}
+             <Button onClick={handleReject} className="h-[46px]! px-10! rounded-lg border border-[#FF6C2D] bg-[#FF6C2D]!
+               py-2 text-sm font-medium text-[#fff]! shadow-sm hover:bg-gray-50 " disabled={!rejectionReason}> 
                Reject
              </Button>
           </div>

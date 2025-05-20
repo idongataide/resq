@@ -209,13 +209,13 @@ const BookingTable: React.FC = () => {
             <div className="flex items-center gap-4">
               <button 
                 onClick={() => handleApprove(record)}
-                className="text-[#12B76A] text-sm font-medium flex items-center gap-2 cursor-pointer hover:text-green-700"
+                className="text-[#667085] text-sm font-medium flex items-center gap-2 cursor-pointer "
               >
                 <FaCheck className="w-4 h-4" /> Approve
               </button>
               <button 
                 onClick={() => handleReject(record)}
-                className="text-[#F04438] text-sm font-medium flex items-center gap-2 cursor-pointer hover:text-red-700"
+                className="text-[#667085] text-sm font-medium flex items-center gap-2 cursor-pointer "
               >
                 <FaTimes className="w-4 h-4" /> Reject
               </button>

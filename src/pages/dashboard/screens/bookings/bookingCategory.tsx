@@ -1,47 +1,44 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useAllBookings } from "@/hooks/useAdmin";
+import { useAllBookingsCount } from "@/hooks/useAdmin";
 
 const BookingCategory: React.FC = () => {
   const navigate = useNavigate();
-  
-  const { data: pendingData } = useAllBookings('0');
-  const { data: approvedData } = useAllBookings('1');
-  const { data: arrivedData } = useAllBookings('2');
-  const { data: completedData } = useAllBookings('3');
-  const { data: cancelledData } = useAllBookings('4');
+
+  const { data: bookingsCount } = useAllBookingsCount('count-status');
+
 
   const bookingCategories = [
     {
-      count: pendingData?.length?.toString().padStart(2, '0') || '00',
+      count: bookingsCount?.pending || '00',
       title: "Pending request",
       description: "Manage incoming requests for customer tow booking",
       action: "View →",
       path: "pending"
     },
     {
-      count: approvedData?.length?.toString().padStart(2, '0') || '00',
+      count: bookingsCount?.approved || '00',
       title: "Accepted request",
       description: "Manage and assign operators to customer requests",
       action: "View →",
       path: "accepted"
     },
     {
-      count: arrivedData?.length?.toString().padStart(2, '0') || '00',
+      count: bookingsCount?.arrived || '00',
       title: "Ongoing request",
       description: "Monitor ongoing request and mark as completed when done",
       action: "View →",
       path: "ongoing"
     },
     {
-      count: completedData?.length?.toString().padStart(2, '0') || '00',
+      count: bookingsCount?.completed || '00',
       title: "Completed request",
       description: "Overview of completed customer requests",
       action: "View →",
       path: "completed"
     },
     {
-      count: cancelledData?.length?.toString().padStart(2, '0') || '00',
+      count: bookingsCount?.cancelled || '00',
       title: "Rejected requests",
       description: "Overview of rejected customer requests",
       action: "View →",
@@ -73,7 +70,7 @@ const BookingCategory: React.FC = () => {
                   <h2 className="text-[16px] text-[#667085] font-medium mt-1">{category.title}</h2>
                   <p className="text-[14px] text-[#667085] mt-1">{category.description}</p>
                 </div>
-                <button className="text-[#FF6C2D] text-[14px] font-medium hover:text-blue-700 mt-4 self-end">
+                <button className="text-[#FF6C2D] text-[14px] cursor-pointer font-medium hover:text-blue-700 mt-4 self-end">
                   {category.action}
                 </button>
               </div>

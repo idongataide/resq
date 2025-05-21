@@ -9,6 +9,9 @@ import { FaAngleLeft } from "react-icons/fa6";
 import { useAllBookings } from "@/hooks/useAdmin";
 import RejectBookingSidebar from './RejectBookingSidebar';
 import ApproveBookingSidebar from './ApproveBookingSidebar';
+import AcceptedBookingsSidebar from './AcceptedBookingsSidebar';
+import CompletedBookingsSidebar from './CompletedBookingsSidebar';
+import CancelledBookingsSidebar from './CancelledBookingsSidebar';
 
 
 interface BookingData {
@@ -72,7 +75,7 @@ const BookingTable: React.FC = () => {
   const [pageSize, setPageSize] = useState(5);
   const [title, setTitle] = useState('');
   const [selectedBooking, setSelectedBooking] = useState<BookingData | null>(null);
-  const [activeSidebar, setActiveSidebar] = useState<'approve' | 'reject' | null>(null);
+  const [activeSidebar, setActiveSidebar] = useState<'approve' | 'reject' | 'accepted' | 'completed' | 'cancelled' | null>(null);
 
   useEffect(() => {
     if (status) {
@@ -82,6 +85,18 @@ const BookingTable: React.FC = () => {
 
   const handleViewRequest = (request: BookingData) => {
     console.log(request);
+    if (request.ride_status === 1) {
+      setSelectedBooking(request);
+      setActiveSidebar('accepted');
+    } else if (request.ride_status === 3) {
+      setSelectedBooking(request);
+      setActiveSidebar('completed');
+    } else if (request.ride_status === 4) {
+      setSelectedBooking(request);
+      setActiveSidebar('cancelled');
+    } else {
+      handleCloseSidebar();
+    }
   };
 
   const handleApprove = (request: BookingData) => {
@@ -104,7 +119,7 @@ const BookingTable: React.FC = () => {
   const getStatusText = (rideStatus: number) => {
     switch(rideStatus) {
       case 0: return 'Pending';
-      case 1: return 'Accepted';
+      case 1: return 'Awaiting payment';
       case 2: return 'Ongoing';
       case 3: return 'Completed';
       case 4: return 'Rejected';
@@ -124,6 +139,8 @@ const BookingTable: React.FC = () => {
   };
 
   const { data: bookingData, isLoading } = useAllBookings(getRideStatus(status));
+
+  const bokingCount = bookingData?.lenght
 
   const columns: Array<ColumnDefinition<BookingData>> = [
     {
@@ -266,12 +283,12 @@ const BookingTable: React.FC = () => {
       <Table
         columns={columns}
         data={bookingData?.slice((currentPage - 1) * pageSize, currentPage * pageSize) || []}
-        pagination={{
+        pagination={bokingCount > pageSize ? {
           current: currentPage,
           pageSize: pageSize,
           total: bookingData?.length || 0,
           onChange: handlePageChange,
-        }}
+        }: undefined}
         showActions
         onRowClick={(id) => console.log('Clicked row:', id)}
       />
@@ -287,6 +304,27 @@ const BookingTable: React.FC = () => {
     {activeSidebar === 'reject' && (
       <RejectBookingSidebar
         isOpen={activeSidebar === 'reject' && !!selectedBooking}
+        onClose={handleCloseSidebar}
+        booking={selectedBooking}
+      />
+    )}
+    {activeSidebar === 'accepted' && (
+      <AcceptedBookingsSidebar
+        isOpen={activeSidebar === 'accepted' && !!selectedBooking}
+        onClose={handleCloseSidebar}
+        booking={selectedBooking}
+      />
+    )}
+    {activeSidebar === 'completed' && (
+      <CompletedBookingsSidebar
+        isOpen={activeSidebar === 'completed' && !!selectedBooking}
+        onClose={handleCloseSidebar}
+        booking={selectedBooking}
+      />
+    )}
+    {activeSidebar === 'cancelled' && (
+      <CancelledBookingsSidebar
+        isOpen={activeSidebar === 'cancelled' && !!selectedBooking}
         onClose={handleCloseSidebar}
         booking={selectedBooking}
       />

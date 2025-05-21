@@ -11,3 +11,15 @@ export const getBookings = async (ride_status: string = '0') => {
       return error;
     }
 };
+
+export const getBookingsCount = async (countStatus: string) => {
+  try {
+    return await axiosAPIInstance
+      .get(`/towings?component=${countStatus}`)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};

@@ -9,6 +9,7 @@ export const getStatusStyle = (status: string): string => {
     Ongoing: "text-[#FF6C2D] bg-[#FFF0EA] px-3 py-1 rounded-full whitespace-nowrap text-xs font-medium",
     Abandoned: "text-[#667085] bg-[#F9FAFB] px-3 py-1 rounded-full whitespace-nowrap text-xs font-medium",
     Unavailable: "text-[#667085] bg-[#F9FAFB] px-3 py-1 rounded-full whitespace-nowrap text-xs font-medium",
+    "Awaiting payment": "text-[#4387D8] bg-[#EBF7FF] px-3 py-1 rounded-full whitespace-nowrap text-xs font-medium",
   };
 
   return statusStyles[status] || "text-gray-600 bg-gray-50 px-3 py-1 rounded-full whitespace-nowrap  text-sm font-medium";

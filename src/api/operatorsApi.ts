@@ -61,6 +61,21 @@ export const getAssets = async () => {
 };
 
 
+export const getAssetsbyCordinate = async (longitude: string, latitude: string) => {
+  try {
+    const response = await axiosAPIInstance.get(`/users/assets`, {
+      params: {
+        longitude,
+        latitude
+      }
+    });
+    return response?.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+
 export const deleteAsset = async (uid: string) => {
   try {
     return await axiosAPIInstance

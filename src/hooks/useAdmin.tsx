@@ -1,7 +1,7 @@
 import { banksList } from "@/api/banks";
-import { getBookings } from "@/api/bookingsApi";
+import { getBookings, getBookingsCount } from "@/api/bookingsApi";
 import { getCustomers, getCustomersDetails } from "@/api/customersApi";
-import { getOperators, getOperatorData, getAssets, getDrivers, getDriversByOperatorId } from "@/api/operatorsApi";
+import { getOperators, getOperatorData, getDrivers, getDriversByOperatorId, getAssetsbyCordinate, getAssets } from "@/api/operatorsApi";
 import { getServices } from "@/api/settingsApi";
 import { getTeams } from "@/api/teamsApi";
 
@@ -115,9 +115,26 @@ export const useBanksList = () => {
 
 export const useGetAssets = () => {
   const { data, isLoading, mutate } = useSWR(
-    `/settings/bank-lists`,
+    `/users/assets`,
     () => {
       return getAssets().then((res) => {
+        return res?.data;
+      });
+    },
+
+    {
+      revalidateOnFocus: false,
+    },
+  );
+
+  return { data, isLoading, mutate };
+};
+
+export const useGetAssetsbyCord = (longitude: string, latitude: string) => {
+  const { data, isLoading, mutate } = useSWR(
+    `/users/assets`,
+    () => {
+      return getAssetsbyCordinate(longitude,latitude).then((res) => {
         return res?.data;
       });
     },
@@ -169,6 +186,23 @@ export const useAllBookings = (ride_status: string = '0') => {
     `/towings?ride_status=${ride_status}`,
     () => {
       return getBookings(ride_status).then((res) => {
+        return res?.data;
+      });
+    },
+    {
+      revalidateOnFocus: false,
+    },
+  );
+
+  return { data, isLoading, mutate };
+};
+
+
+export const useAllBookingsCount = (countStatus: string = '0') => {
+  const { data, isLoading, mutate } = useSWR(
+    `/towings?component=${countStatus}`,
+    () => {
+      return getBookingsCount(countStatus).then((res) => {
         return res?.data;
       });
     },

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Select, Button, Input } from 'antd';
-import { useGetDriversByOperatorId, useAllService, useGetAssets } from '@/hooks/useAdmin';
+import { useGetDriversByOperatorId, useAllService, useGetAssetsbyCord } from '@/hooks/useAdmin';
 
 interface ApproveBookingSidebarProps {
   isOpen: boolean;
@@ -18,12 +18,16 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
   const [selectedOperatorName, setSelectedOperatorName] = useState<string | undefined>(undefined);
   const [serviceType, setServiceType] = useState<string | undefined>(undefined);
   const [service, setService] = useState<string | undefined>(undefined);
+  const [serviceFee, setServiceFee] = useState<number | undefined>(undefined);
   const [vehicle, setVehicle] = useState<string | undefined>(undefined);
   const [driver, setDriver] = useState<string | undefined>(undefined);
 
+  const longitude = booking?.start_coord?.longitude;
+  const latitude = booking?.start_coord?.latitude;
+
   const { data: drivers, isLoading: isLoadingDrivers } = useGetDriversByOperatorId(towingOperator);
   const { data: services, isLoading: isLoadingServices } = useAllService(serviceType);
-  const { data: assets, isLoading: isLoadingAssets } = useGetAssets();
+  const { data: assets, isLoading: isLoadingAssets } = useGetAssetsbyCord(longitude, latitude);
 
   useEffect(() => {
       setDriver(undefined);
@@ -38,6 +42,15 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
     setTowingOperator(undefined);
     setSelectedOperatorName(undefined);
   }, [isOpen, booking]);
+
+  useEffect(() => {
+    if (service) {
+      const selectedService = services?.find((s: any) => s.id === service);
+      if (selectedService) {
+        setServiceFee(selectedService.amount);
+      }
+    }
+  }, [service, services]);
 
   if (!isOpen || !booking) {
     return null;
@@ -55,6 +68,16 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
       setTowingOperator(selectedAsset.operator_id);
       setSelectedOperatorName(selectedAsset.operator_data?.name);
       form.setFieldsValue({ towingOperator: selectedAsset.operator_data?.name });
+    }
+  };
+
+  const handleServiceChange = (value: string) => {
+    setService(value);
+    const selectedService = services?.find((s: any) => s.name === value);
+    console.log(selectedService, services, value,'s')
+    if (selectedService) {
+      setServiceFee(selectedService.amount);
+      form.setFieldsValue({ service: value });
     }
   };
 
@@ -150,10 +173,10 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
               </Form.Item>
 
               <Form.Item label="Service" name="service" rules={[{ required: true, message: 'Please select a service!' }]}>
-                <Select placeholder="Select" value={service} onChange={setService} className='!h-[42px]' loading={isLoadingServices}>
+                <Select placeholder="Select" value={service} onChange={handleServiceChange} className='!h-[42px]' loading={isLoadingServices}>
                   {services?.map((service: any, index:number) => (
-                      <Select.Option key={index} value={service.id}>
-                          {service.name} - N{service.amount}
+                      <Select.Option key={index} value={service.name}>
+                          {service.name} - ₦{service.amount}
                       </Select.Option>
                   ))}
                 </Select>
@@ -172,14 +195,15 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
               <div className="mb-6 p-4 border border-[#E5E9F0] rounded-lg">
                 <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
                     <div className=''>
-                    <p className="font-medium mb-2">Approx. Distance</p>
-                    <p className="font-medium mb-2">Service Cost</p>
-                    <p className="font-medium">Pickup (Cost/Km)</p>
+                      <p className="font-medium mb-2">Approx. Distance</p>
+                      <p className="font-medium mb-2">Service Cost</p>
+                      <p className="font-medium mb-2">Pickup (Cost/Km)</p>
+                      <p className="font-medium">Dropup (Cost/Km)</p>
                     </div>
                     <div className='text-right'>
-                    <p className='mb-2 capitalize'>{booking?.drop_off_dst}km</p>
-                    <p className='mb-2 capitalize'>₦{booking?.service_fee}</p>
-                    <p className='capitalize'>{booking?.pick_up_dst || 'N/A'} km (Cost/Km)</p>
+                      <p className='mb-2 capitalize'>{booking?.drop_off_dst}km</p>
+                      <p className='mb-2 capitalize'>₦{serviceFee}</p>
+                      <p className='capitalize'>{booking?.pick_up_dst || 'N/A'} km (Cost/Km)</p>
                     </div>
                 </div>
             </div>

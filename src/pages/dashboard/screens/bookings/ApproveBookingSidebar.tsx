@@ -173,7 +173,7 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
                 <Select placeholder="Select" value={vehicle} onChange={handleAssetChange} className='!h-[42px]' loading={isLoadingAssets}>
                    {assets?.map((asset: any, index:number) => (
                       <Select.Option key={index} value={asset.asset_id}>
-                          {asset.brand_name || asset.vehicle_model}
+                          `{asset.brand_name || asset.vehicle_model} ({selectedAsset?.distance_km || 0}km Away)`
                       </Select.Option>
                   ))}
                 </Select>

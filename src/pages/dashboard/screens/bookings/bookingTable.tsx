@@ -203,8 +203,6 @@ const BookingTable: React.FC = () => {
       title: "Reason",
       dataIndex: "tow_reason",
       key: "tow_reason",
-      className: "font-medium",
-      render: (value: number) => `₦${value?.toLocaleString()}`,
     },
     {
       title: "Date & time",

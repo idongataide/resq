@@ -71,7 +71,7 @@ const Table = <T extends { id: string }>({
                     key={column.key}
                     onClick={() => onRowClick?.(row.id)}
                     className={cn(
-                      "px-7 py-5 text-[#667085]  border-b mb-0 border-[#E5E9F0] font-normal",
+                      "px-7 py-5 text-[#667085]  border-b mb-0 capitalize border-[#E5E9F0] font-normal",
                       {
                         "cursor-pointer": onRowClick,
                       },
@@ -88,7 +88,7 @@ const Table = <T extends { id: string }>({
             ))
           ) : (
             <tr>
-              <td colSpan={columns.length + (showActions ? 2 : 1)} className="px-4 py-3 text-center">
+              <td colSpan={columns.length + (showActions ? 2 : 1)} className="px-4  capitalize py-3 text-center">
                 {loading ? 'Loading...' : 'No data available'}
               </td>
             </tr>

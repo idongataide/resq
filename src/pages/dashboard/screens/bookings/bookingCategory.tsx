@@ -1,11 +1,12 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAllBookingsCount } from "@/hooks/useAdmin";
+import LoadingScreen from '@/pages/dashboard/common/LoadingScreen';
 
 const BookingCategory: React.FC = () => {
   const navigate = useNavigate();
 
-  const { data: bookingsCount } = useAllBookingsCount('count-status');
+  const { data: bookingsCount, isLoading } = useAllBookingsCount('count-status');
 
 
   const bookingCategories = [
@@ -49,6 +50,10 @@ const BookingCategory: React.FC = () => {
   const handleCategoryClick = (path: string) => {
     navigate(path);
   };
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <main>

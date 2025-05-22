@@ -178,12 +178,16 @@ const BookingTable: React.FC = () => {
       key: "vehicle_model",
     },
     {
-      title: "Towing operator",
-      dataIndex: "operator",
-      key: "operator",
-      render: (_, record) => (
-        <span>{record.operator?.name || 'N/A'}</span>
-      ),
+      title: "Vehicle Reg",
+      dataIndex: "vehicle_reg",
+      key: "vehicle_reg",
+     
+    },
+    {
+      title: "Vehicle Type",
+      dataIndex: "vehicle_type",
+      key: "vehicle_type",
+     
     },
     {
       title: "Status",
@@ -196,9 +200,9 @@ const BookingTable: React.FC = () => {
       ),
     },
     {
-      title: "Amount",
-      dataIndex: "est_fare",
-      key: "est_fare",
+      title: "Reason",
+      dataIndex: "tow_reason",
+      key: "tow_reason",
       className: "font-medium",
       render: (value: number) => `₦${value?.toLocaleString()}`,
     },

@@ -6,6 +6,7 @@ import { FaArrowRight } from 'react-icons/fa';
 import { GoArrowDownLeft } from "react-icons/go";
 import { useTransactions } from '@/hooks/useAdmin';
 import TransactionDetailsSidebar from './TransactionDetailsSidebar';
+import LoadingScreen from '@/pages/dashboard/common/LoadingScreen';
 
 interface Transaction {
   _id: string;
@@ -31,7 +32,7 @@ const AllTransactions: React.FC = () => {
   
   const { data: transactionsData, isLoading } = useTransactions();
 
-  console.log(transactionsData,'transactionsData')
+  console.log(transactionsData,'transactionssData')
   
   const handleViewTransaction = (transaction: Transaction) => {
     setSelectedTransaction(transaction);
@@ -126,7 +127,7 @@ const AllTransactions: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div>Loading transactions...</div>;
+    return <LoadingScreen />;
   }
 
   const formattedTransactions = transactionsData?.map((transaction: Transaction) => ({

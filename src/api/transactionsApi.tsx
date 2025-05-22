@@ -1,30 +1,18 @@
 import axios from 'axios';
 
+// Get the token from localStorage at the time of instance creation
+const authTokens = localStorage.getItem("adminToken")
+  ? JSON.parse(localStorage.getItem("adminToken")!)
+  : null;
+
 // Create a new axios instance for the wallet service
 const walletAPIInstance = axios.create({
   baseURL: 'https://resq-wallet.onrender.com',
   headers: {
-    'Content-Type': 'application/json',
+    'Content-Type': 'application/json', 
+    ...(authTokens?.access && { 'Authorization': `Bearer ${authTokens.access}` }),
   },
 });
-
-walletAPIInstance.interceptors.request.use(
-  async (req) => {
-    const authTokens = localStorage.getItem("adminToken")
-      ? JSON.parse(localStorage.getItem("adminToken")!)
-      : null;
-
-    if (authTokens?.access) {
-        console.log('ker')
-      req.headers.Authorization = `Bearer ${authTokens?.access}`;
-    }
-    return req;
-  },
-  (error) => {
-    console.log("error", error);
-    return Promise.reject(error);
-  },
-);
 
 export const TransactionList = async () => {
     try {

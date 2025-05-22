@@ -30,6 +30,8 @@ const AllTransactions: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   const { data: transactionsData, isLoading } = useTransactions();
+
+  console.log(transactionsData,'transactionsData')
   
   const handleViewTransaction = (transaction: Transaction) => {
     setSelectedTransaction(transaction);

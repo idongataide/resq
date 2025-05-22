@@ -200,7 +200,7 @@ const BookingTable: React.FC = () => {
       dataIndex: "est_fare",
       key: "est_fare",
       className: "font-medium",
-      render: (value: number) => `₦${value.toLocaleString()}`,
+      render: (value: number) => `₦${value?.toLocaleString()}`,
     },
     {
       title: "Date & time",
@@ -210,7 +210,7 @@ const BookingTable: React.FC = () => {
         if (!value) return 'N/A';
         const date = new Date(value);
         if (isNaN(date.getTime())) return 'N/A';
-        return date.toLocaleString('en-US', {
+        return date?.toLocaleString('en-US', {
           year: 'numeric',
           month: 'short',
           day: 'numeric',

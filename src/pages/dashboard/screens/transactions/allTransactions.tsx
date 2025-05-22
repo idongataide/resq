@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Table, type ColumnDefinition } from '@/components/ui/Table';
 import Images from '@/components/images';
-import {getStatusStyle, getAvatarColor} from '@/components/ui/statusStyles';
+import {getStatusStyle} from '@/components/ui/statusStyles';
 import { FaArrowRight } from 'react-icons/fa';
 import { GoArrowDownLeft } from "react-icons/go";
 import { useTransactions } from '@/hooks/useAdmin';
@@ -109,6 +109,12 @@ const AllTransactions: React.FC = () => {
       key: "actions",
       render: (_, record) => (
         <div className="relative">
+           <span
+            className="flex items-center gap-1 text-[#344054] cursor-pointer hover:underline"
+            onClick={() => handleViewTransaction(record)}
+          >
+            View <FaArrowRight size={12} />
+          </span>
         </div>
       ),
     },

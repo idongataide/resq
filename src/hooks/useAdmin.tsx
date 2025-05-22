@@ -239,11 +239,10 @@ export const useTransactions = () => {
   const { data, isLoading, mutate } = useSWR(
     '/admins/payments/get-transactions',
     () => {
-      return getFees().then((res) => {
+      return TransactionList().then((res) => {
         return res?.data;
       });
     },
-
     {
       revalidateOnFocus: false,
     },

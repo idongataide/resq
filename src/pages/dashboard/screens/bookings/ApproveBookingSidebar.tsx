@@ -6,12 +6,25 @@ interface ApproveBookingSidebarProps {
   isOpen: boolean;
   onClose: () => void;
   booking: any;
+  fees: Array<{
+    name: string;
+    tag: string;
+    slug: string;
+    amount: number;
+    amount_type: string;
+    amount_sufix: string;
+    data: any[];
+    createdAt: string;
+    updatedAt: string;
+    fee_id: string;
+  }>;
 }
 
 const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
   isOpen,
   onClose,
   booking,
+  fees,
 }) => {
   const [form] = Form.useForm();
   const [towingOperator, setTowingOperator] = useState<string | undefined>(undefined);
@@ -21,6 +34,7 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
   const [serviceFee, setServiceFee] = useState<number | undefined>(undefined);
   const [vehicle, setVehicle] = useState<string | undefined>(undefined);
   const [driver, setDriver] = useState<string | undefined>(undefined);
+  const [selectedAsset, setSelectedAsset] = useState<any>(undefined);
 
   const longitude = booking?.start_coord?.longitude;
   const latitude = booking?.start_coord?.latitude;
@@ -52,6 +66,9 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
     }
   }, [service, services]);
 
+  const pickupFee = fees?.find(fee => fee.tag === 'PICK_UP_FEE')?.amount || 0;
+  const dropoffFee = fees?.find(fee => fee.tag === 'DROP_OFF_FEE')?.amount || 0;
+
   if (!isOpen || !booking) {
     return null;
   }
@@ -63,11 +80,12 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
 
   const handleAssetChange = (value: string) => {
     setVehicle(value);
-    const selectedAsset = assets?.find((asset: any) => asset.asset_id === value);
-    if (selectedAsset) {
-      setTowingOperator(selectedAsset.operator_id);
-      setSelectedOperatorName(selectedAsset.operator_data?.name);
-      form.setFieldsValue({ towingOperator: selectedAsset.operator_data?.name });
+    const asset = assets?.find((asset: any) => asset.asset_id === value);
+    if (asset) {
+      setSelectedAsset(asset);
+      setTowingOperator(asset.operator_id);
+      setSelectedOperatorName(asset.operator_data?.name);
+      form.setFieldsValue({ towingOperator: asset.operator_data?.name });
     }
   };
 
@@ -201,9 +219,10 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
                       <p className="font-medium">Dropup (Cost/Km)</p>
                     </div>
                     <div className='text-right'>
-                      <p className='mb-2 capitalize'>{booking?.drop_off_dst}km</p>
+                      <p className='mb-2 capitalize'>{booking?.drop_off_dst + (selectedAsset?.distance_km || 0)}km</p>
                       <p className='mb-2 capitalize'>₦{serviceFee}</p>
-                      <p className='capitalize'>{booking?.pick_up_dst || 'N/A'} km (Cost/Km)</p>
+                      <p className='capitalize'>₦{pickupFee}/km</p>
+                      <p className='capitalize'>₦{dropoffFee}/km</p>
                     </div>
                 </div>
             </div>

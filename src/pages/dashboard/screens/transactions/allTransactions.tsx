@@ -1,146 +1,71 @@
 import React, { useState } from 'react';
-import { Table, type ColumnDefinition } from '../../../../components/ui/Table';
-import Images from '../../../../components/images';
-import {getStatusStyle, getAvatarColor} from '../../../../components/ui/statusStyles';
+import { Table, type ColumnDefinition } from '@/components/ui/Table';
+import Images from '@/components/images';
+import {getStatusStyle, getAvatarColor} from '@/components/ui/statusStyles';
 import { FaArrowRight } from 'react-icons/fa';
-import TransactionDetailsModal from './TransactionDetailsModal';
 import { GoArrowDownLeft } from "react-icons/go";
+import { useTransactions } from '@/hooks/useAdmin';
+import TransactionDetailsSidebar from './TransactionDetailsSidebar';
 
 interface Transaction {
-  id: string;
-  bookingId: string;
-  customer: string;
-  vehicleModel: string;
-  status: string;
-  amount: string;
-  dateTime: string;
-  action?: string;
+  _id: string;
+  booking_ref?: string;
+  user_data?: { first_name: string; last_name: string; email: string; phone_number: string; };
+  vehicle_model?: string;
+  status?: string;
+  amount?: number;
+  createdAt?: string;
+  operator?: { _id: string; name: string; };
+  drop_off_dst?: number;
+  start_address?: string;
+  end_address?: string;
+  action?:string;
+  service_fee?: number;
 }
-
-const mockData: Transaction[] = [
-  {
-    id: '1',
-    bookingId: 'RESQ58120034',
-    customer: 'Feranmi Akinwale',
-    vehicleModel: 'Rav4 2018',
-    status: 'Completed',
-    amount: '₦32,500',
-    dateTime: 'Wed, 14-04-25 6:30pm',
-  },
-  {
-    id: '2',
-    bookingId: 'RESQ58120034',
-    customer: 'Morris Chikwelu',
-    vehicleModel: 'Camry 2002',
-    status: 'Failed',
-    amount: '₦32,500',
-    dateTime: 'Wed, 14-04-25 6:30pm',
-  },
-  {
-    id: '3',
-    bookingId: 'RESQ58120034',
-    customer: 'Sanni Musa',
-    vehicleModel: 'Mercedez GLE S',
-    status: 'Completed',
-    amount: '₦37,500',
-    dateTime: 'Wed, 14-04-25 6:30pm',
-  },
-  {
-    id: '4',
-    bookingId: 'RESQ58120034',
-    customer: 'Kiki Ovie',
-    vehicleModel: 'Suzuki 2012',
-    status: 'Pending',
-    amount: '₦27,500',
-    dateTime: 'Wed, 14-04-25 6:30pm',
-  },
-  {
-    id: '5',
-    bookingId: 'RESQ58120034',
-    customer: 'Preye Johnson',
-    vehicleModel: 'Toyota Hiace 2014',
-    status: 'Abandoned',
-    amount: '₦30,500',
-    dateTime: 'Wed, 14-04-25 6:30pm',
-  },
-  {
-    id: '6',
-    bookingId: 'RESQ58120034',
-    customer: 'Maddy Ataide',
-    vehicleModel: 'Sienna s4 2003',
-    status: 'Completed',
-    amount: '₦27,500',
-    dateTime: 'Wed, 14-04-25 6:30pm',
-  },
-  {
-    id: '7',
-    bookingId: 'RESQ58120034',
-    customer: 'Dubem Orji',
-    vehicleModel: 'Lexus 350 2018',
-    status: 'Failed',
-    amount: '₦27,500',
-    dateTime: 'Wed, 14-04-25 6:30pm',
-  },
-  {
-    id: '8',
-    bookingId: 'RESQ58120034',
-    customer: 'Caleb Careem',
-    vehicleModel: 'Toyota truck 2012',
-    status: 'Completed',
-    amount: '₦41,500',
-    dateTime: 'Wed, 14-04-25 6:30pm',
-  },
-  {
-    id: '9',
-    bookingId: 'RESQ58120034',
-    customer: 'Funke Akinsanya',
-    vehicleModel: 'MAN storm 2003',
-    status: 'Completed',
-    amount: '₦121,500',
-    dateTime: 'Wed, 14-04-25 6:30pm',
-  },
-];
 
 const AllTransactions: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
+  const { data: transactionsData, isLoading } = useTransactions();
+  
   const handleViewTransaction = (transaction: Transaction) => {
     setSelectedTransaction(transaction);
-    setIsModalOpen(true);
+    setIsSidebarOpen(true);
   };
 
-  const columns: Array<ColumnDefinition<Transaction>> = [
+  const handleCloseSidebar = () => {
+    setSelectedTransaction(null);
+    setIsSidebarOpen(false);
+  };
 
-  
+  const columns: Array<ColumnDefinition<Transaction & { id: string | number }>> = [
     {
         title: "Booking ID",
-        dataIndex: "bookingId",
-        key: "name",
-        render: (value, _, rowIndex) => (
+        dataIndex: "booking_ref",
+        key: "booking_ref",
+        render: (value) => (
           <div className="flex items-center gap-2">
-            <div
-              className={`w-8 h-8 flex items-center justify-center rounded-full font-semibold ${getAvatarColor(
-                (rowIndex)
-              )}`}
-            >
-              <GoArrowDownLeft className='text-[#475467]' />
-            </div>
-            <span className='font-medium text-[#475467]'>{value}</span>
+            <GoArrowDownLeft className='text-[#475467]' />
+            <span className='font-medium text-[#475467]'>{value || 'N/A'}</span>
           </div>
         ),
     },
     {
       title: "Customer",
-      dataIndex: "customer",
+      dataIndex: "user_data",
       key: "customer",
+      render: (_, record) => (
+        <span>{record.user_data?.first_name} {record.user_data?.last_name || 'N/A'}</span>
+      ),
     },
     {
       title: "Vehicle model",
-      dataIndex: "vehicleModel",
-      key: "vehicleModel",
+      dataIndex: "vehicle_model",
+      key: "vehicle_model",
+      render: (value) => value || 'N/A',
     },
     {
       title: "Status",
@@ -148,20 +73,33 @@ const AllTransactions: React.FC = () => {
       key: "status",
       render: (status: string) => (
         <span className={getStatusStyle(status)}>
-          {status}
+          {status || 'Unknown'}
         </span>
       ),
     },
     {
       title: "Amount",
-      dataIndex: "amount",
+      dataIndex: "service_fee",
       key: "amount",
       className: "font-medium",
+      render: (value: number) => `₦${value?.toLocaleString() || 'N/A'}`,
     },
     {
       title: "Date & time",
-      dataIndex: "dateTime",
-      key: "dateTime",
+      dataIndex: "createdAt",
+      key: "createdAt",
+       render: (value: string) => {
+        if (!value) return 'N/A';
+        const date = new Date(value);
+        if (isNaN(date.getTime())) return 'N/A';
+        return date.toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      },
     },
     {
       title: "Actions",
@@ -169,12 +107,6 @@ const AllTransactions: React.FC = () => {
       key: "actions",
       render: (_, record) => (
         <div className="relative">
-          <button 
-            onClick={() => handleViewTransaction(record)}
-            className="text-[#667085]! text-sm! font-medium flex items-center gap-2 cursor-pointer"
-          >
-            View <FaArrowRight className='ml-2' />
-          </button>
         </div>
       ),
     },
@@ -184,6 +116,15 @@ const AllTransactions: React.FC = () => {
     setCurrentPage(page);
     setPageSize(size);
   };
+
+  if (isLoading) {
+    return <div>Loading transactions...</div>;
+  }
+
+  const formattedTransactions = transactionsData?.map((transaction: Transaction) => ({
+    ...transaction,
+    id: transaction._id,
+  })) || [];
 
   return (
     <div className="mb-6">
@@ -196,30 +137,27 @@ const AllTransactions: React.FC = () => {
       </div>
       
       <Table
-        columns={columns}
-        data={mockData.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
-        pagination={{
+        columns={columns as ColumnDefinition<{ id: string }>[]}
+        data={formattedTransactions.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
+        pagination={formattedTransactions.length > pageSize ? {
           current: currentPage,
           pageSize: pageSize,
-          total: mockData.length,
+          total: formattedTransactions.length,
           onChange: handlePageChange,
-        }}
+        } : undefined}
         showActions
-        onRowClick={(id) => console.log('Clicked row:', id)}
+        onRowClick={(id: string) => {
+           const selected = formattedTransactions.find((transaction: Transaction & { id: string | number }) => transaction.id === id);
+           if (selected) {
+             handleViewTransaction(selected as Transaction);
+           }
+        }}
       />
 
-      <TransactionDetailsModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        transaction={selectedTransaction ? {
-          ...selectedTransaction,
-          serviceType: 'Malfunction',
-          totalKm: '21km',
-          date: selectedTransaction.dateTime,
-          towingOperator: 'Move360',
-          pickup: '14, Aku str, Ogudu GRA, Ogudu',
-          dropoff: 'Mechanic Village Ikeja'
-        } : null}
+      <TransactionDetailsSidebar
+        isOpen={isSidebarOpen}
+        onClose={handleCloseSidebar}
+        transaction={selectedTransaction}
       />
     </div>
   );

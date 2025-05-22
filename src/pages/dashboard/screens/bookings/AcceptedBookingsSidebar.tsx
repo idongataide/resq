@@ -5,16 +5,32 @@ interface AcceptedBookingsSidebarProps {
   isOpen: boolean;
   onClose: () => void;
   booking: any;
+  fees: Array<{
+    name: string;
+    tag: string;
+    slug: string;
+    amount: number;
+    amount_type: string;
+    amount_sufix: string;
+    data: any[];
+    createdAt: string;
+    updatedAt: string;
+    fee_id: string;
+  }>;
 }
 
 const AcceptedBookingsSidebar: React.FC<AcceptedBookingsSidebarProps> = ({
   isOpen,
   onClose,
   booking,
+  fees,
 }) => {
   const { data: services } = useAllService(booking?.vehicle_reg);
   const [serviceName, setServiceName] = useState<string | undefined>(undefined);
   const [serviceType, setServiceType] = useState<string | undefined>(undefined);
+
+  const pickupFee = fees?.find(fee => fee.tag === 'PICK_UP_FEE')?.amount || 0;
+  const dropoffFee = fees?.find(fee => fee.tag === 'DROP_OFF_FEE')?.amount || 0;
 
   useEffect(() => {
     if (services && booking?.service_id) {
@@ -118,8 +134,8 @@ const AcceptedBookingsSidebar: React.FC<AcceptedBookingsSidebarProps> = ({
                   <p className='mb-2 capitalize'>{booking?.asset_data?.plate_number || 'N/A'}</p>
                   <p className='mb-2 capitalize'>{booking?.drop_off_dst}km</p>
                   <p className='mb-2 capitalize'>₦{booking?.service_fee?.toLocaleString() || 'N/A'}</p>
-                  <p className='capitalize'>{booking?.pick_up_dst || 'N/A'} km (Cost/Km)</p>
-                  <p className='capitalize'>{/* Drop off cost - not available in provided API */ 'N/A'} (Cost/Km)</p>
+                  <p className='capitalize'>₦{pickupFee}/km</p>
+                  <p className='capitalize'>₦{dropoffFee}/km</p>
                 </div>
              </div>
           </div>

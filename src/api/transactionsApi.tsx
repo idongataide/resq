@@ -7,9 +7,9 @@ const authTokens = localStorage.getItem("adminToken")
 
 // Create a new axios instance for the wallet service
 const walletAPIInstance = axios.create({
-  baseURL: 'https://resq-wallet.onrender.com',
+  baseURL: '/wallet',
   headers: {
-    'Content-Type': 'application/json', 
+    'Content-Type': 'application/json',
     ...(authTokens?.access && { 'Authorization': `Bearer ${authTokens.access}` }),
   },
 });
@@ -17,7 +17,7 @@ const walletAPIInstance = axios.create({
 export const TransactionList = async () => {
     try {
       return await walletAPIInstance
-        .get(`/admins/payments/get-transactions`)
+        .get(`/payments/get-transactions`)
         .then((res) => {
           return res?.data;
         });

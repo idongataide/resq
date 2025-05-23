@@ -9,7 +9,8 @@ const Images = {
     ads: "/images/ads.svg",
     ads2: "/images/ads2.svg",
     teambg: "/images/teamsbg.svg",
-  
+    profile: "/images/profile.png",
+
     icon: {
       home: "/images/icons/home.svg",
       transactions: "/images/icons/transactions.svg",

@@ -32,7 +32,7 @@ const AllTransactions: React.FC = () => {
   
   const { data: transactionsData, isLoading } = useTransactions();
 
-  console.log(transactionsData,'transactionssData')
+  console.log(transactionsData,'transactionssssssData')
   
   const handleViewTransaction = (transaction: Transaction) => {
     setSelectedTransaction(transaction);

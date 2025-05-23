@@ -37,6 +37,11 @@ const CustomersLayout = lazy(() =>
   import("@/pages/dashboard/screens/customers/customersLayout")
 );    
 
+// Account components
+const AccountLayout = lazy(() => import("@/pages/dashboard/screens/account/AccountLayout"));
+const Profile = lazy(() => import("@/pages/dashboard/screens/account/Profile"));
+const ChangePassword = lazy(() => import("@/pages/dashboard/screens/account/ChangePassword"));
+const Passcode = lazy(() => import("@/pages/dashboard/screens/account/Passcode"));
 
 export const routes = createBrowserRouter([
   {
@@ -149,6 +154,20 @@ export const routes = createBrowserRouter([
             <CustomersLayout/>
           </Suspense>
         ),
+      },
+      {
+        path: "/account",
+        element: (
+          <Suspense fallback={<LoadingScreen />}>
+            <AccountLayout />
+          </Suspense>
+        ),
+        children: [
+          { index: true, element: <Profile /> }, // Default route for /account
+          { path: 'change-password', element: <ChangePassword /> },
+          { path: 'passcode', element: <Passcode /> },
+          // Add routes for Notifications and FAQs when components are created
+        ],
       },
       {
         path: "*",

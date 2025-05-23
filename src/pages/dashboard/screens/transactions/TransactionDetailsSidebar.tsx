@@ -32,10 +32,10 @@ const TransactionDetailsSidebar: React.FC<TransactionDetailsSidebarProps> = ({
           <div className="px-6 py-6">
             <div className="text-center mb-8">
               <div className="text-[32px] font-medium text-[#1C2023] mb-2">₦{transaction.amount?.toLocaleString() || 'N/A'}</div>
-              <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-[#ECFDF3]">
-                {/* Assuming status 1 is success */}
-                <div className={`w-1.5 h-1.5 rounded-full ${transaction.status === 1 ? 'bg-[#12B76A]' : 'bg-gray-500'}`}></div>
-                <span className={`text-sm ${transaction.status === 1 ? 'text-[#027A48]' : 'text-gray-700]'}`}>{transaction.status === 1 ? 'Success' : transaction.status || 'Unknown'}</span>
+              <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full ${transaction.status === 1 ? 'bg-[#ECFDF3]' : 'bg-[#FFEFEF]'}`}>
+                {/* Assuming status 1 is success and anything else is failed for now */}
+                <div className={`w-1.5 h-1.5 rounded-full ${transaction.status === 1 ? 'bg-[#12B76A]' : 'bg-[#B11B1B]'}`}></div>
+                <span className={`text-sm ${transaction.status === 1 ? 'text-[#027A48]' : 'text-[#B11B1B]'}`}>{transaction.status === 1 ? 'Success' : 'Failed'}</span>
               </div>
             </div>
 
@@ -46,7 +46,7 @@ const TransactionDetailsSidebar: React.FC<TransactionDetailsSidebarProps> = ({
               </div>
                <div className="flex justify-between items-center">
                 <span className="text-[#667085] text-md">Status</span>
-                <span className="text-[#475467] text-sm font-medium">{transaction.status === 1 ? 'Payment successful' : transaction.status || 'N/A'}</span>
+                <span className="text-[#475467] text-sm font-medium">{transaction.status === 1 ? 'Payment successful' : 'Payment failed'}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-[#667085] text-md">Customer</span>
@@ -68,18 +68,22 @@ const TransactionDetailsSidebar: React.FC<TransactionDetailsSidebarProps> = ({
                 <span className="text-[#667085] text-md">Date</span>
                  <span className="text-[#475467] text-sm font-medium">{transaction.createdAt ? new Date(transaction.createdAt).toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A'}</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-[#667085] text-md">Towing operator</span>
-                <span className="text-[#475467] text-sm font-medium">{transaction.operator?.name || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-[#667085] text-md">Pickup</span>
-                <span className="text-[#475467] text-sm font-medium">{transaction.start_address || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-[#667085] text-md">Drop-off</span>
-                <span className="text-[#475467] text-sm font-medium">{transaction.end_address || 'N/A'}</span>
-              </div>
+              {transaction.status === 1 && (
+                <>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[#667085] text-md">Towing operator</span>
+                    <span className="text-[#475467] text-sm font-medium">{transaction.operator?.name || 'N/A'}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[#667085] text-md">Pickup</span>
+                    <span className="text-[#475467] text-sm font-medium">{transaction.start_address || 'N/A'}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[#667085] text-md">Drop-off</span>
+                    <span className="text-[#475467] text-sm font-medium">{transaction.end_address || 'N/A'}</span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

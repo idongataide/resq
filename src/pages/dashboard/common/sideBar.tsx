@@ -148,7 +148,7 @@ const SiderScreen: React.FC = () => {
         
         {timeChange && (
           <div className="hidden flex-1 md:flex justify-between items-center ">
-            <Link to="/settings">
+            <Link to="/account">
               <div>
                 <p className="text-[12px] text-[#fff] font-semibold  transition-all capitalize duration-500">
                   {data?.firstName + ' ' + data?.lastName }

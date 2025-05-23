@@ -28,6 +28,12 @@ export default defineConfig(({ mode }) => {
           secure: false,
           rewrite: (path) => path
         },
+        '/wallet': {
+          target: 'https://resq-wallet.onrender.com/',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/wallet/, '/admins')
+        }
       }
     },
 

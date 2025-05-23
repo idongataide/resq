@@ -237,7 +237,7 @@ export const useAllService = (type: string | undefined) => {
 
 export const useTransactions = () => {
   const { data, isLoading, mutate } = useSWR(
-    '/admins/payments/get-transactions',
+    '/payments/get-transactions',
     () => {
       return TransactionList().then((res) => {
         return res?.data;

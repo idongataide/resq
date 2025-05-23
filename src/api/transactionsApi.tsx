@@ -7,7 +7,7 @@ const authTokens = localStorage.getItem("adminToken")
 
 // Create a new axios instance for the wallet service
 const walletAPIInstance = axios.create({
-  baseURL: '/wallet',
+  baseURL: import.meta.env.VITE_WALLET_API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
     ...(authTokens?.access && { 'Authorization': `Bearer ${authTokens.access}` }),

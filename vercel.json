@@ -6,7 +6,7 @@
     },
     {
       "source": "/wallet/:path*",
-      "destination": "https://resq-wallet.onrender.com/admins/:path*"
+      "destination": "https://resq-wallet.onrender.com/wallet/:path*"
     }
   ]
 } 

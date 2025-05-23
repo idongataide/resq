@@ -134,13 +134,13 @@ const CancelledBookingsSidebar: React.FC<CancelledBookingsSidebarProps> = ({
                 </div>
                  <div className='text-right'>
                   <p className='mb-2 capitalize'>{booking?.operator?.name || 'N/A'}</p>
-                  <p className='mb-2 capitalize'>{serviceType || 'N/A'}</p>{/* Assuming vehicle_reg is the service type */}
-                  <p className='mb-2 capitalize'>{serviceName || 'N/A'}</p>{/* Display service name */}
+                  <p className='mb-2 capitalize'>{serviceType || 'N/A'}</p>
+                  <p className='mb-2 capitalize'>{serviceName || 'N/A'}</p>
                   <p className='mb-2 capitalize'>{booking?.asset_data?.plate_number || 'N/A'}</p>
                   <p className='mb-2 capitalize'>{booking?.drop_off_dst}km</p>
                   <p className='mb-2 capitalize'>₦{booking?.service_fee?.toLocaleString() || 'N/A'}</p>
-                  <p className='capitalize'>{booking?.pick_up_dst || 'N/A'} km (₦{pickupFee}/km)</p>
-                  <p className='capitalize'>{booking?.drop_off_dst || 'N/A'} km (₦{dropoffFee}/km)</p>
+                  <p className='capitalize'>₦{pickupFee}/km</p>
+                  <p className='capitalize'>₦{dropoffFee}/km</p>
                 </div>
              </div>
           </div>

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Select, Button, Input } from 'antd';
 import { useGetDriversByOperatorId, useAllService, useGetAssetsbyCord } from '@/hooks/useAdmin';
+import { approveTowingRequest } from '@/api/bookingsApi';
+import toast from 'react-hot-toast';
 
 interface ApproveBookingSidebarProps {
   isOpen: boolean;
@@ -18,6 +20,7 @@ interface ApproveBookingSidebarProps {
     updatedAt: string;
     fee_id: string;
   }>;
+  mutate: () => void;
 }
 
 const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
@@ -25,6 +28,7 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
   onClose,
   booking,
   fees,
+  mutate
 }) => {
   const [form] = Form.useForm();
   const [towingOperator, setTowingOperator] = useState<string | undefined>(undefined);
@@ -32,9 +36,11 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
   const [serviceType, setServiceType] = useState<string | undefined>(undefined);
   const [service, setService] = useState<string | undefined>(undefined);
   const [serviceFee, setServiceFee] = useState<number | undefined>(undefined);
+  const [serviceId, setServiceID] = useState<number | undefined>(undefined);
   const [vehicle, setVehicle] = useState<string | undefined>(undefined);
   const [driver, setDriver] = useState<string | undefined>(undefined);
   const [selectedAsset, setSelectedAsset] = useState<any>(undefined);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const longitude = booking?.start_coord?.longitude;
   const latitude = booking?.start_coord?.latitude;
@@ -73,9 +79,31 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
     return null;
   }
 
-  const handleFinish = (values: any) => {
-    console.log('Approval Form values:', values);
-    onClose();
+  const handleFinish = async () => {
+    try {
+      setIsSubmitting(true);
+      const res = await approveTowingRequest(booking?.booking_ref, {
+        tow_company_id: towingOperator || '',
+        asset_id: vehicle || '',
+        driver_id: driver || '',
+        service_id: String(serviceId) || ''
+      });
+         
+      if (res.status === 'ok') {
+        toast.success('Booking approved successfully');
+        mutate(); // Refresh the booking data
+      }
+      else{
+        const errorMsg = res?.response?.data?.msg;
+        toast.error(errorMsg || 'Failed to approve booking');
+      }
+      onClose();
+    } catch (error) {
+      toast.error('Failed to approve booking');
+      console.error('Approval error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleAssetChange = (value: string) => {
@@ -92,9 +120,9 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
   const handleServiceChange = (value: string) => {
     setService(value);
     const selectedService = services?.find((s: any) => s.name === value);
-    console.log(selectedService, services, value,'s')
     if (selectedService) {
       setServiceFee(selectedService.amount);
+      setServiceID(selectedService.service_id);
       form.setFieldsValue({ service: value });
     }
   };
@@ -203,7 +231,7 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
               <Form.Item label="Select Driver" name="driver" rules={[{ required: true, message: 'Please select a driver!' }]}>
                 <Select placeholder="Select" value={driver} onChange={setDriver} className='!h-[42px]' loading={isLoadingDrivers} disabled={!towingOperator}>
                   {drivers?.map((driver: any, index:number) => (
-                      <Select.Option key={index} value={driver.id}>
+                      <Select.Option key={index} value={driver.driver_id}>
                           {`${driver.first_name} ${driver.last_name}`}
                       </Select.Option>
                   ))}
@@ -230,7 +258,12 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
             </div>
 
             <div className="border-t border-gray-200 py-4 flex justify-end gap-3">
-                 <Button type="primary" htmlType="submit" className="rounded-md h-[46px]! px-10! border border-transparent bg-[#FF6C2D] py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
+                 <Button 
+                   type="primary" 
+                   htmlType="submit" 
+                   loading={isSubmitting}
+                   className="rounded-md h-[46px]! px-10! border border-transparent bg-[#FF6C2D] py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                 >
                   Approve
                 </Button>
             </div>

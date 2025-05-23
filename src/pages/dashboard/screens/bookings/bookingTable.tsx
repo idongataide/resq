@@ -13,6 +13,7 @@ import AcceptedBookingsSidebar from './AcceptedBookingsSidebar';
 import CompletedBookingsSidebar from './CompletedBookingsSidebar';
 import CancelledBookingsSidebar from './CancelledBookingsSidebar';
 import LoadingScreen from '../../common/LoadingScreen';
+import { Toaster } from 'react-hot-toast';
 
 
 interface BookingData {
@@ -153,7 +154,7 @@ const BookingTable: React.FC = () => {
     }
   };
 
-  const { data: bookingData, isLoading } = useAllBookings(getRideStatus(status));
+  const { data: bookingData, isLoading, mutate } = useAllBookings(getRideStatus(status));
 
   const bokingCount = bookingData?.lenght
 
@@ -286,6 +287,7 @@ const BookingTable: React.FC = () => {
 
   return (
     <>
+    <Toaster/>
     <div className="mb-6 px-6">
        <div 
         className="flex items-center mb-5 mt-10 cursor-pointer"
@@ -322,6 +324,7 @@ const BookingTable: React.FC = () => {
         onClose={handleCloseSidebar}
         booking={selectedBooking}
         fees={feesData}
+        mutate={mutate}
       />
     )}
     {activeSidebar === 'reject' && (
@@ -329,6 +332,7 @@ const BookingTable: React.FC = () => {
         isOpen={activeSidebar === 'reject' && !!selectedBooking}
         onClose={handleCloseSidebar}
         booking={selectedBooking}
+        mutate={mutate}
       />
     )}
     {activeSidebar === 'accepted' && (

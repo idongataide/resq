@@ -42,7 +42,6 @@ const Profile: React.FC = () => {
         phone_number: values.phoneNumber
       });
 
-      console.log(response);
       
       if (response.status === 'ok') {
         toast.success('Profile updated successfully');

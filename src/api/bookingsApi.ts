@@ -23,3 +23,32 @@ export const getBookingsCount = async (countStatus: string) => {
     return error;
   }
 };
+
+export const approveTowingRequest = async (requestId: string, data: {
+  tow_company_id: string;
+  asset_id: string;
+  driver_id: string;
+  service_id: string;
+}) => {
+  try {
+    const response = await axiosAPIInstance.post(
+      `/towings/approve-towing-request/${requestId}`,
+      data
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const rejectTowingRequest = async (data: { towing_id: string; reason: string }) => {
+  try {
+    const response = await axiosAPIInstance.post(
+      `/towings/cancel-request`,
+      data
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}; 

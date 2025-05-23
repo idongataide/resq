@@ -1,29 +1,51 @@
 // src/pages/dashboard/screens/bookings/RejectBookingSidebar.tsx
 import React, { useState } from 'react';
 import { Form, Select, Button } from 'antd';
+import { rejectTowingRequest } from '@/api/bookingsApi';
+import toast from 'react-hot-toast';
 
 interface RejectBookingSidebarProps {
   isOpen: boolean;
   onClose: () => void;
-  booking: any; // Assuming you might still need booking details for rejection logic
+  booking: any;
+  mutate: () => void;
 }
 
 const RejectBookingSidebar: React.FC<RejectBookingSidebarProps> = ({
   isOpen,
   onClose,
   booking,
+  mutate
 }) => {
   const [rejectionReason, setRejectionReason] = useState<string | undefined>(undefined);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen || !booking) {
     return null;
   }
 
-  const handleReject = () => {
-    console.log('Implement Reject Logic');
-    // TODO: Implement reject logic here, using rejectionReason
-    console.log('Rejected booking ID:', booking?.booking_ref, 'with reason:', rejectionReason);
-    onClose();
+  const handleReject = async () => {
+    try {
+      setIsSubmitting(true);
+      const res = await rejectTowingRequest({
+        towing_id: booking?.towing_id || '',
+        reason: rejectionReason || ''
+      });
+         
+      if (res.status === 'ok') {
+        toast.success('Booking rejected successfully');
+        mutate();
+      } else {
+        const errorMsg = res?.data?.msg;
+        toast.error(errorMsg || 'Failed to reject booking');
+      }
+      onClose();
+    } catch (error: any) {
+      toast.error(error?.response?.data?.msg || 'Failed to reject booking');
+      console.error('Rejection error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleRejectionReasonChange = (value: string) => {
@@ -112,8 +134,13 @@ const RejectBookingSidebar: React.FC<RejectBookingSidebarProps> = ({
           </Form>
 
           <div className="py-4 flex justify-end"> {/* Buttons below the form item */}
-             <Button onClick={handleReject} className="h-[46px]! px-10! rounded-lg border border-[#FF6C2D] bg-[#FF6C2D]!
-               py-2 text-sm font-medium text-[#fff]! shadow-sm hover:bg-gray-50 " disabled={!rejectionReason}> 
+             <Button 
+               onClick={handleReject} 
+               className="h-[46px]! px-10! rounded-lg border border-[#FF6C2D] bg-[#FF6C2D]!
+                 py-2 text-sm font-medium text-[#fff]! shadow-sm hover:bg-gray-50" 
+               disabled={!rejectionReason}
+               loading={isSubmitting}
+             > 
                Reject
              </Button>
           </div>

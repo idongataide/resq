@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Table, type ColumnDefinition } from '@/components/ui/Table';
 import Images from '@/components/images';
-import {getStatusStyle} from '@/components/ui/statusStyles';
+import { getStatusStyle } from '@/components/ui/statusStyles';
 import { FaArrowRight } from 'react-icons/fa';
 import { GoArrowDownLeft } from "react-icons/go";
 import { useTransactions } from '@/hooks/useAdmin';
@@ -12,8 +12,9 @@ interface Transaction {
   _id: string;
   booking_ref?: string;
   user_data?: { first_name: string; last_name: string; email: string; phone_number: string; };
+  booking_data?: { vehicle_model?: string; };
   vehicle_model?: string;
-  status?: string;
+  status?: string | number;
   amount?: number;
   createdAt?: string;
   operator?: { _id: string; name: string; };
@@ -23,6 +24,17 @@ interface Transaction {
   action?:string;
   service_fee?: number;
 }
+
+const getStatusText = (status: number) => {
+  switch(status) {
+    case 0: return 'Pending';
+    case 1: return 'Completed';
+    case 2: return 'Failed';
+    case 3: return 'Abandoned';
+    case 4: return 'Cancelled';
+    default: return 'Unknown';
+  }
+};
 
 const AllTransactions: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -51,7 +63,9 @@ const AllTransactions: React.FC = () => {
         key: "booking_ref",
         render: (value) => (
           <div className="flex items-center gap-2">
-            <GoArrowDownLeft className='text-[#475467]' />
+            <div className={`w-6 h-6 rounded-full flex items-center justify-center bg-[#EBF7F2] text-[#2FA270]`}>
+              <GoArrowDownLeft className='text-[#2FA270] font-extrabold' size={14} />
+            </div>
             <span className='font-medium text-[#475467]'>{value || 'N/A'}</span>
           </div>
         ),
@@ -68,21 +82,23 @@ const AllTransactions: React.FC = () => {
       title: "Vehicle model",
       dataIndex: "vehicle_model",
       key: "vehicle_model",
-      render: (value) => value || 'N/A',
+      render: (_, record) => (
+        <span>{record.booking_data?.vehicle_model} </span>
+      ),
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (status: string) => (
-        <span className={getStatusStyle(status)}>
-          {status || 'Unknown'}
+      render: (status: number) => (
+        <span className={getStatusStyle(getStatusText(status))}>
+          {getStatusText(status)}
         </span>
       ),
     },
     {
       title: "Amount",
-      dataIndex: "service_fee",
+      dataIndex: "amount",
       key: "amount",
       className: "font-medium",
       render: (value: number) => `₦${value?.toLocaleString() || 'N/A'}`,

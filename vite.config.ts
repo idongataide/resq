@@ -6,7 +6,7 @@ import path from "node:path";
 
 
 export default defineConfig(({ mode }) => {
-  // Load environment variables based on the mode (development or production)
+
   const env = loadEnv(mode, process.cwd());
 
   return {

@@ -12,6 +12,7 @@ import ApproveBookingSidebar from './ApproveBookingSidebar';
 import AcceptedBookingsSidebar from './AcceptedBookingsSidebar';
 import CompletedBookingsSidebar from './CompletedBookingsSidebar';
 import CancelledBookingsSidebar from './CancelledBookingsSidebar';
+import LoadingScreen from '../../common/LoadingScreen';
 
 
 interface BookingData {
@@ -131,6 +132,8 @@ const BookingTable: React.FC = () => {
     }
   };
 
+  
+
   const getRideStatus = (status: string | undefined) => {
     switch(status) {
       case 'pending': return '0';
@@ -138,7 +141,15 @@ const BookingTable: React.FC = () => {
       case 'ongoing': return '2';
       case 'completed': return '3';
       case 'rejected': return '4';
-      default: return '0'; // Default to pending if status is not recognized
+      default: return '0'; 
+    }
+  };
+  const getPaymentStatus = (status: number | undefined) => {
+    switch(status) {
+      case 0: return 'Awaiting payment';
+      case 1: return 'Paid';
+      case 2: return 'Rejected';
+      default: return '0'; 
     }
   };
 
@@ -193,11 +204,16 @@ const BookingTable: React.FC = () => {
       title: "Status",
       dataIndex: "ride_status",
       key: "ride_status",
-      render: (status: number) => (
-        <span className={getStatusStyle(getStatusText(status))}>
-          {getStatusText(status)}
-        </span>
-      ),
+      render: (value: any, record: BookingData) => 
+        record.ride_status === 1 ? (
+          <span className={getStatusStyle(getPaymentStatus(value))}>
+            {getPaymentStatus(record.charge_status)}
+          </span>
+        ) : (
+          <span className={getStatusStyle(getStatusText(value))}>
+            {getStatusText(value)}
+          </span>
+        ),
     },
     {
       title: "Reason",
@@ -265,7 +281,7 @@ const BookingTable: React.FC = () => {
   }
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    <LoadingScreen/>
   }
 
   return (

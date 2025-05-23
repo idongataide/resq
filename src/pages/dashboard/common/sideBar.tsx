@@ -136,7 +136,7 @@ const SiderScreen: React.FC = () => {
       <div
         className={`${timeChange ? "px-3 items-start" : "px-7 "} py-8 cursor-pointer flex gap-3 w-full transition-all duration-500 border-t-1 border-gray-300 `}      
        >
-        <Link to="/settings">
+        <Link to="/account">
           <img
             alt="avatar"
             src={data?.avatar || Images?.avatar}

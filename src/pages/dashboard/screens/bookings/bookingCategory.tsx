@@ -25,7 +25,7 @@ const BookingCategory: React.FC = () => {
       path: "accepted"
     },
     {
-      count: bookingsCount?.arrived || '00',
+      count: bookingsCount?.ongoing || '00',
       title: "Ongoing request",
       description: "Monitor ongoing request and mark as completed when done",
       action: "View →",

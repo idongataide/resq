@@ -1,16 +1,14 @@
 import React from 'react';
 import { IoClose } from 'react-icons/io5';
 import OtpInput from 'react-otp-input';
-import { confirmOtp } from '@/api/otpApi';
 import toast from 'react-hot-toast';
 
 interface ConfirmOperatorProps {
   onClose: () => void;
   onSuccess: (otp: string, otp_request_id?: string) => void;
-  otpRequestId?: string;
 }
 
-const ConfirmOperator: React.FC<ConfirmOperatorProps> = ({ onClose, onSuccess, otpRequestId }) => {
+const ConfirmOperator: React.FC<ConfirmOperatorProps> = ({ onClose, onSuccess }) => {
   const [otp, setOtp] = React.useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -19,21 +17,18 @@ const ConfirmOperator: React.FC<ConfirmOperatorProps> = ({ onClose, onSuccess, o
       toast.error('Please enter complete OTP');
       return;
     }
-
-    try {
-      // Verify OTP
-      const res = await confirmOtp({ otp, otp_request_id: otpRequestId });
-      console.log(res,'css')
-      if (res?.response?.data?.status === 'error') {
-        toast.error(res?.response?.data?.msg|| 'Invalid OTP');
-        return;
-      }
-
-      // If there's no error, then call onSuccess
-      onSuccess(otp, otpRequestId);
-    } catch (error: any) {
-      toast.error(error.message || 'An error occurred');
-    }
+    onSuccess(otp);
+    // try {
+    //   // Verify OTP
+    //   const res = await confirmOtp({ otp });
+    //   if (res?.response?.data?.status === 'error') {
+    //     toast.error(res?.response?.data?.msg|| 'Invalid OTP');
+    //     return;
+    //   }
+    //   onSuccess(otp);
+    // } catch (error: any) {
+    //   toast.error(error.message || 'An error occurred');
+    // }
   };
 
   return (

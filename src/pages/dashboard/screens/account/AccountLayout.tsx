@@ -1,4 +1,5 @@
 import React from 'react';
+import {Toaster} from 'react-hot-toast';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 
 const AccountLayout: React.FC = () => {
@@ -14,6 +15,7 @@ const AccountLayout: React.FC = () => {
 
   return (
     <div className="mt-5 px-10">
+      <Toaster />
       <h2 className="text-lg font-semibold mb-4">My Account</h2>
         <div className='flex bg-white border-[#E5E9F0] border'>        
         <div className="w-64 border-r border-gray-200 p-4">

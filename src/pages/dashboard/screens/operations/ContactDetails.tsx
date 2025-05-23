@@ -2,7 +2,6 @@ import React from 'react';
 import { Form, Input, Button } from 'antd';
 import ConfirmOperator from './2FA';
 import { useOnboardingStore } from '@/global/store';
-import { generate2fa } from '@/api/otpApi';
 import { addOperators } from '@/api/operatorsApi';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
@@ -10,31 +9,15 @@ import { useNavigate } from 'react-router-dom';
 const ContactDetails: React.FC = () => {
   const [form] = Form.useForm();
   const [show2FAModal, setShow2FAModal] = React.useState(false);
-  const [otpRequestId, setOtpRequestId] = React.useState<string | undefined>(undefined);
   const { setFormData, formData } = useOnboardingStore();
   const navigate = useNavigate()
 
   const handleFinish = async (values: any) => {
-    try {
-      // Store contact details
-      setFormData({ ...formData, contactDetails: values });
-      
-      // Generate 2FA
-      const res = await generate2fa();
-
-      console.log(res,'res')
-      if (res?.data?.error) {
-        toast.error(res?.response?.data?.msg || 'Failed to generate 2FA');
-        return;
-      }
-      setOtpRequestId(res?.data?.otp_request_id);
-      setShow2FAModal(true);
-    } catch (error: any) {
-      toast.error(error.message || 'An error occurred');
-    }
+    setFormData({ ...formData, contactDetails: values });      
+    setShow2FAModal(true);
   };
 
-  const handle2FASuccess = async (otp?: string, otp_request_id?: string) => {
+  const handle2FASuccess = async (otp?: string) => {
     try {
       const finalData = {
         operator_name: formData?.companyDetails?.companyName,
@@ -51,12 +34,12 @@ const ContactDetails: React.FC = () => {
         contact_rep_lastname: formData?.contactDetails?.lastName,
         contact_rep_phone: formData?.contactDetails?.phone,
         otp,
-        otp_request_id,
       };
 
       const submitResponse = await addOperators(finalData);
-      if (submitResponse?.error) {
-        toast.error(submitResponse.message || 'Failed to add operator');
+      console.log(submitResponse?.response?.data?.status)
+      if (submitResponse?.response?.data?.status === 'error') {
+        toast.error(submitResponse?.response?.data?.msg || 'Failed to add operator');
         return;
       }
 
@@ -74,7 +57,6 @@ const ContactDetails: React.FC = () => {
         <ConfirmOperator 
           onClose={() => setShow2FAModal(false)} 
           onSuccess={handle2FASuccess}
-          otpRequestId={otpRequestId}
         />
       )}
       

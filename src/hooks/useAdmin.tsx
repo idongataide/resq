@@ -2,7 +2,7 @@ import { banksList } from "@/api/banks";
 import { getBookings, getBookingsCount } from "@/api/bookingsApi";
 import { getCustomers, getCustomersDetails } from "@/api/customersApi";
 import { getOperators, getOperatorData, getDrivers, getDriversByOperatorId, getAssetsbyCordinate, getAssets } from "@/api/operatorsApi";
-import { getFees, getServices } from "@/api/settingsApi";
+import { getFees, getProfile, getServices } from "@/api/settingsApi";
 import { getTeams } from "@/api/teamsApi";
 import { TransactionList } from "@/api/transactionsApi";
 
@@ -257,6 +257,23 @@ export const useFees = () => {
     `/settings/fees/`,
     () => {
       return getFees().then((res) => {
+        return res?.data;
+      });
+    },
+
+    {
+      revalidateOnFocus: false,
+    },
+  );
+
+  return { data, isLoading, mutate };
+};
+
+export const useAdminProfile = () => {
+  const { data, isLoading, mutate } = useSWR(
+    `/accounts/profile/`,
+    () => {
+      return getProfile().then((res) => {
         return res?.data;
       });
     },

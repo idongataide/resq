@@ -25,7 +25,6 @@ const AccountDetails: React.FC = () => {
   const handleVerifyAccount = async () => {
     const { accountNumber, bankName } = form.getFieldsValue();
 
-    // Check if bank is selected before verifying
     if (!bankName) {
         toast.error('Please select a bank before verifying account number.');
         return;
@@ -47,8 +46,6 @@ const AccountDetails: React.FC = () => {
         };
         const response = await verifyAccount(payload);
         
-        console.log(response,'response');
-
         if (response?.status === 'ok') {
             setAccountName(response.data.data.account_name);
             toast.success('Account name fetched successfully.');
@@ -65,36 +62,29 @@ const AccountDetails: React.FC = () => {
     }
   };
 
-  // Handle change on account number input
   const handleAccountNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const accountNumber = e.target.value;
-    // Allow only digits for verification trigger, but don't restrict input type here if non-digits are needed for final form submission
     const digitsOnly = accountNumber.replace(/\D/g, '');
-    form.setFieldsValue({ accountNumber: digitsOnly }); // Update form state with digits only for trigger
+    form.setFieldsValue({ accountNumber: digitsOnly }); 
     setAccountName(null); 
 
     const bankName = form.getFieldValue('bankName');
-
-    // Trigger verification if account number is at least 10 digits and bank is selected
     if (digitsOnly.length >= 10 && bankName) {
       handleVerifyAccount();
     }
   };
 
-  // Handle change on bank name select
   const handleBankNameChange = (value: string) => {
     form.setFieldsValue({ bankName: value }); 
     setAccountName(null); 
 
     const accountNumber = form.getFieldValue('accountNumber');
-    // Trigger verification if account number is already at least 10 digits
      if (accountNumber?.length >= 10) {
        handleVerifyAccount();
      }
   };
 
   const handleFinish = (values: any) => {
-    // Ensure accountName is available if verification was triggered
      if (values.accountNumber?.length >= 10 && values.bankName && !accountName) {
        toast.error('Please wait for account verification to complete.');
        return;

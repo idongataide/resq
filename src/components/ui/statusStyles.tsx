@@ -4,6 +4,7 @@ export const getStatusStyle = (status: string): string => {
     Paid: "text-[#2FA270] bg-[#EBF7F2] px-3 py-1 rounded-full whitespace-nowrap text-xs font-medium",
     "At rest": "text-[#2FA270] bg-[#EBF7F2] px-3 py-1 rounded-full whitespace-nowrap text-xs font-medium",
     Failed: "text-[#B11B1B] bg-[#FFEFEF] px-3 py-1 rounded-full whitespace-nowrap text-xs font-medium",
+    Rejected: "text-[#B11B1B] bg-[#FFEFEF] px-3 py-1 rounded-full whitespace-nowrap text-xs font-medium",
     Enroute: "text-[#B11B1B] bg-[#FFEFEF] px-3 py-1 rounded-full whitespace-nowrap text-xs font-medium",
     Pending: "text-[#D2930C] bg-[#FDF6E7] px-3 py-1 rounded-full whitespace-nowrap text-xs font-medium",
     Available: "text-[#D2930C] bg-[#FDF6E7] px-3 py-1 rounded-full whitespace-nowrap text-xs font-medium",

@@ -2,7 +2,7 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import { CiSearch } from "react-icons/ci";
 import { IoIosNotificationsOutline } from "react-icons/io";
-import { FaRegQuestionCircle } from "react-icons/fa";
+import { FaRegQuestionCircle, FaSun, FaMoon } from "react-icons/fa";
 import { useOnboardingStore } from "../global/store";
 import SiderScreen from "../pages/dashboard/common/sideBar";
 import Images from "@/components/images";
@@ -12,6 +12,27 @@ const DashboardLayout: React.FC = () => {
   const {siderBarView  } = useOnboardingStore();
  const data = useOnboardingStore()
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) {
+      return {
+        text: 'Good morning',
+        icon: <img src={Images.greetings} alt="user" className="w-7 h-7" />
+      };
+    } else if (hour >= 12 && hour < 17) {
+      return {
+        text: 'Good afternoon',
+        icon: <FaSun className="w-5 h-5 text-orange-500" />
+      };
+    } else {
+      return {
+        text: 'Good evening',
+        icon: <FaMoon className="w-5 h-5 text-blue-900" />
+      };
+    }
+  };
+
+  const greeting = getGreeting();
 
  return (
     <main className="overflow-hidden bg-black">
@@ -30,9 +51,9 @@ const DashboardLayout: React.FC = () => {
             <div className="fixed w-[calc(100vw-100px)] md:w-[calc(100vw-280px)]  py-4 mb-6 lg:flex-row- items-center flex-row flex justify-start md:justify-between bg-white px-8 ">
               <div className="flex items-center">
                 <p className="text-lg pb-0 mb-0 md:mr-3 text-[#344054] font-medium capitalize">
-                  Good morning {data?.firstName || ''}
+                  {greeting.text} {data?.firstName || ''}
                 </p>
-                <img src={Images.greetings} alt="user" className="w-7 h-7" />
+                {greeting.icon}
               </div>
               <div className="hidden md:flex items-center justify-between mt-3 lg:mt-0">
                 <div className="flex items-center border border-[#e5e8ea] md:w-[250px] lg:w-[400px] w-[220px] rounded-full pl-2 bg-[#F9FAFB] md:mr-2 lg:mr-24">

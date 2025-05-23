@@ -8,7 +8,7 @@ import { useAllOperators } from "@/hooks/useAdmin";
 
 const OperationsLayout: React.FC = () => {
 
-  const {data : operators } = useAllOperators()  
+  const { data: operators, isLoading } = useAllOperators()  
 
   return (
     <main>
@@ -27,7 +27,7 @@ const OperationsLayout: React.FC = () => {
                     <FaCar className="text-[#FF6C2D]" />
                 </div>
                 <div className="ml-2">
-                    <h2 className="text-[26px] font-bold text-[#475467] mb-1">{operators?.length}</h2>
+                    <h2 className="text-[26px] font-bold text-[#475467] mb-1">{isLoading ? '...' : operators?.length}</h2>
                     <p className="text-[#667085] text-md font-medium">Active Operators</p>
                 </div>
             </div>
@@ -40,7 +40,7 @@ const OperationsLayout: React.FC = () => {
           </div>
         </div>
         
-        <AllOperations data={operators} />
+        <AllOperations data={operators} isLoading={isLoading} />
       </div>
     </main>
   );

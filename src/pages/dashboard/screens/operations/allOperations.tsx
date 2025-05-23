@@ -3,6 +3,7 @@ import { Table, type ColumnDefinition } from '@/components/ui/Table';
 import Images from '@/components/images';
 import { FaArrowRight } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import LoadingScreen from '../../common/LoadingScreen';
 
 
 interface Operator {
@@ -19,10 +20,16 @@ interface Operator {
 
 interface AllOperationsProps {
   data: Operator[];
+  isLoading?: boolean;
 }
 
-const OperatorsDirectory: React.FC<AllOperationsProps> = ({ data }) => {
+const OperatorsDirectory: React.FC<AllOperationsProps> = ({ data, isLoading  }) => {
 
+  if (isLoading) {
+    return (
+      <LoadingScreen/>
+    );
+  }
 
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
@@ -91,6 +98,7 @@ const OperatorsDirectory: React.FC<AllOperationsProps> = ({ data }) => {
     setPageSize(size);
   };
 
+ 
   return (
     <div className="mb-6">
       <div className="py-2 px-4 bg-white rounded-md border-[#E5E9F0] flex justify-between items-center">

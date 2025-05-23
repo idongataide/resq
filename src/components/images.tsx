@@ -10,6 +10,7 @@ const Images = {
     ads2: "/images/ads2.svg",
     teambg: "/images/teamsbg.svg",
     profile: "/images/profile.png",
+    map: "/images/lagos.png",
 
     icon: {
       home: "/images/icons/home.svg",
@@ -22,6 +23,7 @@ const Images = {
       setup: "/images/icons/settings.svg", 
       siderIcon: "/images/Expand icon.svg",
       filter: "/images/icons/filter.svg",
+      medal: "/images/medal.svg",
     },
   };
   

@@ -50,7 +50,7 @@ const AccountDetails: React.FC = () => {
             setAccountName(response.data.data.account_name);
             toast.success('Account name fetched successfully.');
         } else {
-            toast.error(response?.message || 'Failed to verify account.');
+            toast.error(response?.response.data.msg || 'Failed to verify account.');
             setAccountName(null);
         }
 
@@ -144,7 +144,7 @@ const AccountDetails: React.FC = () => {
             placeholder="Enter details" 
             size="large" 
             onChange={handleAccountNumberChange} 
-            maxLength={10} // Set max length to 11
+            maxLength={10} 
             type="number" 
           />
         </Form.Item>
@@ -164,7 +164,7 @@ const AccountDetails: React.FC = () => {
                 type="primary"
                 htmlType="submit"
             loading={isVerifying} 
-            disabled={isVerifying || !accountName} // Disable submit until account is verified
+            disabled={isVerifying || !accountName} 
             className="h-[46px]! px-10! mt-5! rounded-lg bg-[#FF6C2D] text-[#FF6C2D] font-medium text-lg hover:bg-gray-300 transition border-0"
             >
                 Proceed

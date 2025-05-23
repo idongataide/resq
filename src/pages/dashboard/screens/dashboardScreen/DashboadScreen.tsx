@@ -1,21 +1,33 @@
 import React from "react";
-
+import DashboardMetrics from "./DashboardMetrics";
+import PerformanceRateChart from "./PerformanceRateChart";
+import RevenueGrowthChart from "./RevenueGrowthChart";
+import LagosHotspotsMap from "./LagosHotspotsMap";
+import TopOperatorsTable from "./TopOperatorsTable";
 
 const DashboadScreen: React.FC = () => {
-
   return (
     <div className="w-full p-6">
-      <main className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-        <div className="h-[150px] border-gray-500 rounded-md  bg-zinc-300 animate-pulse"></div>
-        <div className="h-[150px] border-gray-500 rounded-md  bg-zinc-300 animate-pulse"></div>
-        <div className="h-[150px] border-gray-500 rounded-md  bg-zinc-300 animate-pulse"></div>
-        <div className="h-[150px] border-gray-500 rounded-md  bg-zinc-300 animate-pulse"></div>
+      {/* Metrics Boxes */}
+      <DashboardMetrics />
+
+      {/* Charts Row */}
+      <main className="grid grid-cols-1 md:grid-cols-6 mt-5 gap-5">
+        <div className="col-span-1 md:col-span-2">
+          <PerformanceRateChart />
+        </div>
+        <div className="col-span-1 md:col-span-4">
+          <RevenueGrowthChart />
+        </div>
       </main>
 
-      <main className="grid grid-cols-1 md:grid-cols-5 mt-10 gap-5">
-        <div className="h-[600px] border-gray-500 rounded-md  bg-zinc-300 animate-pulse col-span-1 md:col-span-3"></div>
-        <div className="h-[600px] border-gray-500 rounded-md  bg-zinc-300 animate-pulse col-span-1 md:col-span-2"></div>
-      </main>
+        <div className="col-span-1 mt-10">
+          <LagosHotspotsMap />
+        </div>         
+      
+       <div className="col-span-1 mt-10">
+          <TopOperatorsTable />
+       </div>
     </div>
   );
 };

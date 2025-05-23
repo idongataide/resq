@@ -91,7 +91,7 @@ const TransactionDetailsSidebar: React.FC<TransactionDetailsSidebarProps> = ({
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-[#667085] text-md">Service type</span>
-                <span className="text-[#475467] text-sm font-medium">{/* Service type is not directly in the provided transaction data */ 'N/A'}</span>
+                <span className="text-[#475467] text-sm font-medium">{'N/A'}</span>
               </div>
                <div className="flex justify-between items-center">
                 <span className="text-[#667085] text-md">Total Km</span>

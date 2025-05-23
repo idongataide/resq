@@ -82,7 +82,7 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
   const handleFinish = async () => {
     try {
       setIsSubmitting(true);
-      const res = await approveTowingRequest(booking?.booking_ref, {
+      const res = await approveTowingRequest(booking?.towing_id, {
         tow_company_id: towingOperator || '',
         asset_id: vehicle || '',
         driver_id: driver || '',

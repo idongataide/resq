@@ -28,7 +28,7 @@ interface Transaction {
 const getStatusText = (status: number) => {
   switch(status) {
     case 0: return 'Pending';
-    case 1: return 'Completed';
+    case 1: return 'Successful ';
     case 2: return 'Failed';
     case 3: return 'Abandoned';
     case 4: return 'Cancelled';
@@ -44,7 +44,6 @@ const AllTransactions: React.FC = () => {
   
   const { data: transactionsData, isLoading } = useTransactions();
 
-  console.log(transactionsData,'transactionssssssData')
   
   const handleViewTransaction = (transaction: Transaction) => {
     setSelectedTransaction(transaction);

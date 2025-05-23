@@ -13,13 +13,13 @@ const DashboardMetrics: React.FC = () => {
     <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
       {/* Total Revenue */}
       <div className="bg-white rounded-lg p-6 border border-[#F2F4F7]">
-        <p className="text-sm text-[#475467] mb-3">Total Revenue</p>
-        <h2 className="text-2xl font-bold text-[#667085]">100</h2>
+        <h2 className="text-2xl font-bold text-[#667085] mb-3">100</h2>
+        <p className="text-sm text-[#475467]">Total Revenue</p>
       </div>
       {/* Total number of operators */}
       <div className="bg-white rounded-lg p-6 border border-[#F2F4F7]">
-        <p className="text-sm text-[#475467] mb-3">Total number of operators</p>
-        <h2 className="text-2xl font-bold text-[#667085]">100</h2>
+        <h2 className="text-2xl font-bold text-[#667085] mb-3">100</h2>
+        <p className="text-sm text-[#475467]">Total number of operators</p>
       </div>
       {/* Pending requests */}
       <div className="bg-white rounded-lg p-6 border border-[#F2F4F7]">
@@ -28,8 +28,8 @@ const DashboardMetrics: React.FC = () => {
       </div>
       {/* Successful transactions */}
       <div className="bg-white rounded-lg p-6 border border-[#F2F4F7]">
-        <p className="text-sm text-[#475467] mb-3">Successful transactions</p>
-        <h2 className="text-2xl font-bold text-[#667085]">09</h2>
+        <h2 className="text-2xl font-bold text-[#667085] mb-3">09</h2>
+        <p className="text-sm text-[#475467]">Successful transactions</p>
       </div>
     </div>
     </>

@@ -147,7 +147,8 @@ const BookingTable: React.FC = () => {
     switch(status) {
       case 0: return 'Awaiting payment';
       case 1: return 'Paid';
-      case 2: return 'Rejected';
+      case 2: return 'failed';
+      case 3: return 'Abandoned';
       default: return '0'; 
     }
   };

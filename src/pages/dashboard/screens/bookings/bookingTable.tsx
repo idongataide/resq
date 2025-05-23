@@ -81,8 +81,7 @@ const BookingTable: React.FC = () => {
 
   const { data: feesData } = useFees();
 
-  console.log(feesData,'feesData')
-
+  
   useEffect(() => {
     if (status) {
       setTitle(status.charAt(0).toUpperCase() + status.slice(1) + ' Requests');
@@ -112,7 +111,6 @@ const BookingTable: React.FC = () => {
   };
 
   const handleReject = (request: BookingData) => {
-    console.log('Rejected:', request);
     setSelectedBooking(request);
     setActiveSidebar('reject');
   };
@@ -155,6 +153,13 @@ const BookingTable: React.FC = () => {
   };
 
   const { data: bookingData, isLoading, mutate } = useAllBookings(getRideStatus(status));
+
+  
+  if (isLoading) {
+    return (
+      <LoadingScreen/>
+    );
+  }
 
   const bokingCount = bookingData?.lenght
 
@@ -207,7 +212,7 @@ const BookingTable: React.FC = () => {
       key: "ride_status",
       render: (value: any, record: BookingData) => 
         record.ride_status === 1 ? (
-          <span className={getStatusStyle(getPaymentStatus(value))}>
+          <span className={getStatusStyle(getPaymentStatus(record.charge_status))}>
             {getPaymentStatus(record.charge_status)}
           </span>
         ) : (

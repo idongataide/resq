@@ -62,7 +62,9 @@ const AcceptedBookingsSidebar: React.FC<AcceptedBookingsSidebarProps> = ({
 
            <div className="flex justify-between items-center mb-2">
                 <h3 className="text-sm font-medium text-[#475467]">Booking ID {booking?.booking_ref}</h3>
-                <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-[#EBF7FF] text-[#4387D8]">{booking?.charge_status === 1 ? 'Awaiting payment' : 'Accepted'}</span>
+                <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${booking?.charge_status === 0 ? 'bg-[#EBF7FF] text-[#4387D8]' : 'bg-[#ECFDF3] text-[#027A48]'}`}>
+                  {booking?.charge_status === 0 ? 'Awaiting payment' : 'Paid'}
+                </span>
           </div>
 
           <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">

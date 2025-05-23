@@ -2,6 +2,14 @@ import React from "react";
 
 const DashboardMetrics: React.FC = () => {
   return (
+    <>
+    <div className="text-sm py-3 px-2 rounded-lg mb-3 bg-[#fff]">
+        <button className="px-6 py-2 text-[#fff] text-xs cursor-pointer rounded-bl-md rounded-tl-md  border border-[#F2F4F7] bg-[#E86229]">Daily</button>
+        <button className="px-6 py-2 text-[#667085] text-xs cursor-pointer  border border-[#F2F4F7]">Weekly</button>
+        <button className="px-6 py-2 text-[#667085] text-xs cursor-pointer rounded-br-md rounded-tr-md  border border-[#F2F4F7]">Monthly</button>
+        <button className="px-6 py-2 text-[#667085] text-xs cursor-pointer  border border-[#F2F4F7]">Yearly</button>
+        <button className="px-6 py-2 text-[#667085] text-xs cursor-pointer rounded-br-md rounded-tr-md  border border-[#F2F4F7]">All time</button>
+    </div>
     <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
       {/* Total Revenue */}
       <div className="bg-white rounded-lg p-6 border border-[#F2F4F7]">
@@ -24,6 +32,7 @@ const DashboardMetrics: React.FC = () => {
         <h2 className="text-2xl font-bold text-[#667085]">09</h2>
       </div>
     </div>
+    </>
   );
 };
 

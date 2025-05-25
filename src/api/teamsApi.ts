@@ -27,3 +27,14 @@ export const getTeams = async () => {
  };
 
  
+ export const getTeamsCount = async (countStatus: string) => {
+  try {
+    return await axiosAPIInstance
+      .get(`/accounts/admin-user?component=${countStatus}`)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};

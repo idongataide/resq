@@ -118,7 +118,7 @@ const SiderScreen: React.FC = () => {
                ${
                  isActive
                    ? "text-[#fff] bg-[#FF6C2D]"
-                   : "hover:bg-[#eef2ff] hover:text-gray-500"
+                   : "hover:bg-[#ff6c2dea] hover:[#fff]"
                }
                ${handleStart && "first:text-[#fff] first:bg-[#FF6C2D]"}
                 

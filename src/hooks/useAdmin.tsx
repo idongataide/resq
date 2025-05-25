@@ -3,7 +3,7 @@ import { getBookings, getBookingsCount } from "@/api/bookingsApi";
 import { getCustomers, getCustomersDetails } from "@/api/customersApi";
 import { getOperators, getOperatorData, getDrivers, getDriversByOperatorId, getAssetsbyCordinate, getAssets } from "@/api/operatorsApi";
 import { getFees, getProfile, getServices } from "@/api/settingsApi";
-import { getTeams } from "@/api/teamsApi";
+import { getTeams, getTeamsCount } from "@/api/teamsApi";
 import { TransactionList } from "@/api/transactionsApi";
 
 
@@ -278,6 +278,22 @@ export const useAdminProfile = () => {
       });
     },
 
+    {
+      revalidateOnFocus: false,
+    },
+  );
+
+  return { data, isLoading, mutate };
+};
+
+export const useAllTeamsCount = (countStatus: string = '0') => {
+  const { data, isLoading, mutate } = useSWR(
+    `/accounts/admin-user?component=${countStatus}`,
+    () => {
+      return getTeamsCount(countStatus).then((res) => {
+        return res?.data;
+      });
+    },
     {
       revalidateOnFocus: false,
     },

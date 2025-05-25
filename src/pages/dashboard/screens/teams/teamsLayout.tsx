@@ -3,12 +3,15 @@ import AllTeams from "./allTeams";
 import { FaPlus } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { useAllTeam } from "@/hooks/useAdmin";
+import { useAllTeam, useAllTeamsCount } from "@/hooks/useAdmin";
 
 
 const TeamsLayout: React.FC = () => {
 
   const { data : teams } = useAllTeam()
+  const { data : teamsCount } = useAllTeamsCount('count');
+
+  console.log(teamsCount,'teamsCount')
 
   return (
     <main>
@@ -25,7 +28,7 @@ const TeamsLayout: React.FC = () => {
                     <FaUsers className="text-[#FF6C2D]" />
                 </div>
                 <div className="ml-2">
-                    <h2 className="text-[26px] font-bold text-[#475467] mb-1">218</h2>
+                    <h2 className="text-[26px] font-bold text-[#475467] mb-1">{teamsCount?.total}</h2>
                     <p className="text-[#667085] text-md font-medium">Team Members</p>
                 </div>
             </div>

@@ -7,23 +7,7 @@ import { GoArrowDownLeft } from "react-icons/go";
 import { useTransactions } from '@/hooks/useAdmin';
 import TransactionDetailsSidebar from './TransactionDetailsSidebar';
 import LoadingScreen from '@/pages/dashboard/common/LoadingScreen';
-
-interface Transaction {
-  _id: string;
-  booking_ref?: string;
-  user_data?: { first_name: string; last_name: string; email: string; phone_number: string; };
-  booking_data?: { vehicle_model?: string; };
-  vehicle_model?: string;
-  status?: string | number;
-  amount?: number;
-  createdAt?: string;
-  operator?: { _id: string; name: string; };
-  drop_off_dst?: number;
-  start_address?: string;
-  end_address?: string;
-  action?:string;
-  service_fee?: number;
-}
+import { Transaction } from '@/types/transaction';
 
 const getStatusText = (status: number) => {
   switch(status) {
@@ -46,6 +30,7 @@ const AllTransactions: React.FC = () => {
 
   
   const handleViewTransaction = (transaction: Transaction) => {
+    if (!transaction) return;
     setSelectedTransaction(transaction);
     setIsSidebarOpen(true);
   };
@@ -147,7 +132,7 @@ const AllTransactions: React.FC = () => {
 
   const formattedTransactions = transactionsData?.map((transaction: Transaction) => ({
     ...transaction,
-    id: transaction._id,
+    id: transaction.trasaction_id,
   })) || [];
 
   return (

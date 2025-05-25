@@ -9,8 +9,8 @@ const AccountLayout: React.FC = () => {
     { name: 'Personal details', path: '/account' }, // Default path for Personal details
     { name: 'Change Password', path: '/account/change-password' },
     { name: 'Passcode', path: '/account/passcode' },
-    { name: 'Notifications', path: '/account/notifications' },
-    { name: 'FAQs', path: '/account/faqs' },
+    // { name: 'Notifications', path: '/account/notifications' },
+    // { name: 'FAQs', path: '/account/faqs' },
   ];
 
   return (

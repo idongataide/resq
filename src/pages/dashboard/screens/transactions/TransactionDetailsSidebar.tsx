@@ -1,14 +1,14 @@
 import React from 'react';
 import { IoClose } from 'react-icons/io5';
-import { FaRegCheckCircle } from "react-icons/fa";
+import { FaRegCheckCircle, FaClock, FaTimes } from "react-icons/fa";
 import { GiCancel } from "react-icons/gi";
 import jsPDF from 'jspdf';
-
+import { Transaction } from '@/types/transaction';
 
 interface TransactionDetailsSidebarProps {
   isOpen: boolean;
   onClose: () => void;
-  transaction: any; // Use any for now based on the provided data structure
+  transaction: Transaction | null;
 }
 
 const TransactionDetailsSidebar: React.FC<TransactionDetailsSidebarProps> = ({
@@ -29,7 +29,7 @@ const TransactionDetailsSidebar: React.FC<TransactionDetailsSidebarProps> = ({
     doc.setFontSize(12);
     doc.text(`Booking ID: ${transaction.booking_ref || 'N/A'}`, 20, 40);
     doc.text(`Amount: ₦${transaction.amount?.toLocaleString() || 'N/A'}`, 20, 50);
-    doc.text(`Status: ${transaction.status === 1 ? 'Payment successful' : 'Payment failed'}`, 20, 60);
+    doc.text(`Status: ${transaction.status === 1 ? 'Payment successful' : transaction.status === 2 ? 'Payment failed' : transaction.status === 3 ? 'Pending' : 'Abandoned'}`, 20, 60);
     doc.text(`Customer: ${transaction.user_data?.first_name} ${transaction.user_data?.last_name}`, 20, 70);
     doc.text(`Vehicle Model: ${transaction?.booking_data?.vehicle_model || 'N/A'}`, 20, 80);
     doc.text(`Total Km: ${transaction.drop_off_dst || 'N/A'}km`, 20, 90);
@@ -65,12 +65,35 @@ const TransactionDetailsSidebar: React.FC<TransactionDetailsSidebarProps> = ({
         <div className='overflow-y-auto mb-5 h-[calc(100vh-200px)] slide-in scrollbar-hide hover:scrollbar-show'>     
           <div className="px-10 py-6">
             <div className="text-center mb-8">
+              {transaction.status}
               <div className="text-[28px] font-bold text-[#667085] mb-2">₦{transaction.amount?.toLocaleString() || 'N/A'}</div>
-              <div className={`inline-flex items-center gap-1.5 px-3 py-1 text-[14px] rounded-full ${transaction.status === 1 ? 'bg-[#ECFDF3]' : 'bg-[#FFEFEF]'}`}>
-                {transaction.status === 1 ? <FaRegCheckCircle className='text-[#12B76A]'/> : <GiCancel className='text-[#B11B1B]'/>}
-                <span className={`text-sm ${transaction.status === 1 ? 'text-[#2FA270]' : 'text-[#B11B1B]'}`}>{transaction.status === 1 ? 'Success' : 'Failed'}</span>
+              <div className={`inline-flex items-center gap-1.5 px-3 py-1 text-[14px] rounded-full ${
+                transaction.status === 0 ? 'bg-[#FFF4E5]' :
+                transaction.status === 1 ? 'bg-[#ECFDF3]' : 
+                transaction.status === 2 ? 'bg-[#FFEFEF]' :
+                'bg-[#F2F4F7]'
+              }`}>
+                {
+                 transaction.status ===  0 ? <FaClock className='text-[#F79009]'/> :
+                 transaction.status === 1 ? <FaRegCheckCircle className='text-[#12B76A]'/> : 
+                 transaction.status === 2 ? <GiCancel className='text-[#B11B1B]'/> :
+                 <FaTimes className='text-[#667085]'/>}
+                <span className={`text-sm ${
+                  transaction.status === 0 ? 'text-[#F79009]' :
+                  transaction.status === 1 ? 'text-[#2FA270]' : 
+                  transaction.status === 2 ? 'text-[#B11B1B]' :
+                  'text-[#667085]'
+                }`}>
+                  {
+                   transaction.status === 0 ? 'Pending' :
+                   transaction.status === 1 ? 'Success' : 
+                   transaction.status === 2 ? 'Failed' :
+                   'Abandoned'}
+                </span>
               </div>
             </div>
+            
+
 
             <div className="space-y-4">
               <div className="flex justify-between items-center">
@@ -79,7 +102,7 @@ const TransactionDetailsSidebar: React.FC<TransactionDetailsSidebarProps> = ({
               </div>
                <div className="flex justify-between items-center">
                 <span className="text-[#667085] text-md">Status</span>
-                <span className="text-[#475467] text-sm font-medium">{transaction.status === 1 ? 'Payment successful' : 'Payment failed'}</span>
+                <span className="text-[#475467] text-sm font-medium">{transaction.status === 1 ? 'Payment successful' : transaction.status === 2 ? 'Payment failed' : transaction.status === 0 ? 'Pending' : 'Abandoned'}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-[#667085] text-md">Customer</span>

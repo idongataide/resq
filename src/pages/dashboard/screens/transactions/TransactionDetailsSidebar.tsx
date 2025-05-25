@@ -65,7 +65,7 @@ const TransactionDetailsSidebar: React.FC<TransactionDetailsSidebarProps> = ({
         <div className='overflow-y-auto mb-5 h-[calc(100vh-200px)] slide-in scrollbar-hide hover:scrollbar-show'>     
           <div className="px-10 py-6">
             <div className="text-center mb-8">
-              {transaction.status}
+              {/* {transaction.status} */}
               <div className="text-[28px] font-bold text-[#667085] mb-2">₦{transaction.amount?.toLocaleString() || 'N/A'}</div>
               <div className={`inline-flex items-center gap-1.5 px-3 py-1 text-[14px] rounded-full ${
                 transaction.status === 0 ? 'bg-[#FFF4E5]' :

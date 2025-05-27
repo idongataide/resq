@@ -93,7 +93,7 @@ const SetupCategories: React.FC = () => {
         <h1 className="text-[18px] text-[#667085] font-[700]">Setup</h1>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {setupCategories.map((category, index) => (
           <div 
             key={index} 

@@ -35,6 +35,10 @@ const AddTeams = lazy(() =>
 );    
 const CustomersLayout = lazy(() => 
   import("@/pages/dashboard/screens/customers/customersLayout")
+);  
+
+const RevenueLayout = lazy(() => 
+  import("@/pages/dashboard/screens/revenue/RevenueLayout")
 );    
 
 // Account components
@@ -128,6 +132,14 @@ export const routes = createBrowserRouter([
         element: (
           <Suspense fallback={<LoadingScreen />}>
             <RoadRescue />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/revenue",
+        element: (
+          <Suspense fallback={<LoadingScreen />}>
+            <RevenueLayout />
           </Suspense>
         ),
       },

@@ -43,6 +43,7 @@ const RemittedRevenueTable: React.FC = () => {
       title: "Date",
       dataIndex: "date",
       key: "date",
+      render: (value: string) => <span className='text-[#475467] font-medium'>{value}</span>,
     },
     {
       title: "Total Revenue",

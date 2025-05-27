@@ -39,7 +39,13 @@ const CustomersLayout = lazy(() =>
 
 const RevenueLayout = lazy(() => 
   import("@/pages/dashboard/screens/revenue/RevenueLayout")
+);   
+
+const SetupCategories = lazy(() => 
+  import("@/pages/dashboard/screens/setup/SetupCategories")
 );    
+
+
 
 // Account components
 const AccountLayout = lazy(() => import("@/pages/dashboard/screens/account/AccountLayout"));
@@ -150,6 +156,28 @@ export const routes = createBrowserRouter([
             <TeamsLayout />
           </Suspense>
         ),
+      },
+      {
+        path: "/setup",
+        children: [
+          {
+            index: true,
+            element: (
+              <Suspense fallback={<LoadingScreen />}>
+                <SetupCategories />
+              </Suspense>
+            ),
+          },
+          {
+            path: ":status",
+            element: (
+              <Suspense fallback={<LoadingScreen />}>
+                <BookingTable />
+              </Suspense>
+            ),
+          },  
+          
+        ],
       },
       {
         path: "/teams/add",

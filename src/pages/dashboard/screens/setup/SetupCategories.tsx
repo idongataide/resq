@@ -5,6 +5,8 @@ import { MdMenu as IconMenu } from "react-icons/md";
 import { MdOutlineTrackChanges as IconTarget } from "react-icons/md"; 
 import { MdOutlineAccountBalanceWallet as IconBag } from "react-icons/md"; 
 import { MdOutlineDocumentScanner as IconDocument } from "react-icons/md"; 
+import { PiBriefcaseThin } from "react-icons/pi";
+
 
 interface SetupCategory {
   title: string;
@@ -79,7 +81,7 @@ const SetupCategories: React.FC = () => {
       case 'document':
          return (
           <div className="w-8 h-8 bg-[#FFECE3] rounded-full flex items-center justify-center">
-              <IconDocument className="text-[#FF6C2D]" />
+              <PiBriefcaseThin  className="text-[#FF6C2D]" />
           </div>
          );
       default:

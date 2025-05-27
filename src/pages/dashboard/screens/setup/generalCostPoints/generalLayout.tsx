@@ -1,0 +1,76 @@
+import React, { useState } from "react";
+import { FaPlus } from "react-icons/fa6";
+import { FaUsers } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import GeneralCostTable from "./GeneralCostTable";
+import AddGeneralCostForm from "./AddGeneralCostForm";
+
+interface GeneralCostItem {
+  id: string;
+  itemName: string;
+  amount: number;
+  lastModified: string;
+}
+
+const GeneralCostLayout: React.FC = () => {
+  const [activeSidebar, setActiveSidebar] = useState<string | null>(null);
+
+  // const { data : teams } = useAllTeam()
+  // const { data : teamsCount } = useAllTeamsCount('count');
+
+  const generalcosts: GeneralCostItem[] = [
+    { id: '1', itemName: 'LASG Tax', amount: 10500, lastModified: 'Wed, 16-09-2024' },
+    { id: '2', itemName: 'Pickup Cost/Km', amount: 7500, lastModified: 'Wed, 16-09-2024' },
+    { id: '3', itemName: 'Drop off Cost/Km', amount: 8500, lastModified: 'Wed, 16-09-2024' },
+    { id: '4', itemName: 'FIRS', amount: 7500, lastModified: 'Wed, 16-09-2024' },
+  ];
+
+  const handleAddClick = () => {
+    setActiveSidebar('add');
+  };
+
+  const handleCloseSidebar = () => {
+    setActiveSidebar(null);
+  };
+
+  return (
+    <main>
+      <div className="py-1 px-6 mt-10">
+        <div className="flex px-4 justify-between mb-6 items-center">
+          <h1 className="text-[18px] text-[#667085] font-[700]">Team</h1>        
+        </div>
+        
+        {/* Active Operators Card */}
+        <div className="bg-image rounded-lg sm border border-[#E5E9F0] p-6 mb-6 relative overflow-hidden ">
+          <div className="relative z-10 flex justify-between items-center py-5">
+            <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 bg-[#FFF0EA] rounded-full p-2">
+                    <FaUsers className="text-[#FF6C2D]" />
+                </div>
+                <div className="ml-2">
+                    <h2 className="text-[26px] font-bold text-[#475467] mb-1">4</h2>
+                    <p className="text-[#667085] text-md font-medium">General cost points</p>
+                </div>
+            </div>
+            <button
+              className="flex cursor-pointer items-center gap-2 px-4 py-2 text-[16px] bg-[#FF6C2D] text-white rounded-lg hover:bg-[#FF6C2D] transition-colors"
+              onClick={handleAddClick}
+            >
+              <FaPlus className="text-white" />
+              <span> Add new</span>
+            </button>
+          </div>
+        </div>
+        
+        <GeneralCostTable  data={generalcosts}/>
+      </div>
+
+      {activeSidebar === 'add' && (
+        <AddGeneralCostForm onClose={handleCloseSidebar} />
+      )}
+      
+    </main>
+  );
+};
+
+export default GeneralCostLayout;

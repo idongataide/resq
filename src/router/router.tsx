@@ -44,6 +44,9 @@ const RevenueLayout = lazy(() =>
 const SetupCategories = lazy(() => 
   import("@/pages/dashboard/screens/setup/SetupCategories")
 );    
+const GeneralCostLayout = lazy(() => 
+  import("@/pages/dashboard/screens/setup/generalCostPoints/generalLayout")
+);    
 
 
 
@@ -169,6 +172,14 @@ export const routes = createBrowserRouter([
             ),
           },
           {
+            path: "general-cost-points",
+            element: (
+              <Suspense fallback={<LoadingScreen />}>
+                <GeneralCostLayout />
+              </Suspense>
+            ),
+          },
+          {
             path: ":status",
             element: (
               <Suspense fallback={<LoadingScreen />}>
@@ -176,7 +187,6 @@ export const routes = createBrowserRouter([
               </Suspense>
             ),
           },  
-          
         ],
       },
       {

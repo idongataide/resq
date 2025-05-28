@@ -1,19 +1,29 @@
 import React, { useState } from 'react';
 import { Form, Input, Button } from 'antd';
 
-interface AddGeneralCostFormProps {
-  onClose: () => void;
+interface ServiceCostFormValues {
+  serviceName: string;
+  amount: number;
+  type: 'Available' | 'Unavailable';
 }
 
-const AddGeneralCostForm: React.FC<AddGeneralCostFormProps> = ({ onClose }) => {
-  const [form] = Form.useForm();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+interface AddServiceCostFormProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit?: (values: ServiceCostFormValues) => Promise<void>;
+}
 
-  const handleFinish = async (values: any) => {
+const AddServiceCostForm: React.FC<AddServiceCostFormProps> = ({ isOpen, onClose, onSubmit }) => {
+  const [form] = Form.useForm<ServiceCostFormValues>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [type, setType] = useState<'Available' | 'Unavailable'>('Available');
+
+  const handleFinish = async (values: ServiceCostFormValues) => {
     try {
       setIsSubmitting(true);
-      // Add your form submission logic here
-      console.log('Form values:', values);
+      if (onSubmit) {
+        await onSubmit({ ...values, type });
+      }
       onClose();
     } catch (error) {
       console.error('Form submission error:', error);
@@ -21,6 +31,10 @@ const AddGeneralCostForm: React.FC<AddGeneralCostFormProps> = ({ onClose }) => {
       setIsSubmitting(false);
     }
   };
+
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <div className="fixed inset-0 z-[999] flex justify-end bg-[#38383880] p-5 bg-opacity-50" onClick={onClose}>
@@ -47,24 +61,51 @@ const AddGeneralCostForm: React.FC<AddGeneralCostFormProps> = ({ onClose }) => {
                   <h3 className="text-md font-medium text-[#475467] mb-3">Enter required details</h3>
                   <div className='border border-[#F2F4F7] p-3 rounded-lg'>
                     <Form.Item
-                      name="itemName"
-                      label="Item name"
-                      rules={[{ required: true, message: 'Please enter item name!' }]}
+                      name="serviceName"
+                      label="Service"
+                      rules={[{ required: true, message: 'Please enter service name!' }]}
                     >
                       <Input placeholder="Enter details" className="!h-[42px]" />
                     </Form.Item>
+
                     <Form.Item
                       name="amount"
                       label="Amount"
-                      rules={[{ required: true, message: 'Please enter amount!' }]}
+                      rules={[
+                        { required: true, message: 'Please enter amount!' },
+                        { type: 'number', transform: (value) => Number(value), message: 'Please enter a valid number!' }
+                      ]}
                     >
                       <Input type="number" placeholder="Enter details" className="!h-[42px]" />
+                    </Form.Item>
+
+                    <Form.Item
+                      name="type"
+                      label="Service type"
+                      initialValue={type}
+                    >
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          className={`flex-1 py-2 rounded-lg border text-base font-medium transition ${type === 'Available' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'bg-white border-[#D0D5DD] text-[#667085]'}`}
+                          onClick={() => setType('Available')}
+                        >
+                          Available
+                        </button>
+                        <button
+                          type="button"
+                          className={`flex-1 py-2 rounded-lg border text-base font-medium transition ${type === 'Unavailable' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'bg-white border-[#D0D5DD] text-[#667085]'}`}
+                          onClick={() => setType('Unavailable')}
+                        >
+                          Unavailable
+                        </button>
+                      </div>
                     </Form.Item>
                   </div>
                 </div>
               </div>
 
-              <div className="border-t border-gray-200 py-4  gap-3">
+              <div className="border-t border-gray-200 py-4 flex justify-end gap-3">
                 <Button 
                   type="primary" 
                   htmlType="submit" 
@@ -82,4 +123,4 @@ const AddGeneralCostForm: React.FC<AddGeneralCostFormProps> = ({ onClose }) => {
   );
 };
 
-export default AddGeneralCostForm; 
+export default AddServiceCostForm; 

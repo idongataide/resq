@@ -24,6 +24,42 @@ export const getBookingsCount = async (countStatus: string) => {
   }
 };
 
+export const getRevenues = async (operatorEarning: string) => {
+  try {
+    return await axiosAPIInstance
+      .get(`/towings?component=${operatorEarning}`)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};
+
+export const getDashboardOperators = async () => {
+  try {
+    return await axiosAPIInstance
+      .get(`/towings/get-dashboard-ops/`)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};
+export const getRemittedRevenue = async () => {
+  try {
+    return await axiosAPIInstance
+      .get(`/towings/daily-revenue/`)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};
+
+
 export const approveTowingRequest = async (requestId: string, data: {
   tow_company_id: string;
   asset_id: string;

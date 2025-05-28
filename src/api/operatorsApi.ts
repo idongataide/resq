@@ -12,6 +12,7 @@ export const getOperators = async () => {
     }
  };
 
+
 export const getOperatorData = async (uid: string) => {
     try {
       return await axiosAPIInstance
@@ -116,6 +117,18 @@ export const getDriversByOperatorId = async (operatorId: string) => {
   try {
     return await axiosAPIInstance
       .get(`/users/drivers?operator_id=${operatorId}`)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};
+
+export const getOperatorCount = async (operatorCount: string) => {
+  try {
+    return await axiosAPIInstance
+      .get(`/users/operators?component=${operatorCount}`)
       .then((res) => {
         return res?.data;
       });

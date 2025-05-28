@@ -61,6 +61,7 @@ const SiderScreen: React.FC = () => {
       URL: "setup",
       icon: Images.icon?.setup,
     },
+
   ];
 
   const handleStart = pathname.split("/")[1] === "" ? true : false;

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { FaPlus } from "react-icons/fa6";
-import { FaUsers } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { FaAngleLeft, FaUsers } from "react-icons/fa";
 import GeneralCostTable from "./GeneralCostTable";
 import AddGeneralCostForm from "./AddGeneralCostForm";
 
@@ -36,10 +35,13 @@ const GeneralCostLayout: React.FC = () => {
   return (
     <main>
       <div className="py-1 px-6 mt-10">
-        <div className="flex px-4 justify-between mb-6 items-center">
-          <h1 className="text-[18px] text-[#667085] font-[700]">Team</h1>        
+        <div 
+          className="flex items-center mb-5 mt-10 cursor-pointer"
+          onClick={() => window.history.back()}
+          >
+          <FaAngleLeft className='text-lg text-[#667085]' />
+          <p className='ml-2 font-bold text-[#667085] text-lg'>Back</p>
         </div>
-        
         {/* Active Operators Card */}
         <div className="bg-image rounded-lg sm border border-[#E5E9F0] p-6 mb-6 relative overflow-hidden ">
           <div className="relative z-10 flex justify-between items-center py-5">

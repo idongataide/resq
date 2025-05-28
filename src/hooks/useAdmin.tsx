@@ -1,7 +1,7 @@
 import { banksList } from "@/api/banks";
-import { getBookings, getBookingsCount } from "@/api/bookingsApi";
+import { getBookings, getBookingsCount, getDashboardOperators, getRemittedRevenue, getRevenues } from "@/api/bookingsApi";
 import { getCustomers, getCustomersDetails } from "@/api/customersApi";
-import { getOperators, getOperatorData, getDrivers, getDriversByOperatorId, getAssetsbyCordinate, getAssets } from "@/api/operatorsApi";
+import { getOperators, getOperatorData, getDrivers, getDriversByOperatorId, getAssetsbyCordinate, getAssets, getOperatorCount } from "@/api/operatorsApi";
 import { getFees, getProfile, getServices } from "@/api/settingsApi";
 import { getTeams, getTeamsCount } from "@/api/teamsApi";
 import { TransactionList } from "@/api/transactionsApi";
@@ -79,6 +79,21 @@ export const useOperatorData = (uid: string) => {
   return { data, isLoading, mutate };
 };
 
+
+export const useOperatorCount = (operatorCount: string) => {
+  const { data, isLoading, mutate } = useSWR(
+    operatorCount ? `/users/operators?component=${operatorCount}` : null,
+    () => {
+      return getOperatorCount(operatorCount).then((res) => {
+        return res?.data;
+      });
+    },
+    {
+      revalidateOnFocus: false,
+    },
+  );
+  return { data, isLoading, mutate };
+};
 
 export const useAllTeam = () => {
   const { data, isLoading, mutate } = useSWR(
@@ -169,9 +184,9 @@ export const useGetDriversByOperatorId = (operatorId: string | undefined) => {
   const { data, isLoading, mutate } = useSWR(
     operatorId ? `/users/drivers?operator_id=${operatorId}` : null,
     (url) => {
-      if (!url || !operatorId) return null; // Ensure operatorId is present
+      if (!url || !operatorId) return null; 
       return getDriversByOperatorId(operatorId).then((res) => {
-        return res?.data; // Assuming the response structure is similar
+        return res?.data;
       });
     },
     {
@@ -198,6 +213,22 @@ export const useAllBookings = (ride_status: string = '0') => {
   return { data, isLoading, mutate };
 };
 
+
+export const useRevenues = (operatorEarning: string) => {
+  const { data, isLoading, mutate } = useSWR(
+    `/towings?component=${operatorEarning}`,
+    () => {
+      return getRevenues(operatorEarning).then((res) => {
+        return res?.data;
+      });
+    },
+    {
+      revalidateOnFocus: false,
+    },
+  );
+
+  return { data, isLoading, mutate };
+};
 
 export const useAllBookingsCount = (countStatus: string = '0') => {
   const { data, isLoading, mutate } = useSWR(
@@ -294,6 +325,41 @@ export const useAllTeamsCount = (countStatus: string = '0') => {
         return res?.data;
       });
     },
+    {
+      revalidateOnFocus: false,
+    },
+  );
+
+  return { data, isLoading, mutate };
+};
+
+export const useDashboardOperators = () => {
+  const { data, isLoading, mutate } = useSWR(
+    `/towings/get-dashboard-ops/`,
+    () => {
+      return getDashboardOperators().then((res) => {
+        return res?.data;
+      });
+    },
+
+    {
+      revalidateOnFocus: false,
+    },
+  );
+
+  return { data, isLoading, mutate };
+};
+
+
+export const useRemittedRevenue = () => {
+  const { data, isLoading, mutate } = useSWR(
+    `/towings/get-dashboard-ops/`,
+    () => {
+      return getRemittedRevenue().then((res) => {
+        return res?.data;
+      });
+    },
+
     {
       revalidateOnFocus: false,
     },

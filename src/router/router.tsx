@@ -47,7 +47,12 @@ const SetupCategories = lazy(() =>
 const GeneralCostLayout = lazy(() => 
   import("@/pages/dashboard/screens/setup/generalCostPoints/generalLayout")
 );    
-
+const StakeHolderLayout = lazy(() =>
+  import("@/pages/dashboard/screens/setup/stakeHolder/stakeHolderLayout")
+);
+const ServiceCost = lazy(() =>
+  import("@/pages/dashboard/screens/setup/serviceCost/ServiceCost")
+);
 
 
 // Account components
@@ -176,6 +181,22 @@ export const routes = createBrowserRouter([
             element: (
               <Suspense fallback={<LoadingScreen />}>
                 <GeneralCostLayout />
+              </Suspense>
+            ),
+          },
+          {
+            path: "stakeholder-disbursement",
+            element: (
+              <Suspense fallback={<LoadingScreen />}>
+                <StakeHolderLayout />
+              </Suspense>
+            ),
+          },
+          {
+            path: "services-cost",
+            element: (
+              <Suspense fallback={<LoadingScreen />}>
+                <ServiceCost />
               </Suspense>
             ),
           },

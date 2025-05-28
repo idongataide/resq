@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Table, type ColumnDefinition } from '@/components/ui/Table';
+import { useRemittedRevenue } from '@/hooks/useAdmin';
 
 interface RemittedRevenueData {
   id: string;
@@ -16,17 +17,7 @@ const RemittedRevenueTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  // Placeholder data
-  const data: RemittedRevenueData[] = [
-    // Add sample data based on the image
-    // Add more data here for pagination to be visible
-    { id: '1', date: 'Wed, 16-09-2025', totalRevenue: 5500000, transco: 1000000, resq: 800000, lasgTax: 700000, wintra: 1500000, firs: 1500000 },
-    { id: '2', date: 'Tue, 15-09-2025', totalRevenue: 5500000, transco: 1000000, resq: 800000, lasgTax: 700000, wintra: 1500000, firs: 1500000 },
-    { id: '3', date: 'Mon, 14-09-2025', totalRevenue: 5500000, transco: 1000000, resq: 800000, lasgTax: 700000, wintra: 1500000, firs: 1500000 },
-    { id: '4', date: 'Sun, 13-09-2025', totalRevenue: 5500000, transco: 1000000, resq: 800000, lasgTax: 700000, wintra: 1500000, firs: 1500000 },
-    { id: '5', date: 'Sat, 12-09-2025', totalRevenue: 5500000, transco: 1000000, resq: 800000, lasgTax: 700000, wintra: 1500000, firs: 1500000 },
-    { id: '6', date: 'Fri, 11-09-2025', totalRevenue: 5500000, transco: 1000000, resq: 800000, lasgTax: 700000, wintra: 1500000, firs: 1500000 },
-  ];
+  const { data : revenues } = useRemittedRevenue()
 
   const handlePageChange = (page: number, size: number) => {
     setCurrentPage(page);
@@ -35,8 +26,8 @@ const RemittedRevenueTable: React.FC = () => {
 
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * pageSize;
-    return data.slice(startIndex, startIndex + pageSize);
-  }, [currentPage, pageSize, data]);
+    return revenues?.slice(startIndex, startIndex + pageSize);
+  }, [currentPage, pageSize, revenues]);
 
   const columns: Array<ColumnDefinition<RemittedRevenueData>> = [
     {
@@ -96,10 +87,10 @@ const RemittedRevenueTable: React.FC = () => {
       <Table 
         columns={columns} 
         data={paginatedData} 
-        pagination={data.length > pageSize ? {
+        pagination={revenues?.length > pageSize ? {
           current: currentPage,
           pageSize: pageSize,
-          total: data.length,
+          total: revenues?.length,
           onChange: handlePageChange,
         } : undefined}
       />

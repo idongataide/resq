@@ -1,21 +1,18 @@
 import React from 'react';
 import { Table, type ColumnDefinition } from '@/components/ui/Table';
 import Images from '@/components/images';
+import { useDashboardOperators } from '@/hooks/useAdmin';
 
 interface Operator {
-  id: string;
-  assetco_id: string;
+  operator_id: string | null;
+  total_assign: number;
+  total_complete: number;
   name: string;
-  email: string;
-  phone_number: string;
-  lga: string;
-  state: string;
-  createdAt: string;
-  requests_assigned: number;
-  requests_completed: number;
-  performance: number;
-  tour_rating: number;
-  action?: string;
+  avg_rating: number;
+}
+
+interface TableOperator extends Operator {
+  id: string;
 }
 
 interface AllOperationsProps {
@@ -23,82 +20,10 @@ interface AllOperationsProps {
   isLoading?: boolean;
 }
 
-const TopOperators: React.FC<AllOperationsProps> = ({ data }) => {
-  // Mock data if no data is provided
-  const operatorsData = data || [
-    {
-      id: "1",
-      assetco_id: "1",
-      name: "Baba Adugbo Towing & Co",
-      email: "babaadugbo@example.com",
-      phone_number: "+2348012345678",
-      lga: "Ikeja",
-      state: "Lagos",
-      createdAt: "2023-01-15",
-      requests_assigned: 350,
-      requests_completed: 320,
-      performance: 91.4,
-      tour_rating: 4.9
-    },
-    {
-      id: "2",
-      assetco_id: "2",
-      name: "Uptown towing limited",
-      email: "uptown@example.com",
-      phone_number: "+2348023456789",
-      lga: "Victoria Island",
-      state: "Lagos",
-      createdAt: "2023-02-20",
-      requests_assigned: 323,
-      requests_completed: 330,
-      performance: 87,
-      tour_rating: 4.8
-    },
-    {
-      id: "3",
-      assetco_id: "3",
-      name: "Move360",
-      email: "move360@example.com",
-      phone_number: "+2348034567890",
-      lga: "Lekki",
-      state: "Lagos",
-      createdAt: "2023-03-10",
-      requests_assigned: 323,
-      requests_completed: 324,
-      performance: 86.1,
-      tour_rating: 4.8
-    },
-    {
-      id: "4",
-      assetco_id: "4",
-      name: "Towing & more",
-      email: "towingmore@example.com",
-      phone_number: "+2348045678901",
-      lga: "Apapa",
-      state: "Lagos",
-      createdAt: "2023-01-25",
-      requests_assigned: 310,
-      requests_completed: 299,
-      performance: 80.6,
-      tour_rating: 4.6
-    },
-    {
-      id: "5",
-      assetco_id: "5",
-      name: "Alhaji Amusan towing",
-      email: "amusan@example.com",
-      phone_number: "+2348056789012",
-      lga: "Surulere",
-      state: "Lagos",
-      createdAt: "2023-02-05",
-      requests_assigned: 350,
-      requests_completed: 300,
-      performance: 79,
-      tour_rating: 4.5
-    }
-  ];
+const TopOperators: React.FC<AllOperationsProps> = () => {
+  const { data: operatorsData } = useDashboardOperators();
 
-  const columns: Array<ColumnDefinition<Operator>> = [
+  const columns: Array<ColumnDefinition<TableOperator>> = [
     {
       title: "Operators list",
       dataIndex: "name",
@@ -106,39 +31,49 @@ const TopOperators: React.FC<AllOperationsProps> = ({ data }) => {
       render: (value) => (
         <div className="flex items-center gap-2">  
           <img src={Images.icon.medal} alt="Star" className="w-7 h-7" />         
-          <span className='font-medium text-[#475467]'>{value}</span>
+          <span className='font-medium text-[#475467]'>{value || 'Unnamed Operator'}</span>
         </div>
       ),
     },
     {
       title: "Requests assigned",
-      dataIndex: "requests_assigned",
-      key: "requests_assigned",
+      dataIndex: "total_assign",
+      key: "total_assign",
       render: (value) => <span className='text-[#475467]'>{value}</span>,
     },
     {
       title: "Requests completed",
-      dataIndex: "requests_completed",
-      key: "requests_completed",
+      dataIndex: "total_complete",
+      key: "total_complete",
       render: (value) => <span className='text-[#475467]'>{value}</span>,
     },
     {
       title: "Performance(%)",
-      dataIndex: "performance",
+      dataIndex: "total_assign",
       key: "performance",
-      render: (value) => <span className='text-[#475467]'>{value}%</span>,
+      render: (_, record) => {
+        const performance = record.total_assign > 0 
+          ? Math.round((record.total_complete / record.total_assign) * 100) 
+          : 0;
+        return <span className='text-[#475467]'>{performance}%</span>;
+      },
     },
     {
       title: "Tour rating",
-      dataIndex: "tour_rating",
-      key: "tour_rating",
+      dataIndex: "avg_rating",
+      key: "avg_rating",
       render: (value) => (
         <div className="flex items-center gap-1">
-          <span className='text-[#475467]'>{value}</span>
+          <span className='text-[#475467]'>{value?.toFixed(1)}</span>
         </div>
       ),
     },
   ];
+
+  const tableData: TableOperator[] = (operatorsData as Operator[] || []).map((op: Operator) => ({
+    ...op,
+    id: op.operator_id || 'unknown'
+  }));
 
   return (
     <div className="mb-6">
@@ -152,7 +87,7 @@ const TopOperators: React.FC<AllOperationsProps> = ({ data }) => {
       
       <Table
         columns={columns}
-        data={operatorsData?.map(op => ({ ...op, id: op.assetco_id }))}
+        data={tableData}
       />
     </div>
   );

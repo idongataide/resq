@@ -23,7 +23,7 @@ const DashboardMetrics: React.FC = () => {
       {/* Total Revenue */}
       <div className="bg-white rounded-lg p-6 border border-[#F2F4F7]">
         <h2 className="text-2xl font-bold text-[#667085] mb-3">{revenueCount?.total}</h2>
-        <p className="text-sm text-[#475467]">{operatorCount?.total}</p>
+        <p className="text-sm text-[#475467]">Total Revenue</p>
       </div>
       {/* Total number of operators */}
       <div className="bg-white rounded-lg p-6 border border-[#F2F4F7]">

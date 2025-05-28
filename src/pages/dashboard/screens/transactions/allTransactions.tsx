@@ -12,7 +12,7 @@ import { Transaction } from '@/types/transaction';
 const getStatusText = (status: number) => {
   switch(status) {
     case 0: return 'Pending';
-    case 1: return 'Successful ';
+    case 1: return 'Successful';
     case 2: return 'Failed';
     case 3: return 'Abandoned';
     case 4: return 'Cancelled';

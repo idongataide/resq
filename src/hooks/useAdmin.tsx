@@ -1,10 +1,10 @@
 import { banksList } from "@/api/banks";
-import { getBookings, getBookingsCount, getDashboardOperators, getRemittedRevenue, getRevenues } from "@/api/bookingsApi";
+import { getBookings, getBookingsCount, getDailyPayout, getDashboardOperators, getRemittedRevenue, getRevenues } from "@/api/bookingsApi";
 import { getCustomers, getCustomersDetails } from "@/api/customersApi";
 import { getOperators, getOperatorData, getDrivers, getDriversByOperatorId, getAssetsbyCordinate, getAssets, getOperatorCount } from "@/api/operatorsApi";
 import { getFees, getProfile, getServices } from "@/api/settingsApi";
 import { getTeams, getTeamsCount } from "@/api/teamsApi";
-import { TransactionList } from "@/api/transactionsApi";
+import { getTransactionCount, TransactionList } from "@/api/transactionsApi";
 
 
 import useSWR from "swr";
@@ -333,6 +333,22 @@ export const useAllTeamsCount = (countStatus: string = '0') => {
   return { data, isLoading, mutate };
 };
 
+export const useAllTransCount = (countStatus: string = '0') => {
+  const { data, isLoading, mutate } = useSWR(
+    `/payments/get-transactions?component=${countStatus}`,
+    () => {
+      return getTransactionCount(countStatus).then((res) => {
+        return res?.data;
+      });
+    },
+    {
+      revalidateOnFocus: false,
+    },
+  );
+
+  return { data, isLoading, mutate };
+};
+
 export const useDashboardOperators = () => {
   const { data, isLoading, mutate } = useSWR(
     `/towings/get-dashboard-ops/`,
@@ -356,6 +372,23 @@ export const useRemittedRevenue = () => {
     `/towings/get-dashboard-ops/`,
     () => {
       return getRemittedRevenue().then((res) => {
+        return res?.data;
+      });
+    },
+
+    {
+      revalidateOnFocus: false,
+    },
+  );
+
+  return { data, isLoading, mutate };
+};
+
+export const useDailyPayout = () => {
+  const { data, isLoading, mutate } = useSWR(
+    `/towings/daily-revenue-operator/`,
+    () => {
+      return getDailyPayout().then((res) => {
         return res?.data;
       });
     },

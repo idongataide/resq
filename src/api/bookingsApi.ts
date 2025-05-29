@@ -59,6 +59,18 @@ export const getRemittedRevenue = async () => {
   }
 };
 
+export const DailyPayout = async () => {
+  try {
+    return await axiosAPIInstance
+      .get(`/towings/daily-revenue/`)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};
+
 
 export const approveTowingRequest = async (requestId: string, data: {
   tow_company_id: string;
@@ -88,3 +100,15 @@ export const rejectTowingRequest = async (data: { towing_id: string; reason: str
     throw error;
   }
 }; 
+
+export const getDailyPayout = async () => {
+  try {
+    return await axiosAPIInstance
+      .get(`/towings/daily-revenue-operator`)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};

@@ -25,3 +25,17 @@ export const TransactionList = async () => {
       return error;
     }
 };
+
+
+
+export const getTransactionCount = async (operatorCount: string) => {
+  try {
+    return await walletAPIInstance
+      .get(`/payments/get-transactions?component=${operatorCount}`)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};

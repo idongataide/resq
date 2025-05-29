@@ -1,30 +1,26 @@
 import React, { useState, useMemo } from 'react';
 import { Table, type ColumnDefinition } from '@/components/ui/Table';
 
-interface StakeholderPayoutData {
+export interface StakeholderItemData {
   id: string;
-  date: string;
-  beneficiary: string;
-  amountDue: number;
-  amountPaid: number;
-  bankName: string;
-  accountNumber: string;
+  name: string;
+  amount: number;
+  bank: {
+    bank_name: string;
+    bank_code: string;
+    account_number: string;
+    account_name: string;
+  };
 }
 
-const StakeholderPayoutTable: React.FC = () => {
+interface StakeholderPayoutTableProps {
+  itemsData: StakeholderItemData[];
+  payoutDate: string;
+}
+
+const StakeholderPayoutTable: React.FC<StakeholderPayoutTableProps> = ({ itemsData, payoutDate }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-
-  // Placeholder data
-  const data: StakeholderPayoutData[] = [
-    // Add sample data based on the image
-    // Add more data here for pagination to be visible
-    { id: '1', date: 'Wed, 16-09-2025\n10:40am', beneficiary: 'Transco', amountDue: 1000000, amountPaid: 1000000, bankName: 'GTbank', accountNumber: '2004600224' },
-    { id: '2', date: 'Wed, 16-09-2025\n10:40am', beneficiary: 'RESQ', amountDue: 1000000, amountPaid: 1000000, bankName: 'SunTrust', accountNumber: '6604600224' },
-    { id: '3', date: 'Wed, 16-09-2025\n10:40am', beneficiary: 'LASG Tax', amountDue: 1000000, amountPaid: 1000000, bankName: 'Wema', accountNumber: '6604600277' },
-    { id: '4', date: 'Wed, 16-09-2025\n10:40am', beneficiary: 'Wintra', amountDue: 1000000, amountPaid: 1000000, bankName: 'SunTrust', accountNumber: '6604600555' },
-    { id: '5', date: 'Wed, 16-09-2025\n10:40am', beneficiary: 'FIRS', amountDue: 1000000, amountPaid: 1000000, bankName: 'GTbank', accountNumber: '8814600224' },
-  ];
 
   const handlePageChange = (page: number, size: number) => {
     setCurrentPage(page);
@@ -33,48 +29,45 @@ const StakeholderPayoutTable: React.FC = () => {
 
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * pageSize;
-    return data.slice(startIndex, startIndex + pageSize);
-  }, [currentPage, pageSize, data]);
+    return itemsData?.slice(startIndex, startIndex + pageSize);
+  }, [currentPage, pageSize, itemsData]);
 
-  const columns: Array<ColumnDefinition<StakeholderPayoutData>> = [
+  const columns: Array<ColumnDefinition<StakeholderItemData>> = [
     {
       title: "Date",
-      dataIndex: "date",
+      dataIndex: "id",
       key: "date",
-    },
+      render: () => <span className='text-[#475467] font-medium'>{payoutDate}</span>,
+    },        
     {
       title: "Beneficiary",
-      dataIndex: "beneficiary",
+      dataIndex: "name",
       key: "beneficiary",
     },
     {
       title: "Amount due",
-      dataIndex: "amountDue",
+      dataIndex: "amount",
       key: "amountDue",
       render: (value: number) => `₦${value?.toLocaleString() || 'N/A'}`,
     },
     {
-      title: "Amount paid",
-      dataIndex: "amountPaid",
-      key: "amountPaid",
-      render: (value: number) => `₦${value?.toLocaleString() || 'N/A'}`,
-    },
-    {
       title: "Bank name",
-      dataIndex: "bankName",
+      dataIndex: "bank",
       key: "bankName",
+      render: (bank: StakeholderItemData['bank']) => bank?.bank_name || 'N/A',
     },
     {
       title: "Account number",
-      dataIndex: "accountNumber",
+      dataIndex: "bank",
       key: "accountNumber",
+      render: (bank: StakeholderItemData['bank']) => bank?.account_number || 'N/A',
     },
   ];
 
   return (
     <div className="mb-6">
         <div className="py-2 px-4 bg-white rounded-md border-[#E5E9F0] flex justify-between items-center">
-            <h1 className="text-md font-medium mb-0 text-[#344054]">Stakeholder’s Payout</h1>
+            <h1 className="text-md font-medium mb-0 text-[#344054]">Stakeholder's Payout</h1>
             <div className="text-sm text-gray-500">
             <button className="px-3 py-1 text-[#475467] text-xs cursor-pointer rounded-bl-md rounded-tl-md  border border-[#F2F4F7]">Daily</button>
             <button className="px-3 py-1 text-[#475467] text-xs cursor-pointer  border border-[#F2F4F7]">Weekly</button>
@@ -84,10 +77,10 @@ const StakeholderPayoutTable: React.FC = () => {
         <Table 
             columns={columns} 
             data={paginatedData} 
-            pagination={data.length > pageSize ? {
+            pagination={itemsData?.length > pageSize ? {
             current: currentPage,
             pageSize: pageSize,
-            total: data.length,
+            total: itemsData?.length,
             onChange: handlePageChange,
             } : undefined}
         />

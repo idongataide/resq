@@ -1,33 +1,34 @@
 import React, { useState, useMemo } from 'react';
 import { Table, type ColumnDefinition } from '@/components/ui/Table';
+import { useDailyPayout } from '@/hooks/useAdmin';
 
-interface OperatorPayoutData {
-  id: string;
+interface DailyPayout {
+  _id: {
+    date: string;
+    stake_id: string;
+  };
+  serviceFee: number;
+  totalAmount: number;
   date: string;
-  beneficiary: string;
-  amountDue: number;
-  amountPaid: number;
-  bankName: string;
-  accountNumber: string;
+  operator_id: string;
+  name: string;
+  bank_info: {
+    bank_name: string;
+    bank_code: string;
+    account_number: string;
+    account_name: string;
+  };
+}
+
+interface TableDailyPayout extends DailyPayout {
+  id: string;
 }
 
 const OperatorPayoutTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  // Placeholder data
-  const data: OperatorPayoutData[] = [
-    // Add sample data based on the image
-    // Add more data here for pagination to be visible
-    { id: '1', date: 'Wed, 16-09-2025\n10:40am', beneficiary: 'Road Rescue', amountDue: 1000000, amountPaid: 1000000, bankName: 'GTbank', accountNumber: '2004600224' },
-    { id: '2', date: 'Wed, 16-09-2025\n10:40am', beneficiary: 'MobilityOne', amountDue: 1000000, amountPaid: 1000000, bankName: 'SunTrust', accountNumber: '6604600224' },
-    { id: '3', date: 'Wed, 16-09-2025\n10:40am', beneficiary: 'Towing & more', amountDue: 1000000, amountPaid: 1000000, bankName: 'Wema', accountNumber: '6604600277' },
-    { id: '4', date: 'Wed, 16-09-2025\n10:40am', beneficiary: 'Ridera', amountDue: 1000000, amountPaid: 1000000, bankName: 'SunTrust', accountNumber: '6604600555' },
-    { id: '5', date: 'Wed, 16-09-2025\n10:40am', beneficiary: 'Alhaji Amusan', amountDue: 1000000, amountPaid: 1000000, bankName: 'GTbank', accountNumber: '8814600224' },
-  ];
-
-  // In a real application, you would use dateFilter here to filter the data
-  const filteredData = data; // Placeholder for filtering
+  const { data: payouts } = useDailyPayout();
 
   const handlePageChange = (page: number, size: number) => {
     setCurrentPage(page);
@@ -36,61 +37,78 @@ const OperatorPayoutTable: React.FC = () => {
 
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * pageSize;
-    return filteredData.slice(startIndex, startIndex + pageSize);
-  }, [currentPage, pageSize, filteredData]);
+    return payouts?.slice(startIndex, startIndex + pageSize);
+  }, [currentPage, pageSize, payouts]);
 
-  const columns: Array<ColumnDefinition<OperatorPayoutData>> = [
+  const columns: Array<ColumnDefinition<TableDailyPayout>> = [
     {
       title: "Date",
       dataIndex: "date",
       key: "date",
+      render: (value) => (
+        <span className='text-[#475467]'>
+          {new Date(value).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          })}
+        </span>
+      ),
     },
     {
       title: "Beneficiary",
-      dataIndex: "beneficiary",
-      key: "beneficiary",
+      dataIndex: "name",
+      key: "name",
+      render: (value) => <span className='font-medium text-[#475467]'>{value}</span>,
     },
     {
       title: "Amount due",
-      dataIndex: "amountDue",
-      key: "amountDue",
-      render: (value: number) => `₦${value?.toLocaleString() || 'N/A'}`,
+      dataIndex: "serviceFee",
+      key: "serviceFee",
+      render: (value) => <span className='text-[#475467]'>₦{value.toLocaleString()}</span>,
     },
     {
       title: "Amount paid",
-      dataIndex: "amountPaid",
-      key: "amountPaid",
-      render: (value: number) => `₦${value?.toLocaleString() || 'N/A'}`,
+      dataIndex: "totalAmount",
+      key: "totalAmount",
+      render: (value) => <span className='text-[#475467]'>₦{value.toLocaleString()}</span>,
     },
     {
       title: "Bank name",
-      dataIndex: "bankName",
-      key: "bankName",
+      dataIndex: "bank_info",
+      key: "bank_name",
+      render: (_, record) => <span className='text-[#475467]'>{record.bank_info.bank_name || 'N/A'}</span>,
     },
     {
       title: "Account number",
-      dataIndex: "accountNumber",
-      key: "accountNumber",
+      dataIndex: "bank_info",
+      key: "account_number",
+      render: (_, record) => <span className='text-[#475467]'>{record.bank_info.account_number || 'N/A'}</span>,
     },
   ];
+
+  const tableData: TableDailyPayout[] = (payouts as DailyPayout[] || []).map((payout: DailyPayout) => ({
+    ...payout,
+    id: payout.operator_id
+  }));
 
   return (
     <div className="mb-6">
       <div className="py-2 px-4 bg-white rounded-md border-[#E5E9F0] flex justify-between items-center">
-            <h1 className="text-md font-medium mb-0 text-[#344054]">Operator Payout</h1>
-            <div className="text-sm text-gray-500">
-            <button className="px-3 py-1 text-[#475467] text-xs cursor-pointer rounded-bl-md rounded-tl-md  border border-[#F2F4F7]">Daily</button>
-            <button className="px-3 py-1 text-[#475467] text-xs cursor-pointer  border border-[#F2F4F7]">Weekly</button>
-            <button className="px-3 py-1 text-[#475467] text-xs cursor-pointer rounded-br-md rounded-tr-md  border border-[#F2F4F7]">Monthly</button>
-            </div>
+        <h1 className="text-md font-medium mb-0 text-[#344054]">Operator Payout</h1>
+        <div className="text-sm text-gray-500">
+          <button className="px-3 py-1 text-[#475467] text-xs cursor-pointer rounded-bl-md rounded-tl-md  border border-[#F2F4F7]">Daily</button>
+          <button className="px-3 py-1 text-[#475467] text-xs cursor-pointer  border border-[#F2F4F7]">Weekly</button>
+          <button className="px-3 py-1 text-[#475467] text-xs cursor-pointer rounded-br-md rounded-tr-md  border border-[#F2F4F7]">Monthly</button>
+        </div>
       </div>
       <Table 
         columns={columns} 
-        data={paginatedData} 
-        pagination={filteredData.length > pageSize ? {
+        data={paginatedData}
+        pagination={tableData?.length > pageSize ? {
           current: currentPage,
           pageSize: pageSize,
-          total: filteredData.length,
+          total: tableData.length,
           onChange: handlePageChange,
         } : undefined}
       />

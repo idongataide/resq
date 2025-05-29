@@ -1,4 +1,4 @@
-import { useAllBookingsCount, useOperatorCount } from "@/hooks/useAdmin";
+import { useAllBookingsCount, useAllTransCount, useOperatorCount } from "@/hooks/useAdmin";
 import React from "react";
 
 
@@ -6,9 +6,9 @@ const DashboardMetrics: React.FC = () => {
 
   const {data : operatorCount  } = useOperatorCount('count');
   const { data: bookingsCount } = useAllBookingsCount('count-status');
-  const { data: revenueCount } = useAllBookingsCount('count');
+  // const { data: revenueCount } = useAllBookingsCount('count');
+  const { data: transCount } = useAllTransCount('count');
 
-  console.log(revenueCount,'revenueCountdd')
 
   return (
     <>
@@ -37,7 +37,7 @@ const DashboardMetrics: React.FC = () => {
       </div>
       {/* Successful transactions */}
       <div className="bg-white rounded-lg p-6 border border-[#F2F4F7]">
-        <h2 className="text-2xl font-bold text-[#667085] mb-3">09</h2>
+        <h2 className="text-2xl font-bold text-[#667085] mb-3">{transCount?.total}</h2>
         <p className="text-sm text-[#475467]">Successful transactions</p>
       </div>
     </div>

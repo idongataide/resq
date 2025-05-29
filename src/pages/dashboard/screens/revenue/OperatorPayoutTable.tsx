@@ -67,12 +67,12 @@ const OperatorPayoutTable: React.FC = () => {
       key: "serviceFee",
       render: (value) => <span className='text-[#475467]'>₦{value.toLocaleString()}</span>,
     },
-    {
-      title: "Amount paid",
-      dataIndex: "totalAmount",
-      key: "totalAmount",
-      render: (value) => <span className='text-[#475467]'>₦{value.toLocaleString()}</span>,
-    },
+    // {
+    //   title: "Amount paid",
+    //   dataIndex: "totalAmount",
+    //   key: "totalAmount",
+    //   render: (value) => <span className='text-[#475467]'>₦{value.toLocaleString()}</span>,
+    // },
     {
       title: "Bank name",
       dataIndex: "bank_info",

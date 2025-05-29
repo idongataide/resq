@@ -35,9 +35,9 @@ const RemittedRevenueTable: React.FC<RemittedRevenueTableProps> = ({ onRowClick 
         id: revenue?.id || revenue?.date,
         date: revenue?.date,
         totalRevenue: revenue?.totalAmount,
-        originalItems: revenue?.items
+        originalItems: revenue?.items || []
       };
-      revenue?.items.forEach((item: any) => {
+      revenue?.items?.forEach((item: any) => {
         uniqueStakeholders.add(item.name);
         rowData[item.name] = item.amount;
       });

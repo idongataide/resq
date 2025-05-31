@@ -1,33 +1,54 @@
-import React, { useState } from 'react';
-import { Form, Input, Button } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Form, Input, Button } from 'antd'; // Remove Select
 import ConfirmOperator from '@/pages/dashboard/screens/setup/2FA';
 import toast from 'react-hot-toast';
 import { useSWRConfig } from 'swr';
-import { addService } from '@/api/settingsApi';
+import { updateService } from '@/api/settingsApi';
 
+interface ServiceItem {
+  _id: string;
+  name: string;
+  amount: number;
+  service_type: 'private' | 'commercial';
+  createdAt: string;
+  updatedAt: string;
+  id: string;
+  service_id: string;
+}
 
-interface AddServiceCostFormProps {
-  isOpen: boolean;
+interface EditServiceCostFormProps {
   onClose: () => void;
+  serviceData: ServiceItem;
 }
 
 interface FormValues {
   name: string;
   amount: string;
-  type: 'Private' | 'Commercial';
+  type: 'private' | 'commercial';
 }
 
-const AddServiceCostForm: React.FC<AddServiceCostFormProps> = ({
-  isOpen,
+const EditServiceCostForm: React.FC<EditServiceCostFormProps> = ({
   onClose,
+  serviceData,
 }) => {
-  const [form] = Form.useForm<FormValues>();
+  const [form] = Form.useForm<Omit<FormValues, 'type'> & { type: 'private' | 'commercial' }>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [show2FA, setShow2FA] = useState(false);
   const [formValues, setFormValues] = useState<FormValues | null>(null);
-  const [type, setType] = useState<'Private' | 'Commercial'>('Private');
+  const [type, setType] = useState<'private' | 'commercial'>(serviceData.service_type);
 
   const { mutate: globalMutate } = useSWRConfig();
+
+  useEffect(() => {
+    if (serviceData) {
+      form.setFieldsValue({
+        name: serviceData.name,
+        amount: String(serviceData.amount),
+        type: serviceData.service_type,
+      });
+      setType(serviceData.service_type);
+    }
+  }, [serviceData, form]);
 
   const handleFinish = async (values: Omit<FormValues, 'type'>) => {
     setFormValues({...values, type});
@@ -35,11 +56,11 @@ const AddServiceCostForm: React.FC<AddServiceCostFormProps> = ({
   };
 
   const handle2FASuccess = async (otp: string) => {
-    if (!formValues) return;
+    if (!formValues || !serviceData) return;
 
     try {
       setIsSubmitting(true);
-      const response = await addService({
+      const response = await updateService(serviceData.service_id, {
         name: formValues.name,
         amount: formValues.amount,
         type: formValues.type,
@@ -47,25 +68,21 @@ const AddServiceCostForm: React.FC<AddServiceCostFormProps> = ({
       });
 
       if (response?.status === 'ok') {
-        toast.success('Service cost added successfully');
-        globalMutate('/settings/services');
+        toast.success('Service cost updated successfully');
+        globalMutate('/settings/services'); // Invalidate the cache for services list
         onClose();
       } else {
         const errorMsg = response?.response?.data?.msg;
-        toast.error(errorMsg || 'Failed to add service cost');
+        toast.error(errorMsg || 'Failed to update service cost');
       }
     } catch (error) {
       console.error('Form submission error:', error);
-      toast.error('An error occurred while adding service cost');
+      toast.error('An error occurred while updating service cost');
     } finally {
       setIsSubmitting(false);
       setShow2FA(false);
     }
   };
-
-  if (!isOpen) {
-    return null;
-  }
 
   return (
     <>
@@ -73,7 +90,7 @@ const AddServiceCostForm: React.FC<AddServiceCostFormProps> = ({
         <div className="md:w-[48%] lg:w-1/3 w-100 z-[9999] h-full bg-white rounded-xl slide-in overflow-hidden" onClick={(e) => e.stopPropagation()}>
           <div className="h-full bg-white rounded-xl overflow-hidden">
             <div className="flex justify-between items-center py-3 px-6 border-b border-[#D6DADD]">
-              <h2 className="text-md font-semibold text-[#1C2023]">Add service</h2>
+              <h2 className="text-md font-semibold text-[#1C2023]">Edit service</h2>
               <button
                 onClick={onClose}
                 className="text-[#7D8489] bg-[#EEF0F2] cursor-pointer py-2 px-3 rounded-3xl hover:text-black"
@@ -90,7 +107,7 @@ const AddServiceCostForm: React.FC<AddServiceCostFormProps> = ({
               >
                 <div>
                   <div className="form-section mb-4">
-                    <h3 className="text-md font-medium text-[#475467] mb-3">Enter required details</h3>
+                    <h3 className="text-md font-medium text-[#475467] mb-3">Edit details</h3>
                     <div className='border border-[#F2F4F7] p-3 rounded-lg'>
                       <Form.Item
                         name="name"
@@ -111,24 +128,24 @@ const AddServiceCostForm: React.FC<AddServiceCostFormProps> = ({
                         <Input type="number" placeholder="Enter details" className="!h-[42px]" />
                       </Form.Item>
 
-                      <Form.Item
+                      <Form.Item // Reverted to original format
                         name="type"
                         label="Service type"
                       >
                         <div className="flex gap-2">
                           <button
                             type="button"
-                            className={`flex-1 py-2 rounded-lg border text-base font-medium transition ${type === 'Private' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'bg-white border-[#D0D5DD] text-[#667085]'}`}
-                            onClick={() => setType('Private')}
+                            className={`flex-1 py-2 rounded-lg border text-base cursor-pointer capitalize font-medium transition ${type === 'private' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'bg-white border-[#D0D5DD] text-[#667085]'}`}
+                            onClick={() => setType('private')}
                           >
                             Private
                           </button>
                           <button
                             type="button"
-                            className={`flex-1 py-2 rounded-lg border text-base font-medium transition ${type === 'Commercial' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'bg-white border-[#D0D5DD] text-[#667085]'}`}
-                            onClick={() => setType('Commercial')}
+                            className={`flex-1 py-2 rounded-lg border cursor-pointer text-base capitalize font-medium transition ${type === 'commercial' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'bg-white border-[#D0D5DD] text-[#667085]'}`}
+                            onClick={() => setType('commercial')}
                           >
-                            Commercial
+                            commercial
                           </button>
                         </div>
                       </Form.Item>
@@ -152,7 +169,7 @@ const AddServiceCostForm: React.FC<AddServiceCostFormProps> = ({
         </div>
       </div>
 
-      {show2FA && formValues && (
+      {show2FA && formValues && serviceData && (
         <ConfirmOperator
           onClose={() => setShow2FA(false)}
           onSuccess={handle2FASuccess}
@@ -162,4 +179,4 @@ const AddServiceCostForm: React.FC<AddServiceCostFormProps> = ({
   );
 };
 
-export default AddServiceCostForm; 
+export default EditServiceCostForm; 

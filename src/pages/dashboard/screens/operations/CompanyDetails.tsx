@@ -1,12 +1,14 @@
 import React from 'react';
 import { Form, Input, Button, Select } from 'antd';
 import { useOnboardingStore } from '@/global/store';
+import { useLagosCities } from '@/hooks/useAdmin';
 
 const { Option } = Select;
 
 const CompanyDetails: React.FC<{ onProceed?: () => void }> = () => {
   const [form] = Form.useForm();
   const { setNavPath, setFormData, formData } = useOnboardingStore();
+  const { data: cities } = useLagosCities();
 
   const handleFinish = (values: any) => {
     setFormData({ ...formData, companyDetails: values });
@@ -16,8 +18,9 @@ const CompanyDetails: React.FC<{ onProceed?: () => void }> = () => {
   };
 
   return (
-    <div className="w-full mx-auto">
-      <div className="bg-[#F2F4F7] rounded-md px-4 py-2 mb-6 text-[#475467] font-medium">Company details</div>
+    <div className="w-full mx-auto">   
+        <h2 className="text-lg! font-medium text-[#667085] mb-7">Add Operators</h2>
+        <div className="bg-[#F2F4F7] rounded-md px-4 py-2 mb-6 text-[#475467] font-medium">Company details</div>
         <Form
             form={form}
             layout="vertical"
@@ -40,10 +43,22 @@ const CompanyDetails: React.FC<{ onProceed?: () => void }> = () => {
                 </Select>
             </Form.Item>
             <Form.Item label="LGA" name="lga" rules={[{ required: true, message: 'Please select an LGA' }]}> 
-                <Select  placeholder="Select" className='mb-10 !h-[42px]' size="large">
-                    <Option value="ikeja">Ikeja</Option>
-                    <Option value="lekki">Lekki</Option>
-                    {/* Add more LGAs as needed */}
+                <Select 
+                    placeholder="Select LGA" 
+                    className='mb-10 !h-[42px]' 
+                    size="large"
+                    showSearch
+                    optionFilterProp="children"
+                    filterOption={(input, option) => {
+                        const optionText = String(option?.children || '').toLowerCase();
+                        return optionText.indexOf(input.toLowerCase()) >= 0;
+                    }}
+                >
+                    {cities?.map((city) => (
+                        <Option key={city.toLowerCase()} value={city.toLowerCase()}>
+                            {city}
+                        </Option>
+                    ))}
                 </Select>
             </Form.Item>
             <Form.Item>

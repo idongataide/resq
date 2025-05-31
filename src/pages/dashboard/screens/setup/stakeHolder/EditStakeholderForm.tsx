@@ -1,17 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Select } from 'antd';
 import { useBanksList } from '@/hooks/useAdmin';
 import { verifyAccount } from '@/api/banks'; 
 import toast from 'react-hot-toast';
 import ConfirmOperator from '@/pages/dashboard/screens/setup/2FA';
 import { useSWRConfig } from 'swr';
-import { addStakeholder } from '@/api/settingsApi';
+import { updateStakeholder } from '@/api/settingsApi';
 
 const { Option } = Select;
 
-interface AddStakeHolderFormProps {
+interface EditStakeholderFormProps {
   isOpen: boolean;
   onClose: () => void;
+  editData: {
+    id: string;
+    name: string;
+    bank_name: string;
+    bank_code: string;
+    account_number: string;
+    account_name: string;
+    amount: string;
+    amount_type: 'percentage' | 'amount';
+  };
 }
 
 interface Bank {
@@ -29,9 +39,10 @@ interface FormValues {
   amount_type: 'percentage' | 'amount';
 }
 
-const AddStakeholderForm: React.FC<AddStakeHolderFormProps> = ({
+const EditStakeholderForm: React.FC<EditStakeholderFormProps> = ({
   isOpen,
   onClose,
+  editData
 }) => {
   const [form] = Form.useForm<FormValues>();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,10 +50,26 @@ const AddStakeholderForm: React.FC<AddStakeHolderFormProps> = ({
   const [formValues, setFormValues] = useState<FormValues | null>(null);
   const [valueType, setValueType] = useState<'percentage' | 'amount'>('percentage');
   const [isVerifyingAccount, setIsVerifyingAccount] = useState(false);
-  const [accountName, setAccountName] = useState<string | null>(null);
+  const [accountName, setAccountName] = useState<string | null>(editData?.account_name || null);
 
   const { data: bankList, isLoading: isLoadingBanks } = useBanksList();
   const { mutate: globalMutate } = useSWRConfig();
+
+  useEffect(() => {
+    if (editData) {
+      form.setFieldsValue({
+        name: editData.name,
+        bank_name: editData.bank_name,
+        bank_code: editData.bank_code,
+        account_number: editData.account_number,
+        account_name: editData.account_name,
+        amount: editData.amount,
+        amount_type: editData.amount_type || 'percentage'
+      });
+      setValueType(editData.amount_type || 'percentage');
+      setAccountName(editData.account_name);
+    }
+  }, [editData, form]);
 
   const handleVerifyAccount = async (accountNumber: string, bankName: string) => {
     if (!bankName || !accountNumber || accountNumber.length < 10) {
@@ -117,7 +144,6 @@ const AddStakeholderForm: React.FC<AddStakeHolderFormProps> = ({
   };
 
   const handleFinish = async (values: FormValues) => {
-    
     if (!accountName) {
       toast.error('Please verify account number first');
       return;
@@ -135,29 +161,26 @@ const AddStakeholderForm: React.FC<AddStakeHolderFormProps> = ({
   };
 
   const handle2FASuccess = async (otp: string) => {
-     
-    if (!formValues) {
-      return;
-    }
+    if (!formValues) return;
 
     try {
       setIsSubmitting(true);
-      const response = await addStakeholder({
-        ...formValues,
-        otp: otp,
+      const response = await updateStakeholder(editData.id, { 
+        ...formValues, 
+        otp
       });
 
       if (response?.status === 'ok') {
-        toast.success('Stakeholder added successfully');
+        toast.success('Stakeholder updated successfully');
         globalMutate('/users/stakeholders');
         onClose();
       } else {
         const errorMsg = response?.response?.data?.msg;
-        toast.error(errorMsg || 'Failed to add stakeholder');
+        toast.error(errorMsg || 'Failed to update stakeholder');
       }
     } catch (error) {
       console.error('Form submission error:', error);
-      toast.error('An error occurred while adding stakeholder');
+      toast.error('An error occurred while updating stakeholder');
     } finally {
       setIsSubmitting(false);
       setShow2FA(false);
@@ -174,7 +197,7 @@ const AddStakeholderForm: React.FC<AddStakeHolderFormProps> = ({
         <div className="md:w-[48%] lg:w-1/3 w-100 z-[9999] h-full bg-white rounded-xl slide-in overflow-hidden" onClick={(e) => e.stopPropagation()}>
           <div className="h-full bg-white rounded-xl overflow-hidden">
             <div className="flex justify-between items-center py-3 px-6 border-b border-[#D6DADD]">
-              <h2 className="text-md font-semibold text-[#1C2023]">Add stakeholder</h2>
+              <h2 className="text-md font-semibold text-[#1C2023]">Edit stakeholder</h2>
               <button
                 onClick={onClose}
                 className="text-[#7D8489] bg-[#EEF0F2] cursor-pointer py-2 px-3 rounded-3xl hover:text-black"
@@ -186,16 +209,7 @@ const AddStakeholderForm: React.FC<AddStakeHolderFormProps> = ({
               <Form
                 form={form}
                 layout="vertical"
-                onFinish={(values) => {
-                  console.log('Form onFinish triggered');
-                  handleFinish(values);
-                }}
-                onFinishFailed={({ values, errorFields, outOfDate }) => {
-                  console.log('Form validation failed:', { values, errorFields, outOfDate });
-                  errorFields.forEach(field => {
-                    console.log('Field error:', field.name, field.errors);
-                  });
-                }}
+                onFinish={handleFinish}
                 className="flex flex-col justify-between flex-grow"
               >
                 <div>
@@ -267,6 +281,7 @@ const AddStakeholderForm: React.FC<AddStakeHolderFormProps> = ({
 
                       <Form.Item
                         name="account_name"
+                        label="Account Name"
                         hidden
                         rules={[{ required: true, message: 'Account name is required!' }]}
                       >
@@ -317,25 +332,9 @@ const AddStakeholderForm: React.FC<AddStakeHolderFormProps> = ({
                     htmlType="submit" 
                     loading={isSubmitting}
                     disabled={isSubmitting || isVerifyingAccount}
-                    onClick={() => {
-                    
-                      if (accountName) {
-                        form.setFieldsValue({ account_name: accountName });
-                      }
-                      
-                      form.validateFields().then(values => {
-                        console.log('Form validation passed:', values);
-                        handleFinish(values);
-                      }).catch(error => {
-                        console.log('Form validation failed:', error);
-                        error.errorFields.forEach((field: { name: (string | number)[]; errors: string[] }) => {
-                          console.log('Field error:', field.name, field.errors);
-                        });
-                      });
-                    }}
                     className="rounded-md h-[46px]! px-10! border border-transparent bg-[#FF6C2D] py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
                   >
-                    Save
+                    Update
                   </Button>
                 </div>
               </Form>
@@ -354,4 +353,4 @@ const AddStakeholderForm: React.FC<AddStakeHolderFormProps> = ({
   );
 };
 
-export default AddStakeholderForm; 
+export default EditStakeholderForm; 

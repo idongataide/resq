@@ -1,66 +1,15 @@
-import ServiceCostTable, { ServiceCostItem } from './ServiceCostTable';
 import AddServiceCostForm from './AddServiceCostForm';
+import ServiceCostTable from './ServiceCostTable';
 import { FaAngleLeft, FaPlus, FaUsers } from 'react-icons/fa';
 import { useState } from 'react';
-
-// Placeholder data - Replace with actual data fetching
-const initialServiceCostData: ServiceCostItem[] = [
-  {
-    id: '1',
-    serviceName: 'Service A',
-    serviceType: 'Commercial',
-    amount: 10500,
-    lastModified: 'Wed, 16-09-2024',
-  },
-  {
-    id: '2',
-    serviceName: 'Service B',
-    serviceType: 'Private',
-    amount: 7500,
-    lastModified: 'Wed, 16-09-2024',
-  },
-   {
-    id: '3',
-    serviceName: 'Service C',
-    serviceType: 'Private',
-    amount: 8500,
-    lastModified: 'Wed, 16-09-2024',
-  },
-   {
-    id: '4',
-    serviceName: 'Service D',
-    serviceType: 'Commercial',
-    amount: 7500,
-    lastModified: 'Wed, 16-09-2024',
-  },
-    {
-    id: '5',
-    serviceName: 'Service E',
-    serviceType: 'Private',
-    amount: 10500,
-    lastModified: 'Wed, 16-09-2024',
-  },
-     {
-    id: '6',
-    serviceName: 'Service F',
-    serviceType: 'Commercial',
-    amount: 10500,
-    lastModified: 'Wed, 16-09-2024',
-  },
-      {
-    id: '7',
-    serviceName: 'Service G',
-    serviceType: 'Private',
-    amount: 10500,
-    lastModified: 'Wed, 16-09-2024',
-  },
-];
+import { useServicesCount } from '@/hooks/useAdmin';
 
 const ServiceCost: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { data: countData } =  useServicesCount();
  
   const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+    setIsSidebarOpen(!isSidebarOpen); 
   };
 
   return (
@@ -81,8 +30,8 @@ const ServiceCost: React.FC = () => {
                   <FaUsers className="text-[#FF6C2D]" />
               </div>
               <div className="ml-2">
-                  <h2 className="text-[26px] font-bold text-[#475467] mb-1">4</h2>
-                  <p className="text-[#667085] text-md font-medium">General cost points</p>
+                  <h2 className="text-[26px] font-bold text-[#475467] mb-1">{countData?.data[0]?.total ?? 0}</h2>
+                  <p className="text-[#667085] text-md font-medium">Services Cost</p>
               </div>
           </div>
           <button
@@ -96,7 +45,7 @@ const ServiceCost: React.FC = () => {
       </div>
       
      
-      <ServiceCostTable data={initialServiceCostData} />
+      <ServiceCostTable/>
 
     </div>
 

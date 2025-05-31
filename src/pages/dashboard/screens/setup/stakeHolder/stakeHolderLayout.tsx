@@ -1,38 +1,24 @@
 import React, { useState } from "react";
 import { FaPlus } from "react-icons/fa6";
-import { FaAngleLeft, FaUsers } from "react-icons/fa"; // Assuming a similar icon might be used
-// import { Link } from "react-router-dom"; // Removed Link as sidebar will be used for adding
+import { FaAngleLeft, FaUsers } from "react-icons/fa"; 
 import StakeHolderTable from "./StakeHolderTable";
 import AddStakeHolderForm from "./AddStakeHolderForm";
+import EditStakeholderForm from "./EditStakeholderForm";
+import { useStakeholdersCount } from "@/hooks/useAdmin";
 
-// Define a basic interface for StakeHolderItem - this will need refinement based on actual data
-interface StakeHolderItem {
-  id: string;
-  stakeholderName: string;
-  accountNumber: string;
-  bankName: string;
-  accountName: string;
-  value: string; // Can be percentage or amount
-}
 
 const StakeHolderLayout: React.FC = () => {
-  const [activeSidebar, setActiveSidebar] = useState<string | null>(null);
+  const [activeSidebar, setActiveSidebar] = useState<'add' | 'edit' | null>(null);
+  const [editData, setEditData] = useState<any>(null);
 
-  // Placeholder data - replace with actual data fetching later
-  const stakeholders: StakeHolderItem[] = [
-    { id: '1', stakeholderName: 'Company & co', accountNumber: '9004000522', bankName: 'GTBank', accountName: 'The co company', value: '20%' },
-    { id: '2', stakeholderName: 'Company & co', accountNumber: '9004000522', bankName: 'GTBank', accountName: 'The co company', value: '₦5,000' },
-    // Add more placeholder data as needed
-  ];
-
-  const handleAddClick = () => {
-    setActiveSidebar('add');
-  };
-
+  const handleAddClick = () => setActiveSidebar('add');
   const handleCloseSidebar = () => {
     setActiveSidebar(null);
+    setEditData(null);
   };
 
+  const { data: stakeholdersCount } = useStakeholdersCount();
+  console.log(stakeholdersCount);
   return (
     <main>
       <div className="py-1 px-6 mt-10">
@@ -52,12 +38,15 @@ const StakeHolderLayout: React.FC = () => {
                     <FaUsers className="text-[#FF6C2D]" />
                 </div>
                 <div className="ml-2">
-                    {/* Replace with actual stakeholder count */}
-                    <h2 className="text-[26px] font-bold text-[#475467] mb-1">{stakeholders.length}</h2>
+                    {/* TODO: Replace with actual stakeholder count */}
+                    <h2 className="text-[26px] font-bold text-[#475467] mb-1">{stakeholdersCount?.data?.total}</h2>
                     <p className="text-[#667085] text-md font-medium">Stakeholders</p>
                 </div>
             </div>
-            <button className="flex cursor-pointer items-center gap-2 px-4 py-2 text-[16px] bg-[#FF6C2D] text-white rounded-lg hover:bg-[#FF6C2D] transition-colors" onClick={handleAddClick}>
+            <button 
+              className="flex cursor-pointer items-center gap-2 px-4 py-2 text-[16px] bg-[#FF6C2D] text-white rounded-lg hover:bg-[#FF6C2D] transition-colors" 
+              onClick={handleAddClick}
+            >
               <FaPlus className="text-white" />
               <span> Add new</span>
             </button>
@@ -65,12 +54,26 @@ const StakeHolderLayout: React.FC = () => {
         </div>
 
         {/* Stakeholder Table */}
-        <StakeHolderTable data={stakeholders} />
+        <StakeHolderTable onEdit={(data) => {
+          setEditData(data);
+          setActiveSidebar('edit');
+        }} />
       </div>
 
-      {/* Add Stakeholder Sidebar */}
-      {activeSidebar === 'add' && (
-            <AddStakeHolderForm onClose={handleCloseSidebar} />
+        {activeSidebar === 'add' && (
+          <AddStakeHolderForm 
+            isOpen={activeSidebar === 'add'} 
+            onClose={handleCloseSidebar} 
+          />
+        )}
+
+      {/* Edit Stakeholder Sidebar */}
+      {activeSidebar === 'edit' && editData && (
+        <EditStakeholderForm 
+          isOpen={activeSidebar === 'edit'} 
+          onClose={handleCloseSidebar}
+          editData={editData}
+        />
       )}
     </main>
   );

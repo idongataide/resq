@@ -1,19 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Select } from 'antd';
 import { useGetFees } from '@/hooks/useAdmin';
-import { addFees } from '@/api/settingsApi';
+import { updateFee } from '@/api/settingsApi';
 import ConfirmOperator from '@/pages/dashboard/screens/setup/2FA';
 import toast from 'react-hot-toast';
 import { useSWRConfig } from 'swr';
 
-interface AddGeneralCostFormProps {
-  onClose: () => void;
+interface FeeItem {
+  name: string;
+  tag: string;
+  slug: string;
+  amount: number;
+  amount_type: string;
+  amount_sufix: string;
+  data: any[];
+  createdAt: string;
+  updatedAt: string;
+  fee_id: string;
+  id: string;
 }
 
-interface FeeVariable {
-  slug: string;
-  tag: string;
-  name: string;
+interface EditGeneralCostFormProps {
+  onClose: () => void;
+  feeData: FeeItem;
 }
 
 interface FormValues {
@@ -21,7 +30,15 @@ interface FormValues {
   tag: string;
 }
 
-const AddGeneralCostForm: React.FC<AddGeneralCostFormProps> = ({ onClose }) => {
+interface FeeVariable {
+  name: string;
+  tag: string;
+}
+
+const EditGeneralCostForm: React.FC<EditGeneralCostFormProps> = ({
+  onClose,
+  feeData,
+}) => {
   const [form] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [show2FA, setShow2FA] = useState(false);
@@ -30,40 +47,47 @@ const AddGeneralCostForm: React.FC<AddGeneralCostFormProps> = ({ onClose }) => {
 
   const { mutate: globalMutate } = useSWRConfig();
 
+  useEffect(() => {
+    if (feeData) {
+      form.setFieldsValue({
+        amount: feeData.amount,
+        tag: feeData.tag,
+      });
+    }
+  }, [feeData, form]);
+
   const handleFinish = async (values: FormValues) => {
     setFormValues(values);
     setShow2FA(true);
   };
 
   const handle2FASuccess = async (otp: string) => {
-    if (!formValues) return;
-    
+    if (!formValues || !feeData) return;
+
     try {
       setIsSubmitting(true);
-      const response = await addFees({
+      const response = await updateFee(feeData.fee_id, {
         amount: formValues.amount,
         tag: formValues.tag,
-        otp: otp
+        otp: otp,
       });
-      
+
       if (response.status === 'ok') {
-        toast.success('Fee added successfully');
-        globalMutate('/settings/fees/'); 
+        toast.success('Fee updated successfully');
+        globalMutate('/settings/fees/'); // Invalidate the cache for the fees list
         onClose();
-      }
-      else{
+      } else {
         const errorMsg = response?.response?.data?.msg;
-        toast.error(errorMsg || 'Failed to add fee');
+        toast.error(errorMsg || 'Failed to update fee');
       }
     } catch (error) {
       console.error('Form submission error:', error);
-      toast.error('An error occurred while adding the fee');
+      toast.error('An error occurred while updating the fee');
     } finally {
       setIsSubmitting(false);
       setShow2FA(false);
     }
   };
-
 
   return (
     <>
@@ -71,7 +95,7 @@ const AddGeneralCostForm: React.FC<AddGeneralCostFormProps> = ({ onClose }) => {
         <div className="md:w-[48%] lg:w-1/3 w-100 z-[9999] h-full bg-white rounded-xl slide-in overflow-hidden" onClick={(e) => e.stopPropagation()}>
           <div className="h-full bg-white rounded-xl overflow-hidden">
             <div className="flex justify-between items-center py-3 px-6 border-b border-[#D6DADD]">
-              <h2 className="text-md font-semibold text-[#1C2023]">Add service</h2>
+              <h2 className="text-md font-semibold text-[#1C2023]">Edit service</h2>
               <button
                 onClick={onClose}
                 className="text-[#7D8489] bg-[#EEF0F2] cursor-pointer py-2 px-3 rounded-3xl hover:text-black"
@@ -88,20 +112,20 @@ const AddGeneralCostForm: React.FC<AddGeneralCostFormProps> = ({ onClose }) => {
               >
                 <div>
                   <div className="form-section mb-4">
-                    <h3 className="text-md font-medium text-[#475467] mb-3">Enter required details</h3>
-                    <div className='border border-[#F2F4F7] p-3 rounded-lg'>                 
-                      <Form.Item 
+                    <h3 className="text-md font-medium text-[#475467] mb-3">Edit details</h3>
+                    <div className='border border-[#F2F4F7] p-3 rounded-lg'>
+                      <Form.Item
                         name="tag"
-                        label="Fee Type" 
+                        label="Fee Type"
                         rules={[{ required: true, message: 'Please select a fee type!' }]}
                       >
-                          <Select placeholder="Select" className='!h-[42px] capitalize'>
-                            {feesVariables?.map((fee: FeeVariable) => (
-                              <Select.Option key={fee.tag} className="capitalize" value={fee.tag}>
-                                {fee.name}
-                              </Select.Option>
-                            ))}
-                          </Select>
+                        <Select placeholder="Select" className='!h-[42px] capitalize'>
+                          {feesVariables?.map((fee: FeeVariable) => (
+                            <Select.Option key={fee.tag} className="capitalize" value={fee.tag}>
+                              {fee.name}
+                            </Select.Option>
+                          ))}
+                        </Select>
                       </Form.Item>
                       <Form.Item
                         name="amount"
@@ -114,10 +138,10 @@ const AddGeneralCostForm: React.FC<AddGeneralCostFormProps> = ({ onClose }) => {
                   </div>
                 </div>
 
-                <div className="border-t border-gray-200 py-4  gap-3">
-                  <Button 
-                    type="primary" 
-                    htmlType="submit" 
+                <div className="border-t border-gray-200 py-4 gap-3">
+                  <Button
+                    type="primary"
+                    htmlType="submit"
                     loading={isSubmitting}
                     className="rounded-md h-[46px]! px-10! border border-transparent bg-[#FF6C2D] py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
                   >
@@ -130,7 +154,7 @@ const AddGeneralCostForm: React.FC<AddGeneralCostFormProps> = ({ onClose }) => {
         </div>
       </div>
 
-      {show2FA && (
+      {show2FA && formValues && feeData && (
         <ConfirmOperator
           onClose={() => setShow2FA(false)}
           onSuccess={handle2FASuccess}
@@ -140,4 +164,4 @@ const AddGeneralCostForm: React.FC<AddGeneralCostFormProps> = ({ onClose }) => {
   );
 };
 
-export default AddGeneralCostForm; 
+export default EditGeneralCostForm; 

@@ -5,11 +5,12 @@ import { useOnboardingStore } from '@/global/store';
 import { addOperators } from '@/api/operatorsApi';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { FaAngleLeft } from 'react-icons/fa';
 
 const ContactDetails: React.FC = () => {
   const [form] = Form.useForm();
   const [show2FAModal, setShow2FAModal] = React.useState(false);
-  const { setFormData, formData } = useOnboardingStore();
+  const { setNavPath, setFormData, formData } = useOnboardingStore();
   const navigate = useNavigate()
 
   const handleFinish = async (values: any) => {
@@ -52,17 +53,19 @@ const ContactDetails: React.FC = () => {
   };
 
   return (
-    <div className="w-full mx-auto">
+    <div className="w-full mx-auto">        
       {show2FAModal && (
         <ConfirmOperator 
           onClose={() => setShow2FAModal(false)} 
           onSuccess={handle2FASuccess}
         />
       )}
-      
-      <div className="bg-[#F5F6FA] rounded-md px-4 py-2 mb-6 text-[#667085] font-medium">
-        Contact person details
+          
+      <div className="flex items-center mb-7">
+          <FaAngleLeft onClick={() => setNavPath("account-details")} className='text-lg me-2 text-[#667085]' />
+          <h2 className="text-lg! font-medium text-[#667085]">Add Operators</h2>
       </div>
+      <div className="bg-[#F5F6FA] rounded-md px-4 py-2 mb-6 text-[#667085]font-medium"> Contact person details </div>
       
       <Form
         form={form}

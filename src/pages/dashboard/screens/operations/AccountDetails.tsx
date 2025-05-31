@@ -5,6 +5,7 @@ import { useBanksList } from '@/hooks/useAdmin';
 import { verifyAccount } from '@/api/banks';
 import toast from 'react-hot-toast';
 import { DefaultOptionType } from 'antd/es/select';
+import { FaAngleLeft } from 'react-icons/fa';
 
 const { Option } = Select;
 
@@ -105,7 +106,12 @@ const AccountDetails: React.FC = () => {
 
   return (
     <div className="w-full mx-auto">
-      <div className="bg-[#F5F6FA] rounded-md px-4 py-2 mb-6 text-[#667085] font-medium">Account details</div>
+
+      <div className="flex items-center mb-7">
+          <FaAngleLeft onClick={() => setNavPath("company-details")} className='text-lg me-2 text-[#667085]' />
+          <h2 className="text-lg! font-medium text-[#667085]">Add Operators</h2>
+      </div>
+      <div className="bg-[#F5F6FA] rounded-md px-4 py-2 mb-6 text-[#667085]font-medium"> Account details </div>
       <Form
         form={form}
         layout="vertical"

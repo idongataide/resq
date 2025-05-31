@@ -1,11 +1,10 @@
-import { banksList } from "@/api/banks";
 import { getBookings, getBookingsCount, getDailyPayout, getDashboardOperators, getRemittedRevenue, getRevenues } from "@/api/bookingsApi";
-import { getCustomers, getCustomersDetails } from "@/api/customersApi";
+import { getCustomerCount, getCustomers, getCustomersDetails } from "@/api/customersApi";
 import { getOperators, getOperatorData, getDrivers, getDriversByOperatorId, getAssetsbyCordinate, getAssets, getOperatorCount } from "@/api/operatorsApi";
-import { getFees, getProfile, getServices } from "@/api/settingsApi";
+import { getFees, getFeesCategory, getProfile, getServices, getFeesCount, getServicesCount, getStakeholdersCount } from "@/api/settingsApi";
 import { getTeams, getTeamsCount } from "@/api/teamsApi";
 import { getTransactionCount, TransactionList } from "@/api/transactionsApi";
-
+import { getBanksList } from "@/api/banks";
 
 import useSWR from "swr";
 
@@ -24,6 +23,21 @@ export const useAllCustomers = () => {
   );
 
   return { data, isLoading, mutate };
+};
+
+export const useCustomerCount = () => {
+    const { data, isLoading, mutate } = useSWR(
+      `/users?component=count-status`,
+      () => {
+        return getCustomerCount().then((res) => {
+          return res;
+        });
+      },
+      {
+        revalidateOnFocus: false,
+      }
+    );
+    return { data, isLoading, mutate };
 };
 
 export const useCustomersData = (userId: string) => {
@@ -114,18 +128,16 @@ export const useAllTeam = () => {
 
 export const useBanksList = () => {
   const { data, isLoading, mutate } = useSWR(
-    `/settings/bank-lists`,
+    '/banks',
     () => {
-      return banksList().then((res) => {
+      return getBanksList().then((res) => {
         return res?.data;
       });
     },
-
     {
       revalidateOnFocus: false,
-    },
+    }
   );
-
   return { data, isLoading, mutate };
 };
 
@@ -282,6 +294,21 @@ export const useTransactions = () => {
   return { data, isLoading, mutate };
 };
 
+export const useServices = () => {
+  const { data, isLoading, mutate } = useSWR(
+    `/settings/services`,
+    () => {
+      return getServices('').then((res) => {
+        return res?.data;
+      });
+    },
+    {
+      revalidateOnFocus: false,
+    },
+  );
+
+  return { data, isLoading, mutate };
+};
 
 export const useFees = () => {
   const { data, isLoading, mutate } = useSWR(
@@ -399,4 +426,95 @@ export const useDailyPayout = () => {
   );
 
   return { data, isLoading, mutate };
+};
+
+export const useFeesCount = () => {
+  const { data, isLoading, mutate } = useSWR<
+    { success: boolean; msg: string; data: { total: number }[] } | undefined
+  >(
+    `/settings/fees?component=count`,
+    () => {
+      return getFeesCount().then((res) => {
+        return res;
+      });
+    },
+    {
+      revalidateOnFocus: false,
+    }
+  );
+  return { data, isLoading, mutate };
+};
+
+export const useGetFees = (feeVariable: string = '0') => {
+  const { data, isLoading, mutate } = useSWR(
+    `/settings/fees?component=${feeVariable}`,
+    () => {
+      return getFeesCategory(feeVariable).then((res) => {
+        return res?.data;
+      });
+    },
+    {
+      revalidateOnFocus: false,
+    },
+  );
+
+  return { data, isLoading, mutate };
+};
+
+export const useServicesCount = () => {
+  const { data, isLoading, mutate } = useSWR(
+    `/settings/services?component=count`,
+    () => {
+      return getServicesCount().then((res) => {
+        return res;
+      });
+    },
+    {
+      revalidateOnFocus: false,
+    }
+  );
+  return { data, isLoading, mutate };
+};
+
+
+export const useStakeholdersCount = () => {
+    const { data, isLoading, mutate } = useSWR(
+      `/settings/stakeholders?component=count`,
+      () => {
+        return getStakeholdersCount().then((res) => {
+          return res;
+        });
+      },
+      {
+        revalidateOnFocus: false,
+      }
+    );
+    return { data, isLoading, mutate };
+};
+
+export const useLagosCities = () => {
+  const cities = [
+    "Agege",
+    "Ajeromi-Ifelodun",
+    "Alimosho",
+    "Amuwo-Odofin",
+    "Apapa",
+    "Badagry",
+    "Epe",
+    "Eti-Osa",
+    "Ibeju-Lekki",
+    "Ifako-Ijaiye",
+    "Ikeja",
+    "Ikorodu",
+    "Kosofe",
+    "Lagos Island",
+    "Lagos Mainland",
+    "Mushin",
+    "Ojo",
+    "Oshodi-Isolo",
+    "Shomolu",
+    "Surulere"
+  ];
+
+  return { data: cities, isLoading: false };
 };

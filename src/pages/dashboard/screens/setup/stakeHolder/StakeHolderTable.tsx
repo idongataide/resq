@@ -1,75 +1,149 @@
 import React, { useState, useMemo } from 'react';
 import { Table, type ColumnDefinition } from '@/components/ui/Table';
-// import Images from '@/components/images'; // Remove if not used
-// import { FaArrowRight } from 'react-icons/fa'; // Remove if not used
-// import { useNavigate } from 'react-router-dom'; // Remove if not used
-
-// Import Icons here if needed for actions (Edit/Delete)
 import { MdOutlineEdit as IconEdit } from 'react-icons/md';
 import { MdOutlineDeleteOutline as IconDelete } from 'react-icons/md';
+import { getStakeholders, deleteStakeholder } from '@/api/settingsApi';
+import toast, { Toaster } from 'react-hot-toast';
+import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
+import useSWR from 'swr';
 
-interface StakeHolderItem {
-  id: string;
-  stakeholderName: string;
-  accountNumber: string;
-  bankName: string;
-  accountName: string;
-  value: string; // Can be percentage or amount
-  action?: string; // Add optional action property
+interface BankData {
+  bank_name: string;
+  bank_code: string;
+  account_number: string;
+  account_name: string;
 }
 
-interface StakeHolderTableProps {
+interface StakeHolderItem {
+  stakeholder_id: string;
+  id: string;
+  name: string;
+  bank_data: BankData;
+  amount?: number;
+  amount_sufix?: string;
+  amount_type?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+interface StakeholdersResponse {
+  status: string;
   data: StakeHolderItem[];
 }
 
-const StakeHolderTable: React.FC<StakeHolderTableProps> = ({ data }) => {
-  // const navigate = useNavigate(); // Remove if not used
+interface StakeHolderTableProps {
+  onEdit: (data: any) => void;
+}
+
+export type { StakeHolderTableProps };
+
+const StakeHolderTable: React.FC<StakeHolderTableProps> = ({ onEdit }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5); // Keep a small page size for demo
+  const [pageSize, setPageSize] = useState(5);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [stakeholderToDelete, setStakeholderToDelete] = useState<StakeHolderItem | null>(null);
+  const { data: stakeholdersResponse, mutate } = useSWR<StakeholdersResponse>('/users/stakeholders', getStakeholders);
+
+
+  const handleDeleteClick = (stakeholder: StakeHolderItem) => {
+    setStakeholderToDelete(stakeholder);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!stakeholderToDelete) return;
+
+    try {
+      setIsDeleting(true);
+      const response = await deleteStakeholder(stakeholderToDelete.stakeholder_id);
+
+      if (response) {
+        toast.success('Stakeholder deleted successfully');
+        mutate(); // Refresh the stakeholders list
+      } else {
+        toast.error('Failed to delete stakeholder');
+      }
+    } catch (error) {
+      console.error('Delete error:', error);
+      toast.error('An error occurred while deleting the stakeholder');
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteModal(false);
+      setStakeholderToDelete(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false);
+    setStakeholderToDelete(null);
+  };
+
+  const handleEditClick = (stakeholder: StakeHolderItem) => {
+    const formattedData = {
+      id: stakeholder.stakeholder_id,
+      name: stakeholder.name,
+      bank_name: stakeholder.bank_data.bank_name,
+      bank_code: stakeholder.bank_data.bank_code,
+      account_number: stakeholder.bank_data.account_number,
+      account_name: stakeholder.bank_data.account_name,
+      value: stakeholder.amount?.toString() || '',
+      value_type: stakeholder.amount_type === 'percentage' ? 'Percentage' : 'Amount'
+    };
+    onEdit(formattedData);
+  };
 
   const columns: Array<ColumnDefinition<StakeHolderItem>> = [
     {
-      title: "Stakeholder",
-      dataIndex: "stakeholderName",
-      key: "stakeholderName",
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
       render: (value: string) => <span className='text-[#475467] font-medium'>{value}</span>,
     },
     {
-      title: "Account number",
-      dataIndex: "accountNumber",
-      key: "accountNumber",
+      title: "Bank Name",
+      dataIndex: ["bank_data", "bank_name"],
+      key: "bank_name",
     },
     {
-      title: "Bank name",
-      dataIndex: "bankName",
-      key: "bankName",
+      title: "Account Number",
+      dataIndex: ["bank_data", "account_number"],
+      key: "account_number",
     },
     {
-      title: "Account name",
-      dataIndex: "accountName",
-      key: "accountName",
+      title: "Account Name",
+      dataIndex: ["bank_data", "account_name"],
+      key: "account_name",
     },
     {
-      title: "Value (Percentage/Amount)",
-      dataIndex: "value",
+      title: "Value (Percentage/amount)",
+      dataIndex: "amount",
       key: "value",
-      render: (value: string) => <span className='text-[#475467] font-medium'>{value}</span>, // Apply styling if needed
+      render: (amount: number, record: StakeHolderItem) => {
+        if (record.amount_type === 'percentage') {
+          return `${amount}%`;
+        } else if (record.amount_type === 'amount') {
+          return `₦${amount?.toLocaleString()}`;
+        }
+        return amount;
+      },
     },
     {
       title: "Actions",
-      dataIndex: "action",
+      dataIndex: "stakeholder_id",
       key: "actions",
       render: (_, record) => (
         <div className="flex items-center gap-4">
           <button
             className="flex items-center gap-1 text-[#667085] text-sm font-medium cursor-pointer"
-            onClick={() => console.log('Edit stakeholder', record.id)}
+            onClick={() => handleEditClick(record)}
           >
             <IconEdit className='w-4 h-4'/> Edit
           </button>
           <button
              className="flex items-center gap-1 text-[#667085] text-sm font-medium cursor-pointer"
-             onClick={() => console.log('Delete stakeholder', record.id)}
+             onClick={() => handleDeleteClick(record)}
+             disabled={isDeleting}
           >
              <IconDelete className='w-4 h-4'/> Delete
           </button>
@@ -84,35 +158,46 @@ const StakeHolderTable: React.FC<StakeHolderTableProps> = ({ data }) => {
   };
 
   const paginatedData = useMemo(() => {
+    if (!stakeholdersResponse?.data || !Array.isArray(stakeholdersResponse.data)) return [];
     const startIndex = (currentPage - 1) * pageSize;
-    return data.slice(startIndex, startIndex + pageSize);
-  }, [currentPage, pageSize, data]);
+    return stakeholdersResponse.data.map((stakeholder: StakeHolderItem) => ({
+      ...stakeholder,
+      id: stakeholder.stakeholder_id // Use stakeholder_id as the id
+    })).slice(startIndex, startIndex + pageSize);
+  }, [currentPage, pageSize, stakeholdersResponse]);
+
+  // Ensure total is based on the actual data array length
+  const totalStakeholders = stakeholdersResponse?.data?.length || 0;
 
   return (
     <div className="mb-6">
-
+      <Toaster/>
       <div className="py-2 px-4 bg-white rounded-md border-[#E5E9F0] flex justify-between items-center">
-        <h1 className="text-lg font-medium mb-0 text-[#344054]">Stakeholders Disbursements</h1>
-        {/* Adapting the filter button to a Sort by button */}
+        <h1 className="text-lg font-medium mb-0 text-[#344054]">Stakeholders</h1>
         <button className="flex items-center gap-2 px-4 py-2 text-[#667085] bg-[#F9FAFB] rounded-lg border border-[#E5E9F0] hover:bg-gray-50">
-          {/* You might need a different icon here */}
           <span>Sort by</span>
-          {/* Add sorting functionality later */}
         </button>
       </div>
 
-      <Table
+      <Table<StakeHolderItem>
         columns={columns}
         data={paginatedData}
-        pagination={data.length > pageSize ? {
+        pagination={totalStakeholders > pageSize ? {
           current: currentPage,
           pageSize: pageSize,
-          total: data.length,
+          total: totalStakeholders,
           onChange: handlePageChange,
         } : undefined}
-        // showActions={false} // Actions are handled in render
-        // onRowClick={(id) => handleEditStakeholder(id)} // Add/update as needed
       />
+
+      {showDeleteModal && stakeholderToDelete && (
+        <DeleteConfirmationModal
+          itemName={stakeholderToDelete.name}
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+          loading={isDeleting}
+        />
+      )}
     </div>
   );
 };

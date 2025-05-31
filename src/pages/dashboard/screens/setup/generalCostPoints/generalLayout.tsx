@@ -3,26 +3,14 @@ import { FaPlus } from "react-icons/fa6";
 import { FaAngleLeft, FaUsers } from "react-icons/fa";
 import GeneralCostTable from "./GeneralCostTable";
 import AddGeneralCostForm from "./AddGeneralCostForm";
-
-interface GeneralCostItem {
-  id: string;
-  itemName: string;
-  amount: number;
-  lastModified: string;
-}
+import { useFeesCount } from '@/hooks/useAdmin';
 
 const GeneralCostLayout: React.FC = () => {
   const [activeSidebar, setActiveSidebar] = useState<string | null>(null);
 
-  // const { data : teams } = useAllTeam()
-  // const { data : teamsCount } = useAllTeamsCount('count');
+  const { data: feesCountData } = useFeesCount();
+  const feesCount = feesCountData?.data[0]?.total ?? 0;
 
-  const generalcosts: GeneralCostItem[] = [
-    { id: '1', itemName: 'LASG Tax', amount: 10500, lastModified: 'Wed, 16-09-2024' },
-    { id: '2', itemName: 'Pickup Cost/Km', amount: 7500, lastModified: 'Wed, 16-09-2024' },
-    { id: '3', itemName: 'Drop off Cost/Km', amount: 8500, lastModified: 'Wed, 16-09-2024' },
-    { id: '4', itemName: 'FIRS', amount: 7500, lastModified: 'Wed, 16-09-2024' },
-  ];
 
   const handleAddClick = () => {
     setActiveSidebar('add');
@@ -50,7 +38,7 @@ const GeneralCostLayout: React.FC = () => {
                     <FaUsers className="text-[#FF6C2D]" />
                 </div>
                 <div className="ml-2">
-                    <h2 className="text-[26px] font-bold text-[#475467] mb-1">4</h2>
+                    <h2 className="text-[26px] font-bold text-[#475467] mb-1">{feesCount}</h2>
                     <p className="text-[#667085] text-md font-medium">General cost points</p>
                 </div>
             </div>
@@ -64,7 +52,7 @@ const GeneralCostLayout: React.FC = () => {
           </div>
         </div>
         
-        <GeneralCostTable  data={generalcosts}/>
+        <GeneralCostTable/>
       </div>
 
       {activeSidebar === 'add' && (

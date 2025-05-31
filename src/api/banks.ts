@@ -1,6 +1,6 @@
 import { axiosAPIInstance } from "./interceptor";
 
-export const banksList = async () => {
+export const getBanksList = async () => {
     try {
       return await axiosAPIInstance
         .get(`/settings/bank-lists`)

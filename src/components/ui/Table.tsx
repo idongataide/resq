@@ -3,7 +3,7 @@ import { cn } from "../../lib/utils";
 
 export interface ColumnDefinition<T> {
   title: string;
-  dataIndex: keyof T;
+  dataIndex: keyof T | (string | number)[];
   key: string;
   render?: (value: any, row: T, rowIndex: number) => React.ReactNode;
   className?: string;
@@ -24,6 +24,14 @@ interface TableProps<T> {
   };
   loading?: boolean;
 }
+
+const getValue = (obj: any, path: keyof any | (string | number)[]): any => {
+  if (Array.isArray(path)) {
+    return path.reduce((current, key) => (current && current[key] !== undefined ? current[key] : undefined), obj);
+  } else {
+    return obj[path];
+  }
+};
 
 const Table = <T extends { id: string }>({
   columns,
@@ -79,8 +87,8 @@ const Table = <T extends { id: string }>({
                     )}
                   >
                     {column.render
-                      ? column.render(row[column.dataIndex], row, rowIndex)
-                      : (row[column.dataIndex] as any) ?? "-"}
+                      ? column.render(getValue(row, column.dataIndex), row, rowIndex)
+                      : getValue(row, column.dataIndex) as any ?? "-"}
                   </td>
                 ))}
               

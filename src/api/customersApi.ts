@@ -25,3 +25,15 @@ export const getCustomersDetails =  async (userId: string) => {
     return error;
   }
 };
+
+export const getCustomerCount = async () => {
+    try {
+        return await axiosAPIInstance
+          .get(`/users?component=count-status`)
+          .then((res) => {
+            return res?.data;
+          });
+      } catch (error) {
+        return error;
+      }
+};

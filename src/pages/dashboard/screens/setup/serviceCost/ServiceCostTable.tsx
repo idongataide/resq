@@ -2,43 +2,83 @@ import React, { useState, useMemo } from 'react';
 import { Table, type ColumnDefinition } from '@/components/ui/Table';
 import { MdOutlineEdit as IconEdit } from 'react-icons/md';
 import { MdOutlineDeleteOutline as IconDelete } from 'react-icons/md';
+import { useServices } from '@/hooks/useAdmin';
+import { deleteService } from '@/api/settingsApi';
+import toast, { Toaster } from 'react-hot-toast';
+import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
+import EditServiceCostForm from './EditServiceCostForm';
+import { getStatusStyle } from '@/components/ui/statusStyles';
 
-export interface ServiceCostItem {
-  id: string;
-  serviceName: string;
-  serviceType: 'Private' | 'Commercial';
+interface ServiceItem {
+  _id: string;
+  name: string;
   amount: number;
-  lastModified: string;
-  action?: string; // Add optional action property
+  service_type: 'private' | 'commercial';
+  createdAt: string;
+  updatedAt: string;
+  id: string;
+  service_id: string;
 }
 
-interface ServiceCostTableProps {
-  data: ServiceCostItem[];
-  // searchTerm: string; // Removed
-  // sortBy: string; // Removed
-}
-
-const ServiceCostTable: React.FC<ServiceCostTableProps> = ({ data }) => {
-  // const navigate = useNavigate(); // Remove if not used
+const ServiceCostTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5); // Keep a small page size for demo
+  const [pageSize, setPageSize] = useState(5);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [serviceToDelete, setServiceToDelete] = useState<ServiceItem | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false); // For Edit functionality
+  const [serviceToEdit, setServiceToEdit] = useState<ServiceItem | null>(null); // For Edit functionality
+  const { data: servicesList, mutate } = useServices();
 
-  const columns: Array<ColumnDefinition<ServiceCostItem>> = [
+  const handleDeleteClick = (service: ServiceItem) => {
+    setServiceToDelete(service);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!serviceToDelete) return;
+
+    try {
+      setIsDeleting(true);
+      const response = await deleteService(serviceToDelete.service_id);
+
+      if (response) {
+        toast.success('Service cost deleted successfully');
+        mutate(); // Refresh the services list
+      } else {
+        toast.error('Failed to delete service cost');
+      }
+    } catch (error) {
+      console.error('Delete error:', error);
+      toast.error('An error occurred while deleting the service cost');
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteModal(false);
+      setServiceToDelete(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false);
+    setServiceToDelete(null);
+  };
+
+  const handleEditClick = (service: ServiceItem) => { // For Edit functionality
+    setServiceToEdit(service);
+    setShowEditModal(true);
+  };
+
+  const handleCloseEditModal = () => { // For Edit functionality
+    setShowEditModal(false);
+    setServiceToEdit(null);
+  };
+
+  const columns: Array<ColumnDefinition<ServiceItem>> = [
     {
-      title: "Service name",
-      dataIndex: "serviceName",
-      key: "serviceName",
-      render: (value: string) => <span className='text-[#475467] font-medium'>{value}</span>,
-    },
-    {
-      title: "Type of service",
-      dataIndex: "serviceType",
-      key: "serviceType",
-      render: (value: 'Private' | 'Commercial') => (
-        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${value === 'Private' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}`}>
-          {value}
-        </span>
-      ),
+      title: "Service Name",
+      dataIndex: "name",
+      key: "name",
+      render: (value: string) => <span className='text-[#475467] font-medium capitalize'>{value}</span>,
     },
     {
       title: "Amount",
@@ -46,26 +86,42 @@ const ServiceCostTable: React.FC<ServiceCostTableProps> = ({ data }) => {
       key: "amount",
       render: (value: number) => `₦${value?.toLocaleString() || 'N/A'}`,
     },
+     {
+      title: "Type",
+      dataIndex: "service_type",
+      key: "service_type",
+      render: (value: string) => (
+        <span className={`px-2.5 py-0.5 rounded-full text-xs capitalize font-medium ${getStatusStyle(value)}`}>
+          {value}
+        </span>
+      ),
+    },
     {
       title: "Last modified",
-      dataIndex: "lastModified",
-      key: "lastModified",
+      dataIndex: "updatedAt",
+      key: "updatedAt",
+      render: (value: string) => new Date(value).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      }),
     },
     {
       title: "Actions",
-      dataIndex: "action",
+      dataIndex: "_id",
       key: "actions",
       render: (_, record) => (
         <div className="flex items-center gap-4">
-          <button 
-            className="flex items-center gap-1 text-[#667085] text-sm font-medium cursor-pointer"
-            onClick={() => console.log('Edit', record.id)}
-          >
-            <IconEdit className='w-4 h-4'/> Edit
-          </button>
+          <button  // For Edit functionality
+             className="flex items-center gap-1 text-[#667085] text-sm font-medium cursor-pointer"
+             onClick={() => handleEditClick(record)}
+           >
+             <IconEdit className='w-4 h-4'/> Edit
+           </button>
           <button 
              className="flex items-center gap-1 text-[#667085] text-sm font-medium cursor-pointer"
-             onClick={() => console.log('Delete', record.id)}
+             onClick={() => handleDeleteClick(record)}
+             disabled={isDeleting}
           >
              <IconDelete className='w-4 h-4'/> Delete
           </button>
@@ -80,35 +136,50 @@ const ServiceCostTable: React.FC<ServiceCostTableProps> = ({ data }) => {
   };
 
   const paginatedData = useMemo(() => {
+    if (!servicesList) return [];
     const startIndex = (currentPage - 1) * pageSize;
-    return data.slice(startIndex, startIndex + pageSize);
-  }, [currentPage, pageSize, data]);
+    return servicesList.map((service: ServiceItem) => ({
+      ...service,
+      id: service._id 
+    })).slice(startIndex, startIndex + pageSize);
+  }, [currentPage, pageSize, servicesList]);
 
   return (
     <div className="mb-6">
-
-      {/* Header */}
+      <Toaster/>
       <div className="py-2 px-4 bg-white rounded-md border-[#E5E9F0] flex justify-between items-center">
-        <h1 className="text-lg font-medium mb-0 text-[#344054]">Services Cost</h1>
-        <button className="flex items-center gap-2 px-4 py-2 text-[#667085] bg-[#F9FAFB] rounded-lg border border-[#E5E9F0] hover:bg-gray-50">
-          {/* <img src={Images.icon.filter} alt="Filter" className="w-4 h-4" /> */}
-          <span>Filters</span>
+        <h1 className="text-lg font-medium mb-0 text-[#344054]">Service costs</h1>
+        <button className="flex items-center gap-2 px-4 py-2 text-[#667085] bg-[#F9FAFB] rounded-lg border border-[#E5E9F0] hover:bg-gray-50"> // For Filters later
+          <span>Filters</span>          
         </button>
       </div>
-
-      {/* Table */}
+      
       <Table
         columns={columns}
         data={paginatedData}
-        pagination={data.length > pageSize ? {
+        pagination={servicesList?.length > pageSize ? {
           current: currentPage,
           pageSize: pageSize,
-          total: data.length,
+          total: servicesList.length,
           onChange: handlePageChange,
         } : undefined}
-        // showActions={false} // Actions are handled in render
-        // onRowClick={(id) => handleEditOperator(id)} // Remove or update
       />
+
+      {showDeleteModal && serviceToDelete && (
+        <DeleteConfirmationModal
+          itemName={serviceToDelete.name}
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+          loading={isDeleting}
+        />
+      )}
+
+      {showEditModal && serviceToEdit && (
+        <EditServiceCostForm
+          onClose={handleCloseEditModal}
+          serviceData={serviceToEdit}
+        />
+      )}
     </div>
   );
 };

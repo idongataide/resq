@@ -59,7 +59,7 @@ const TopOperators: React.FC<AllOperationsProps> = () => {
       },
     },
     {
-      title: "Tour rating",
+      title: "Tow rating",
       dataIndex: "avg_rating",
       key: "avg_rating",
       render: (value) => (

@@ -1,20 +1,22 @@
 import axios from "axios";
 
-
-const authTokens = localStorage.getItem("adminToken")
-  ? JSON.parse(localStorage.getItem("adminToken")!)
-  : null;
+// Helper function to safely access localStorage
+const getAuthTokens = () => {
+  if (typeof window !== 'undefined') {
+    const tokens = localStorage.getItem("adminToken");
+    return tokens ? JSON.parse(tokens) : null;
+  }
+  return null;
+};
 
 export const axiosAPIInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/admins',
-  headers: { Authorization: `Bearer ${authTokens?.access}` },
+  headers: { Authorization: `Bearer ${getAuthTokens()?.access}` },
 });
 
 axiosAPIInstance.interceptors.request.use(
   async (req) => {
-    const authTokens = localStorage.getItem("adminToken")
-      ? JSON.parse(localStorage.getItem("adminToken")!)
-      : null;
+    const authTokens = getAuthTokens();
 
     if (authTokens?.access) {
       req.headers.Authorization = `Bearer ${authTokens?.access}`;
@@ -32,10 +34,12 @@ axiosAPIInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response.status === 401) {
-      localStorage.removeItem("adminToken");
-      localStorage.clear();
-      window.location.href = "/login";
+    if (error.response?.status === 401) {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem("adminToken");
+        localStorage.clear();
+        window.location.href = "/login";
+      }
     }
     return Promise.reject(error);
   },

@@ -148,15 +148,7 @@ const BookingTable: React.FC = () => {
       default: return '0'; 
     }
   };
-  const getPaymentStatus = (status: number | undefined) => {
-    switch(status) {
-      case 0: return 'Awaiting payment';
-      case 1: return 'Paid';
-      case 2: return 'failed';
-      case 3: return 'Abandoned';
-      default: return '0'; 
-    }
-  };
+ 
 
   const { data: bookingData, isLoading, mutate } = useAllBookings(getRideStatus(status));
 
@@ -231,6 +223,14 @@ const BookingTable: React.FC = () => {
       title: "Reason",
       dataIndex: "tow_reason",
       key: "tow_reason",
+    },
+
+    {
+      title: "Amount",
+      dataIndex: "est_fare",
+      key: "est_fare",
+      render: (value: number, record: BookingData) => 
+        record?.ride_status === 0 || record?.ride_status === 4 ? null : `₦${value?.toLocaleString()}`
     },
     {
       title: "Date & time",

@@ -60,7 +60,7 @@ const Table = <T extends { id: string }>({
             {columns.map((column) => (
               <th 
                 key={column.key} 
-                className={cn("px-7 py-3 text-left text-[#667085] border-b mb-0 border-[#E5E9F0] font-medium", column.className)}
+                className={cn("px-7 py-3 text-left capitalize text-[#667085] border-b mb-0 border-[#E5E9F0] font-medium", column.className)}
               >
                 {column.title}
               </th>

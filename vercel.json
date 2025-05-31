@@ -9,10 +9,8 @@
       "destination": "https://resq-wallet.onrender.com/wallet/:path*"
     },
     {
-      "rewrites": [
-        { "source": "/(.*)", "destination": "/" }
-      ]
+      "source": "/(.*)",
+      "destination": "/"
     }
-    
   ]
 } 

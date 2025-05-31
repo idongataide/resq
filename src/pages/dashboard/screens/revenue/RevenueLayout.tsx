@@ -60,7 +60,7 @@ const RevenueLayout: React.FC = () => {
             className={`px-6 py-2 text-xs cursor-pointer  border border-[#F2F4F7] ${activeView === 'stakeholder' ? 'bg-[#E86229] text-[#fff]' : 'text-[#667085]'}`}
             onClick={() => handleViewChange('stakeholder')}
             >
-            Stakeholder payout
+            Stakeholder payouts
             </button>
         </>
         )}

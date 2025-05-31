@@ -161,7 +161,7 @@ const BookingTable: React.FC = () => {
 
   const bokingCount = bookingData?.lenght
 
-  const columns: Array<ColumnDefinition<BookingData>> = [
+  const baseColumns: Array<ColumnDefinition<BookingData>> = [
     {
       title: "Booking ID",
       dataIndex: "booking_ref",
@@ -224,14 +224,6 @@ const BookingTable: React.FC = () => {
       dataIndex: "tow_reason",
       key: "tow_reason",
     },
-
-    {
-      title: "Amount",
-      dataIndex: "est_fare",
-      key: "est_fare",
-      render: (value: number, record: BookingData) => 
-        record?.ride_status === 0 || record?.ride_status === 4 ? null : `₦${value?.toLocaleString()}`
-    },
     {
       title: "Date & time",
       dataIndex: "createdAt",
@@ -282,6 +274,16 @@ const BookingTable: React.FC = () => {
       ),
     },
   ];
+
+  const columns = React.useMemo(() => {
+    const currentStatus = getRideStatus(status);
+    return baseColumns.filter(column => {
+      if (column.key === 'est_fare') {
+        return currentStatus !== '0' && currentStatus !== '4';
+      }
+      return true;
+    });
+  }, [status]);
 
   const handlePageChange = (page: number, size: number) => {
     setCurrentPage(page);

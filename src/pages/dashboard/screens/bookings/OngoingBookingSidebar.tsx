@@ -118,15 +118,15 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
                       )}
                     </span>
                     {idx < steps.length - 1 && (
-                      <span className="w-px flex-1 bg-gray-300" style={{ minHeight: 32 }}></span>
+                      <span className="w-px flex-1 bg-gray-300" style={{ minHeight: 100 }}></span>
                     )}
                   </div>
                   <div className="flex-1">
-                    <div className="font-semibold text-[#1C2023] mb-1">{step.title}</div>
-                    <div className="mb-1">
-                      <div className="bg-[#F8F9FB] rounded-md p-2 text-sm text-[#475467]">{step.message}</div>
+                    <div className="font-[400] text-[#475467] mb-1">{step.title}</div>
+                    <div className="mb-1 w-[70%] border-[#F2F4F7] border px-3">
+                      <div className="mt-3 text-sm font-medium text-[#475467]">{step.message}</div>
                       {step.confirm && (
-                        <button className="mt-2 px-4 py-1 bg-orange-500 text-white rounded" style={{ fontSize: 14 }}>
+                        <button className="mt-2 px-3 py-1 mb-3 bg-orange-500 text-white rounded" style={{ fontSize: 14 }}>
                           Confirm
                         </button>
                       )}
@@ -142,12 +142,12 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
           <div className="bg-white rounded-lg border border-[#E5E9F0] p-4 mb-3">
             <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
               <div>
-                <p className="font-medium mb-2">Customer</p>
-                <p className="font-medium mb-2">Email</p>
-                <p className="font-medium">Phone number</p>
+                <p className="font-normal mb-3 text-[#667085]">Customer</p>
+                <p className="font-normal mb-3 text-[#667085]">Email</p>
+                <p className="font-normal text-[#667085]">Phone number</p>
               </div>
               <div className='text-right'>
-                <p className='mb-2 capitalize'>{booking?.user_data?.first_name} {booking?.user_data?.last_name}</p>
+                <p className='mb-3 capitalize'>{booking?.user_data?.first_name} {booking?.user_data?.last_name}</p>
                 <p className='mb-2'>{booking?.user_data?.email || 'N/A'}</p>
                 <p>{booking?.user_data?.phone_number || 'N/A'}</p>
               </div>
@@ -157,15 +157,15 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
           <div className="bg-white rounded-lg border border-[#E5E9F0] p-4 mb-3">
             <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
               <div>
-                <p className="font-medium mb-2">Vehicle model</p>
-                <p className="font-medium mb-2">Number plate</p>
-                <p className="font-medium mb-2">Reason for towing</p>
-                <p className="font-medium">Vehicle loading status</p>
+                <p className="font-normal mb-3 text-[#667085]">Vehicle model</p>
+                <p className="font-normal mb-3 text-[#667085]">Number plate</p>
+                <p className="font-normal mb-3 text-[#667085]">Reason for towing</p>
+                <p className="font-normal text-[#667085]">Vehicle loading status</p>
               </div>
               <div className='text-right'>
-                <p className='mb-2 capitalize'>{booking?.vehicle_model}</p>
-                <p className='mb-2 capitalize'>{booking?.plate_number}</p>
-                <p className='mb-2 capitalize'>{booking?.tow_reason}</p>
+                <p className='mb-3 capitalize'>{booking?.vehicle_model}</p>
+                <p className='mb-3 capitalize'>{booking?.plate_number}</p>
+                <p className='mb-3 capitalize'>{booking?.tow_reason}</p>
                 <p>{booking?.vehicle_loaded === 1 ? 'Loaded' : 'Unloaded'}</p>
               </div>
             </div>
@@ -174,11 +174,11 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
           <div className="bg-white rounded-lg border border-[#E5E9F0] p-4 mb-3">
             <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
               <div>
-                <p className="font-medium mb-2">Pickup</p>
-                <p className="font-medium">Destination</p>
+                <p className="font-normal mb-3 text-[#667085]">Pickup</p>
+                <p className="font-normal text-[#667085]">Destination</p>
               </div>
               <div className='text-right'>
-                <p className='mb-2 capitalize'>{booking?.start_address}</p>
+                <p className='mb-3 capitalize'>{booking?.start_address}</p>
                 <p className='capitalize'>{booking?.end_address}</p>
               </div>
             </div>
@@ -187,34 +187,35 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
           <div className="bg-white rounded-lg border border-[#E5E9F0] p-4 mb-3">
             <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
               <div>
-                <p className="font-medium mb-2">Towing Operator</p>
-                <p className="font-medium mb-2">Service type</p>
-                <p className="font-medium mb-2">Service</p>
-                <p className="font-medium mb-2">Vehicle assets</p>
-                <p className="font-medium mb-2">Approx. Distance</p>
-                <p className="font-medium mb-2">Service cost</p>
-                <p className="font-medium mb-2">Pickup (Cost/km)</p>
-                <p className="font-medium">Drop off (Cost/km)</p>
+                <p className="font-normal mb-3 text-[#667085]">Towing Operator</p>
+                <p className="font-normal mb-3 text-[#667085]">Service type</p>
+                <p className="font-normal mb-3 text-[#667085]">Service</p>
+                <p className="font-normal mb-3 text-[#667085]">Vehicle assets</p>
+                <p className="font-normal mb-3 text-[#667085]">Approx. Distance</p>
+                <p className="font-normal mb-3 text-[#667085]">Service cost</p>
+                <p className="font-normal mb-3 text-[#667085]">Pickup (Cost/km)</p>
+                <p className="font-normal text-[#667085]">Drop off (Cost/km)</p>
               </div>
               <div className='text-right'>
-                <p className='mb-2 capitalize'>{booking?.operator?.name || 'N/A'}</p>
-                <p className='mb-2 capitalize'>{serviceType || 'N/A'}</p>
-                <p className='mb-2 capitalize'>{serviceName || 'N/A'}</p>
-                <p className='mb-2 capitalize'>{booking?.asset_data?.plate_number || 'N/A'}</p>
-                <p className='mb-2 capitalize'>{booking?.drop_off_dst}km</p>
-                <p className='mb-2 capitalize'>₦{booking?.service_fee?.toLocaleString() || 'N/A'}</p>
-                <p>₦{pickupFee}/km</p>
+                <p className='mb-3 capitalize'>{booking?.operator?.name || 'N/A'}</p>
+                <p className='mb-3 capitalize'>{serviceType || 'N/A'}</p>
+                <p className='mb-3 capitalize'>{serviceName || 'N/A'}</p>
+                <p className='mb-3 capitalize'>{booking?.asset_data?.plate_number || 'N/A'}</p>
+                <p className='mb-3 capitalize'>{booking?.drop_off_dst}km</p>
+                <p className='mb-3 capitalize'>₦{booking?.service_fee?.toLocaleString() || 'N/A'}</p>
+                <p className='mb-3'>₦{pickupFee}/km</p>
                 <p>₦{dropoffFee}/km</p>
               </div>
+              <div className="w-100">
+                <div className="flex justify-between text-[#667085] text-base font-medium">
+                    <span>Total cost</span>
+                    <span>₦{booking?.total_cost?.toLocaleString() || 'N/A'}</span>
+                </div>
+            </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg border border-[#E5E9F0] p-4 mb-3">
-            <div className="flex justify-between text-base font-semibold">
-              <span>Total cost</span>
-              <span>₦{booking?.total_cost?.toLocaleString() || 'N/A'}</span>
-            </div>
-          </div>
+          
         </div>
       </div>
     </div>

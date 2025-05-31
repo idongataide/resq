@@ -90,9 +90,12 @@ const BookingTable: React.FC = () => {
   }, [status]);
 
   const handleViewRequest = (request: BookingData) => {
-    console.log('Clicked booking:', request);
-    console.log('Clicked booking ride_status:', request.ride_status);
-    if (request.ride_status === 1) {
+    console.log('Clicked booking ride_status:', request.ride_status, request.charge_status);
+    if (request.ride_status === 1 && request.charge_status === 1) {
+      console.log('request');
+      setSelectedBooking(request);
+      setActiveSidebar('ongoing');
+    } else if (request.ride_status === 1) {
       setSelectedBooking(request);
       setActiveSidebar('accepted');
     } else if (request.ride_status === 3) {
@@ -101,9 +104,6 @@ const BookingTable: React.FC = () => {
     } else if (request.ride_status === 4) {
       setSelectedBooking(request);
       setActiveSidebar('cancelled');
-    } else if (request.ride_status === 2) {
-      setSelectedBooking(request);
-      setActiveSidebar('ongoing');
     } else {
       handleCloseSidebar();
     }
@@ -148,7 +148,15 @@ const BookingTable: React.FC = () => {
       default: return '0'; 
     }
   };
-
+  const getPaymentStatus = (status: number | undefined) => {
+    switch(status) {
+      case 0: return 'Awaiting payment';
+      case 1: return 'Paid';
+      case 2: return 'failed';
+      case 3: return 'Abandoned';
+      default: return '0'; 
+    }
+  };
 
   const { data: bookingData, isLoading, mutate } = useAllBookings(getRideStatus(status));
 
@@ -208,11 +216,16 @@ const BookingTable: React.FC = () => {
       title: "Status",
       dataIndex: "ride_status",
       key: "ride_status",
-      render: (value: any) => (
-        <span className={getStatusStyle(getStatusText(value))}>
-          {getStatusText(value)}
-        </span>
-      ),
+      render: (value: any, record: BookingData) => 
+        record.ride_status === 1 && record.charge_status === 1 ?  (
+          <span className={getStatusStyle('Ongoing')}>
+             Ongoing
+          </span>
+        ) : (
+          <span className={getStatusStyle(getStatusText(value))}>
+            {getStatusText(value)}
+          </span>
+        ),
     },
     {
       title: "Reason",

@@ -142,21 +142,21 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
         <div className='overflow-y-auto flex flex-col h-[calc(100vh-160px)] slide-in scrollbar-hide hover:scrollbar-show px-7 py-4'>
 
            <div className="flex justify-between items-center mb-2">
-                <h3 className="text-sm font-medium text-[#475467]">Booking ID {booking?.booking_ref}</h3>
+                <h3 className="text-sm font-normal mb-3 text-[#667085]">Booking ID {booking?.booking_ref}</h3>
                 <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800">Pending</span>
           </div>
           <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">
             <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
               <div className=''>
-                <p className="font-medium mb-2">Pickups</p>
-                <p className="font-medium mb-2">Destination</p>
-                <p className="font-medium">Pickup landmark</p>
+                <p className="font-normal mb-3 text-[#667085]">Pickups</p>
+                <p className="font-normal mb-3 text-[#667085]">Destination</p>
+                <p className="font-normal mb-3 text-[#667085]">Pickup landmark</p>
 
               </div>
               <div className='text-right'>
-                <p className='mb-2 capitalize'>{booking?.start_address}</p>
-                <p className='mb-2 capitalize'>{booking?.end_address}</p>
-                <p className='capitalize'>{booking?.landmark}</p>
+                <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.start_address}</p>
+                <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.end_address}</p>
+                <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.landmark}</p>
               </div>
             </div>
           </div>
@@ -164,14 +164,14 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
           <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">
              <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
                 <div className=''>
-                  <p className="font-medium mb-2">Customer Name</p>
-                  <p className="font-medium mb-2">Email</p>
-                  <p className="font-medium">Phone number</p>
+                  <p className="font-normal mb-3 text-[#667085]">Customer Name</p>
+                  <p className="font-normal mb-3 text-[#667085]">Email</p>
+                  <p className="font-normal  text-[#667085]">Phone number</p>
                 </div>
                  <div className='text-right'>
-                  <p className='mb-2 capitalize'>{booking?.user_data?.first_name} {booking?.user_data?.last_name}</p>
-                  <p className='mb-2 capitalize'>{booking?.user_data?.email || 'N/A'}</p>
-                  <p className='capitalize'>{booking?.user_data?.phone_number || 'N/A'}</p>
+                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.user_data?.first_name} {booking?.user_data?.last_name}</p>
+                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.user_data?.email || 'N/A'}</p>
+                  <p className='font-normal  text-[#475467] capitalize'>{booking?.user_data?.phone_number || 'N/A'}</p>
                 </div>
              </div>
           </div>
@@ -179,18 +179,18 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
           <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">
              <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
                 <div className=''>
-                  <p className="font-medium mb-2">Vehicle model</p>
-                  <p className="font-medium mb-2">Vehicle colour</p>
-                  <p className="font-medium mb-2">Number plate</p>
-                  <p className="font-medium mb-2">Reason for towing</p>
-                  <p className="font-medium">Vehicle loading status</p>
+                  <p className="font-normal mb-3 text-[#667085]">Vehicle model</p>
+                  <p className="font-normal mb-3 text-[#667085]">Vehicle colour</p>
+                  <p className="font-normal mb-3 text-[#667085]">Number plate</p>
+                  <p className="font-normal mb-3 text-[#667085]">Reason for towing</p>
+                  <p className="text-[#667085]">Vehicle loading status</p>
                 </div>
                  <div className='text-right'>
-                  <p className='mb-2 capitalize'>{booking?.vehicle_model}</p>
-                  <p className='mb-2 capitalize'>{booking?.vehicle_color}</p>
-                  <p className='mb-2 capitalize'>{booking?.plate_number}</p>
-                  <p className='mb-2 capitalize'>{booking?.tow_reason}</p>
-                  <p className='capitalize'>{booking?.vehicle_loaded === 1 ? 'Loaded' : 'Unloaded'}</p>
+                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.vehicle_model}</p>
+                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.vehicle_color}</p>
+                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.plate_number}</p>
+                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.tow_reason}</p>
+                  <p className='font-normal text-[#475467] capitalize'>{booking?.vehicle_loaded === 1 ? 'Loaded' : 'Unloaded'}</p>
                 </div>
              </div>
           </div>
@@ -241,16 +241,16 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
               <div className="mb-6 p-4 border border-[#E5E9F0] rounded-lg">
                 <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
                     <div className=''>
-                      <p className="font-medium mb-2">Approx. Distance</p>
-                      <p className="font-medium mb-2">Service Cost</p>
-                      <p className="font-medium mb-2">Pickup (Cost/Km)</p>
-                      <p className="font-medium">Dropup (Cost/Km)</p>
+                      <p className="font-normal mb-3 text-[#667085]">Approx. Distance</p>
+                      <p className="font-normal mb-3 text-[#667085]">Service Cost</p>
+                      <p className="font-normal mb-3 text-[#667085]">Pickup (Cost/Km)</p>
+                      <p className="font-normal mb-3 text-[#667085]">Dropup (Cost/Km)</p>
                     </div>
                     <div className='text-right'>
-                      <p className='mb-2 capitalize'>{booking?.drop_off_dst + (selectedAsset?.distance_km || 0)}km</p>
-                      <p className='mb-2 capitalize'>₦{serviceFee}</p>
-                      <p className='capitalize'>₦{pickupFee}/km</p>
-                      <p className='capitalize'>₦{dropoffFee}/km</p>
+                      <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.drop_off_dst + (selectedAsset?.distance_km || 0)}km</p>
+                      <p className='font-normal mb-3 text-[#475467] capitalize'>₦{serviceFee}</p>
+                      <p className='font-normal mb-3 text-[#475467] capitalize'>₦{pickupFee}/km</p>
+                      <p className='font-normal mb-3 text-[#475467] capitalize'>₦{dropoffFee}/km</p>
                     </div>
                 </div>
             </div>

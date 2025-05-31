@@ -134,8 +134,8 @@ const CancelledBookingsSidebar: React.FC<CancelledBookingsSidebarProps> = ({
                 </div>
                  <div className='text-right'>
                   <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.operator?.name || 'N/A'}</p>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>{serviceType || 'N/A'}</p>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>{serviceName || 'N/A'}</p>
+                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.service_data?.service_type || 'N/A'}</p>
+                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.service_data?.name || 'N/A'}</p>
                   <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.asset_data?.plate_number || 'N/A'}</p>
                   <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.drop_off_dst}km</p>
                   <p className='font-normal mb-3 text-[#475467] capitalize'>₦{booking?.service_fee?.toLocaleString() || 'N/A'}</p>

@@ -219,11 +219,11 @@ const BookingTable: React.FC = () => {
           </span>
         ),
     },
-    {
-      title: "Reason",
-      dataIndex: "tow_reason",
-      key: "tow_reason",
-    },
+    // {
+    //   title: "Reason",
+    //   dataIndex: "tow_reason",
+    //   key: "tow_reason",
+    // },
     {
       title: "Date & time",
       dataIndex: "createdAt",
@@ -240,6 +240,13 @@ const BookingTable: React.FC = () => {
           minute: '2-digit'
         });
       },
+    },
+    {
+      title: "Amount",
+      dataIndex: "est_fare",
+      key: "est_fare",
+      render: (value: number, record: BookingData) => 
+        record?.ride_status === 0 || record?.ride_status === 4 ? null : `₦${value?.toLocaleString()}`
     },
     {
       title: "Actions",

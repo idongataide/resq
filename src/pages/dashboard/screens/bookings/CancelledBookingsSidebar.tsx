@@ -1,5 +1,3 @@
-import React, { useState, useEffect } from 'react';
-import { useAllService } from '@/hooks/useAdmin';
 
 interface CancelledBookingsSidebarProps {
   isOpen: boolean;
@@ -25,22 +23,9 @@ const CancelledBookingsSidebar: React.FC<CancelledBookingsSidebarProps> = ({
   booking,
   fees,
 }) => {
-  const { data: services } = useAllService(booking?.vehicle_reg);
-  const [serviceName, setServiceName] = useState<string | undefined>(undefined);
-  const [serviceType, setServiceType] = useState<string | undefined>(undefined);
 
   const pickupFee = fees?.find(fee => fee.tag === 'PICK_UP_FEE')?.amount || 0;
   const dropoffFee = fees?.find(fee => fee.tag === 'DROP_OFF_FEE')?.amount || 0;
-
-  useEffect(() => {
-    if (services && booking?.service_id) {
-      const selectedService = services.find((s: any) => s.service_id === booking.service_id);
-      if (selectedService) {
-        setServiceName(selectedService.name);
-        setServiceType(selectedService.service_type);
-      }
-    }
-  }, [services, booking?.service_id]);
 
   if (!isOpen || !booking) {
     return null;

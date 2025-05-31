@@ -57,7 +57,6 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
   fees,
 }) => {
   const { data: services } = useAllService(booking?.vehicle_reg);
-  const [serviceName, setServiceName] = useState<string | undefined>(undefined);
   const [serviceType, setServiceType] = useState<string | undefined>(undefined);
 
   const pickupFee = fees?.find(fee => fee.tag === 'PICK_UP_FEE')?.amount || 0;
@@ -67,7 +66,6 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
     if (services && booking?.service_id) {
       const selectedService = services.find((s: any) => s.service_id === booking.service_id);
       if (selectedService) {
-        setServiceName(selectedService.name);
         setServiceType(selectedService.service_type);
       }
     }

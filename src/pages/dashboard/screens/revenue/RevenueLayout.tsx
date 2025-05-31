@@ -32,12 +32,11 @@ const RevenueLayout: React.FC = () => {
     }
   };
 
-  // Handler function for row clicks in RemittedRevenueTable
-  // This function now expects the full row data object
+  
   const handleRemittedRowClick = (rowData: RemittedRevenueRowData) => {
-    setSelectedStakeholderItems(rowData.originalItems); // Set the selected items from originalItems
-    setPayoutDate(rowData.date); // Set the payout date from the clicked row's date property
-    setActiveView('stakeholder'); // Switch to the Stakeholder payout tab
+    setSelectedStakeholderItems(rowData.originalItems);
+    setPayoutDate(rowData.date); 
+    setActiveView('stakeholder'); 
   };
 
   return (

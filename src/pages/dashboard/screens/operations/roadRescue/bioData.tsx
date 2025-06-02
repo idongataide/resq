@@ -35,7 +35,7 @@ const CompanyProfileCard = () => {
         <div className="w-full md:w-3/4 bg-white rounded-2xl p-6">
         {/* Company Header */}
           <div className="flex justify-between items-start mb-6">
-            <h1 className="text-2xl font-bold text-[#475467]">{companyData?.name}</h1>
+            <h1 className="text-2xl font-bold capitalize text-[#475467]">{companyData?.name}</h1>
             <button className="flex items-center gap-2 text-[#FF6C2D] hover:text-[#E55B1F]">
               <FiEdit2 className="w-5 h-5" />
               <span>Edit</span>

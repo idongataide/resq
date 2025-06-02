@@ -1,10 +1,11 @@
 import { getBookings, getBookingsCount, getDailyPayout, getDashboardOperators, getRemittedRevenue, getRevenues } from "@/api/bookingsApi";
 import { getCustomerCount, getCustomers, getCustomersDetails } from "@/api/customersApi";
-import { getOperators, getOperatorData, getDrivers, getDriversByOperatorId, getAssetsbyCordinate, getAssets, getOperatorCount } from "@/api/operatorsApi";
+import { getOperators, getOperatorData, getDrivers, getDriversByOperatorId, getAssetsbyCordinate, getAssets, getOperatorCount, getAssetsByOperatorId } from "@/api/operatorsApi";
 import { getFees, getFeesCategory, getProfile, getServices, getFeesCount, getServicesCount, getStakeholdersCount } from "@/api/settingsApi";
 import { getTeams, getTeamsCount } from "@/api/teamsApi";
 import { getTransactionCount, TransactionList } from "@/api/transactionsApi";
 import { getBanksList } from "@/api/banks";
+import { getStakeholderPayouts } from "@/api/bookingsApi";
 
 import useSWR from "swr";
 
@@ -174,6 +175,25 @@ export const useGetAssetsbyCord = (longitude: string, latitude: string) => {
 
   return { data, isLoading, mutate };
 };
+
+
+export const useAssetsByOperatorId = (operatorId: string | undefined) => {
+    const { data, isLoading, mutate } = useSWR(
+      operatorId ? `/users/assets?operator_id=${operatorId}` : null,
+      (url) => {
+        if (!url || !operatorId) return null; 
+        return getAssetsByOperatorId(operatorId).then((res) => {
+          return res?.data;
+        });
+      },
+      {
+        revalidateOnFocus: false,
+      }
+    );
+  
+    return { data, isLoading, mutate };
+  };
+  
 
 export const useGetDrivers = () => {
   const { data, isLoading, mutate } = useSWR(
@@ -399,6 +419,23 @@ export const useRemittedRevenue = () => {
     `/towings/get-dashboard-ops/`,
     () => {
       return getRemittedRevenue().then((res) => {
+        return res?.data;
+      });
+    },
+
+    {
+      revalidateOnFocus: false,
+    },
+  );
+
+  return { data, isLoading, mutate };
+};
+
+export const useStakeholderPayouts = () => {
+  const { data, isLoading, mutate } = useSWR(
+    `/towings/stakeholder-daily-revenue/`,
+    () => {
+      return getStakeholderPayouts().then((res) => {
         return res?.data;
       });
     },

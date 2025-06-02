@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Table, type ColumnDefinition } from '@/components/ui/Table';
 import { useRemittedRevenue } from '@/hooks/useAdmin';
 import { StakeholderItemData } from './StakeholderPayoutTable';
+import LoadingScreen from '@/pages/dashboard/common/LoadingScreen';
 
 interface RemittedRevenueData {
   id: string;
@@ -18,7 +19,11 @@ const RemittedRevenueTable: React.FC<RemittedRevenueTableProps> = ({ onRowClick 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  const { data : revenues } = useRemittedRevenue()
+  const { data: revenues, isLoading } = useRemittedRevenue();
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   const handlePageChange = (page: number, size: number) => {
     setCurrentPage(page);

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Select } from 'antd';
+import { Form, Input, Button } from 'antd';
 import { useGetFees } from '@/hooks/useAdmin';
 import { addFees } from '@/api/settingsApi';
 import ConfirmOperator from '@/pages/dashboard/screens/setup/2FA';
@@ -26,7 +26,6 @@ const AddGeneralCostForm: React.FC<AddGeneralCostFormProps> = ({ onClose }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [show2FA, setShow2FA] = useState(false);
   const [formValues, setFormValues] = useState<FormValues | null>(null);
-  const { data: feesVariables } = useGetFees('fee_variables');
 
   const { mutate: globalMutate } = useSWRConfig();
 
@@ -42,7 +41,7 @@ const AddGeneralCostForm: React.FC<AddGeneralCostFormProps> = ({ onClose }) => {
       setIsSubmitting(true);
       const response = await addFees({
         amount: formValues.amount,
-        tag: formValues.tag,
+        name: formValues.tag,
         otp: otp
       });
       
@@ -93,15 +92,9 @@ const AddGeneralCostForm: React.FC<AddGeneralCostFormProps> = ({ onClose }) => {
                       <Form.Item 
                         name="tag"
                         label="Fee Type" 
-                        rules={[{ required: true, message: 'Please select a fee type!' }]}
+                        rules={[{ required: true, message: 'Please enter fee type!' }]}
                       >
-                          <Select placeholder="Select" className='!h-[42px] capitalize'>
-                            {feesVariables?.map((fee: FeeVariable) => (
-                              <Select.Option key={fee.tag} className="capitalize" value={fee.tag}>
-                                {fee.name}
-                              </Select.Option>
-                            ))}
-                          </Select>
+                        <Input placeholder="Enter fee type" className="!h-[42px]" />
                       </Form.Item>
                       <Form.Item
                         name="amount"

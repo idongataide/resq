@@ -77,6 +77,18 @@ export const getAssetsbyCordinate = async (longitude: string, latitude: string) 
 };
 
 
+export const getAssetsByOperatorId = async (operatorId: string) => {
+  try {
+    return await axiosAPIInstance
+      .get(`/users/assets?operator_id=${operatorId}`)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};
+
 export const deleteAsset = async (uid: string) => {
   try {
     return await axiosAPIInstance

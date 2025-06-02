@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Table, type ColumnDefinition } from '@/components/ui/Table';
 import { useDailyPayout } from '@/hooks/useAdmin';
+import LoadingScreen from '@/pages/dashboard/common/LoadingScreen';
 
 interface DailyPayout {
   _id: {
@@ -28,7 +29,11 @@ const OperatorPayoutTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  const { data: payouts } = useDailyPayout();
+  const { data: payouts, isLoading } = useDailyPayout();
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   const handlePageChange = (page: number, size: number) => {
     setCurrentPage(page);

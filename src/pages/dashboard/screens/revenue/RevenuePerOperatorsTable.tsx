@@ -41,7 +41,7 @@ const RevenuePerOperatorsTable: React.FC = () => {
       title: "Total earnings",
       dataIndex: "total_earning",
       key: "total_earning",
-      render: (value) => <span className='text-[#475467]'>₦{value.toLocaleString()}</span>,
+      render: (value) => <span className='text-[#475467]'>₦{value?.toLocaleString()}</span>,
     },
     {
       title: "Date joined",

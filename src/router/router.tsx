@@ -5,6 +5,7 @@ import Login from "../pages/auth/login/login";
 import AuthPath from "../pages/auth/authPath";
 import LoadingScreen from "../pages/dashboard/common/LoadingScreen";
 import MainRouter from "./mainRouter";
+import BPDListing from "@/pages/dashboard/screens/setup/BPD/BPDListing";
 
 const DashboadScreen = lazy(() =>
   import("../pages/dashboard/screens/dashboardScreen/DashboadScreen")
@@ -197,6 +198,14 @@ export const routes = createBrowserRouter([
             element: (
               <Suspense fallback={<LoadingScreen />}>
                 <ServiceCost />
+              </Suspense>
+            ),
+          },
+          {
+            path: "business-process-documentation",
+            element: (
+              <Suspense fallback={<LoadingScreen />}>
+                <BPDListing />
               </Suspense>
             ),
           },

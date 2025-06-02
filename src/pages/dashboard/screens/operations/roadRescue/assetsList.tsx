@@ -4,9 +4,11 @@ import { FaTrash, FaPlus } from 'react-icons/fa';
 import { MdOutlineEdit } from "react-icons/md";
 import { getStatusStyle } from '@/components/ui/statusStyles';
 import AddAsset from './addAssets';
-import { useGetAssets } from '@/hooks/useAdmin';
+import { useAssetsByOperatorId } from '@/hooks/useAdmin';
 import { deleteAsset } from '@/api/operatorsApi';
 import toast from 'react-hot-toast';
+import { useParams } from 'react-router-dom';
+
 
 interface Vehicle {
   id: string;
@@ -25,8 +27,9 @@ const VehicleAssets: React.FC = () => {
   const [showAddAssetModal, setShowAddAssetModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [assetToDelete, setAssetToDelete] = useState<Vehicle | null>(null);
+  const { id } = useParams<{ id: string }>();
 
-  const { data : allAssets, mutate } = useGetAssets()
+  const { data : allAssets, mutate } = useAssetsByOperatorId(id || '')
 
   console.log(allAssets)
 

@@ -50,7 +50,19 @@ export const getDashboardOperators = async () => {
 export const getRemittedRevenue = async () => {
   try {
     return await axiosAPIInstance
-      .get(`/towings/daily-revenue/`)
+      .get(`/towings/stakeholder-daily-revenue/`)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};
+
+export const getStakeholderPayouts = async () => {
+  try {
+    return await axiosAPIInstance
+      .get(`/towings/stakeholder-revenue/`)
       .then((res) => {
         return res?.data;
       });

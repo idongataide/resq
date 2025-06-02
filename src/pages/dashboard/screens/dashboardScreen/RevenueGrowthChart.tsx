@@ -116,7 +116,7 @@ const RevenueGrowthChart: React.FC = () => {
       legend: '',
       legendOffset: -40,
       legendPosition: 'middle' as const,
-      format: (value: number) => `₦${value.toLocaleString()}`,
+      format: (value: number) => `₦${value?.toLocaleString()}`,
     },
     enableGridX: false,
     enableGridY: true,
@@ -176,7 +176,7 @@ const RevenueGrowthChart: React.FC = () => {
           <div style={{ color: point.serieColor }}>
             {moment(point.data.x as string).format('MMM D')}
           </div>
-          <strong>₦{point.data.y.toLocaleString()}</strong>
+          <strong>₦{point?.data?.y?.toLocaleString()}</strong>
         </div>
       );
     },
@@ -197,7 +197,7 @@ const RevenueGrowthChart: React.FC = () => {
           <div style={{ color: point.serieColor }}>
             {moment(point.data.x as string).format('MMM D')}
           </div>
-          <strong>₦{point.data.y.toLocaleString()}</strong>
+          <strong>₦{point?.data?.y?.toLocaleString()}</strong>
         </div>
       );
     }
@@ -209,7 +209,7 @@ const RevenueGrowthChart: React.FC = () => {
         <div>
           <h3 className="text-xs font-medium text-[#667085]">Revenue Growth</h3>
           <div className="flex items-center text-sm">
-            <span className="text-xl font-medium text-[#344054]">₦{currentPeriodRevenue.toLocaleString()}</span>
+            <span className="text-xl font-medium text-[#344054]">₦{currentPeriodRevenue?.toLocaleString()}</span>
             <span className="ml-2 text-[#475467]">{periodLabel}</span>
             <HiMiniArrowTrendingUp className="text-[20px] ml-2 text-[#69B574]" />
           </div>

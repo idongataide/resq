@@ -3,9 +3,11 @@ import { Table, type ColumnDefinition } from '@/components/ui/Table';
 import { FaTrash, FaPlus } from 'react-icons/fa';
 import { MdOutlineEdit } from "react-icons/md";
 import AddDriver from './addDrivers';
-import { useGetDrivers } from '@/hooks/useAdmin';
+import { useGetDriversByOperatorId } from '@/hooks/useAdmin';
 import { deleteDriver } from '@/api/operatorsApi';
 import toast from 'react-hot-toast';
+import { useParams } from 'react-router-dom';
+
 
 interface Driver {
   id: string;
@@ -32,8 +34,9 @@ const DriversList: React.FC = () => {
   const [showAddDriverModal, setShowAddDriverModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [driverToDelete, setDriverToDelete] = useState<Driver | null>(null);
+  const { id } = useParams<{ id: string }>();
 
-  const { data: allDrivers, mutate } = useGetDrivers();
+  const { data: allDrivers, mutate } = useGetDriversByOperatorId(id || '');
 
   const handleEdit = (driver: Driver) => {
     console.log('Edit driver:', driver);

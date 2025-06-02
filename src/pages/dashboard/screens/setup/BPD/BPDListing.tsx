@@ -3,26 +3,31 @@ import { FaFilePdf } from 'react-icons/fa';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FaAngleLeft, FaUsers, FaPlus } from 'react-icons/fa';
 import BPDSidebar from './BPDSidebar';
+import { Toaster } from 'react-hot-toast';
+import { useGetProcess } from '@/hooks/useAdmin';
+import LoadingScreen from '@/pages/dashboard/common/LoadingScreen';
+import { deleteBisProcess } from '@/api/settingsApi';
+import toast from 'react-hot-toast';
+import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
 
 interface BPDDocument {
-  id: string;
   name: string;
-  size: string;
+  file: string;
+  createdAt: string;
+  updatedAt: string;
+  biz_id: string;
 }
-
-const mockDocuments: BPDDocument[] = [
-  { id: '1', name: 'Document 1', size: '124Kb' },
-  { id: '2', name: 'Document 2', size: '124Kb' },
-  { id: '3', name: 'Document 3', size: '124Kb' },
-];
 
 const BPDListing: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarMode, setSidebarMode] = useState<'add' | 'edit'>('add');
   const [editDoc, setEditDoc] = useState<BPDDocument | null>(null);
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
-  const countData: { total: number }[] = [];
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [docToDelete, setDocToDelete] = useState<BPDDocument | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
+  const { data: BizList, isLoading, mutate } = useGetProcess();
 
   const handleAddNew = () => {
     setEditDoc(null);
@@ -37,12 +42,37 @@ const BPDListing: React.FC = () => {
     setMenuOpenId(null);
   };
 
-  const handleDelete = (doc: BPDDocument) => {
-    // You can open a confirmation modal here instead
-    setEditDoc(doc);
-    setSidebarMode('edit'); // or 'delete' if you want a separate mode
-    setSidebarOpen(true);
+  const handleDeleteClick = (doc: BPDDocument) => {
+    setDocToDelete(doc);
+    setDeleteConfirmOpen(true);
     setMenuOpenId(null);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!docToDelete) return;
+    setIsDeleting(true);
+
+    try {
+      const response = await deleteBisProcess(docToDelete.biz_id);
+      if (response?.status === 'ok') {
+        toast.success('Document deleted successfully');
+        mutate();
+      } else {
+        toast.error(response?.message || 'Failed to delete document');
+      }
+    } catch (error) {
+      console.error('Error deleting document:', error);
+      toast.error('Failed to delete document');
+    } finally {
+      setIsDeleting(false);
+      setDeleteConfirmOpen(false);
+      setDocToDelete(null);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirmOpen(false);
+    setDocToDelete(null);
   };
 
   const handleCloseSidebar = () => {
@@ -50,9 +80,14 @@ const BPDListing: React.FC = () => {
     setEditDoc(null);
   };
 
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
   return (
     <div className="p-6">
-         <div className="py-1 px-6 mt-10">
+      <Toaster/>
+      <div className="py-1- px-6-">
         <div 
           className="flex items-center mb-5 mt-10 cursor-pointer"
           onClick={() => window.history.back()}
@@ -61,58 +96,83 @@ const BPDListing: React.FC = () => {
           <p className='ml-2 font-bold text-[#667085] text-lg'>Back</p>
         </div>
         <div className="bg-image rounded-lg sm border border-[#E5E9F0] p-6 mb-6 relative overflow-hidden ">
-        <div className="relative z-10 flex justify-between items-center py-5">
-          <div className="flex items-center gap-2">
+          <div className="relative z-10 flex justify-between items-center py-5">
+            <div className="flex items-center gap-2">
               <div className="flex items-center gap-2 bg-[#FFF0EA] rounded-full p-2">
-                  <FaUsers className="text-[#FF6C2D]" />
+                <FaUsers className="text-[#FF6C2D]" />
               </div>
               <div className="ml-2">
-                  <h2 className="text-[26px] font-bold text-[#475467] mb-1">{countData?.[0]?.total ?? 0}</h2>
-                  <p className="text-[#667085] text-md font-medium">Business process docs</p>
+                <h2 className="text-[26px] font-bold text-[#475467] mb-1">{BizList?.length || 0}</h2>
+                <p className="text-[#667085] text-md font-medium">Business process docs</p>
               </div>
+            </div>
+            <button
+              className="flex cursor-pointer items-center gap-2 px-4 py-2 text-[16px] bg-[#FF6C2D] text-white rounded-lg hover:bg-[#FF6C2D] transition-colors"            
+              onClick={handleAddNew}
+            >
+              <FaPlus className="text-white" />
+              <span> Add new</span>
+            </button>
           </div>
-          <button
-            className="flex cursor-pointer items-center gap-2 px-4 py-2 text-[16px] bg-[#FF6C2D] text-white rounded-lg hover:bg-[#FF6C2D] transition-colors"            
-            onClick={handleAddNew}
-         >
-            <FaPlus className="text-white" />
-            <span> Add new</span>
-          </button>
         </div>
       </div>
-        
-        <BPDListing />
-      </div>
 
-    
+      {deleteConfirmOpen && docToDelete && (
+        <DeleteConfirmationModal
+          itemName={docToDelete.name}
+          onConfirm={handleDeleteConfirm}
+          onCancel={handleDeleteCancel}
+          loading={isDeleting}
+        />
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {mockDocuments.map((doc) => (
+        {BizList?.map((doc: BPDDocument) => (
           <div
-            key={doc.id}
+            key={doc.biz_id}
             className="flex items-center border border-[#E5E9F0] rounded-lg p-4 bg-white relative"
           >
             <FaFilePdf className="text-red-500 text-2xl mr-3" />
             <div className="flex-1">
-              <div className="font-medium text-[#475467]">{doc.name}</div>
-              <div className="text-xs text-[#667085]">PDF • {doc.size}</div>
+              <div className="font-medium text-[16px] text-[#475467]">{doc.name}</div>
+              <div className="text-xs font-md text-[#667085]">
+                {doc.file ? (
+                  <div className='flex items-center'>
+                     <a 
+                        href={doc.file} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-[#FF6C2D] hover:underline"
+                    >
+                        View PDF
+                    </a>
+                    <div className="text-xs  text-[#667085] ml-3">
+                        Created: {new Date(doc.createdAt).toLocaleDateString()}
+                    </div>
+                  </div>  
+                 
+                ) : (
+                  'No file uploaded'
+                )}
+              </div>              
             </div>
             <button
-              className="ml-2"
-              onClick={() => setMenuOpenId(menuOpenId === doc.id ? null : doc.id)}
+              className="ml-2 cursor-pointer"
+              onClick={() => setMenuOpenId(menuOpenId === doc.biz_id ? null : doc.biz_id)}
             >
               <BsThreeDotsVertical />
             </button>
-            {menuOpenId === doc.id && (
-              <div className="absolute right-4 top-12 bg-white border border-[#E5E9F0] rounded shadow-xs z-10 w-48">
+            {menuOpenId === doc.biz_id && (
+              <div className="absolute right-4 top-12 bg-white border border-[#E5E9F0] rounded shadow-xs z-10 w-90">
                 <div
-                  className="px-4 py-2 text-[#475467] cursor-pointer hover:bg-gray-100"
+                  className="px-4 py-2 text-[#475467] text-[14px] cursor-pointer hover:bg-gray-100"
                   onClick={() => handleEdit(doc)}
                 >
                   Edit document
                 </div>
                 <div
-                  className="px-4 py-2 text-[#475467] cursor-pointer hover:bg-gray-100"
-                  onClick={() => handleDelete(doc)}
+                  className="px-4 py-2 text-[#475467] text-[14px] cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleDeleteClick(doc)}
                 >
                   Delete document
                 </div>
@@ -121,11 +181,13 @@ const BPDListing: React.FC = () => {
           </div>
         ))}
       </div>
+      
       <BPDSidebar
         open={sidebarOpen}
         onClose={handleCloseSidebar}
         mode={sidebarMode}
         initialData={editDoc}
+        mutate={mutate}
       />
     </div>
   );

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Form, Input, Button } from 'antd';
-import { useGetFees } from '@/hooks/useAdmin';
 import { addFees } from '@/api/settingsApi';
 import ConfirmOperator from '@/pages/dashboard/screens/setup/2FA';
 import toast from 'react-hot-toast';
@@ -10,11 +9,7 @@ interface AddGeneralCostFormProps {
   onClose: () => void;
 }
 
-interface FeeVariable {
-  slug: string;
-  tag: string;
-  name: string;
-}
+
 
 interface FormValues {
   amount: string;

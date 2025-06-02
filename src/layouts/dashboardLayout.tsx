@@ -48,7 +48,7 @@ const DashboardLayout: React.FC = () => {
               className={`w-full ${siderBarView ? "lg:pl-[280px] pl-[100px]" : "md:pl-[100px]"} 
               transition-all duration-500 flex flex-col min-h-screen`}
             >
-            <div className="fixed w-[calc(100vw-100px)] md:w-[calc(100vw-280px)] z-[9999-]  py-4 mb-6 lg:flex-row- items-center flex-row flex justify-start md:justify-between bg-white px-8 ">
+            <div className="fixed w-[calc(100vw-100px)] md:w-[calc(100vw-280px)] z-[9999]  py-4 mb-6 lg:flex-row- items-center flex-row flex justify-start md:justify-between bg-white px-8 ">
               <div className="flex items-center">
                 <p className="text-lg pb-0 mb-0 md:mr-3 text-[#344054] font-medium capitalize">
                   {greeting.text} {data?.firstName || ''}

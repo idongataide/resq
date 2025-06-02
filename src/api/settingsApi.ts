@@ -262,3 +262,53 @@ export const getStakeholdersCount = async () => {
   }
 };
   
+
+export const getBizImage = async () => {
+  try {
+    const response = await axiosAPIInstance.get('/users/biz-image');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+
+export const getBisProcess = async (data: { 
+  doc_name: string;
+  otp: string;
+}) => {
+  try {
+    return await axiosAPIInstance
+      .post(`/users/biz-process`, data)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};
+
+export const getBisProcessList = async () => {
+  try {
+    return await axiosAPIInstance
+      .get(`/users/biz-process`)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};
+
+export const deleteBisProcess = async (bizId: string) => {
+  try {
+    return await axiosAPIInstance
+      .delete(`/users/biz-process/${bizId}`)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};

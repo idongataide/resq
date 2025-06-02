@@ -57,10 +57,10 @@ const ConfirmOperator: React.FC<ConfirmOperatorProps> = ({ onClose, onSuccess })
 
         <div className='overflow-y-auto mb-5  max-h-[calc(100vh-200px)]'>     
           <form onSubmit={handleSubmit} className="px-8 py-8">
-            <h3 className="text-[#475467] text-lg font-bold mb-2">2FA Code</h3>
-            <p className="text-[#667085] font-medium mb-6">Please enter 2FA code to proceed with this action</p>
+            <h3 className="text-[#475467] text-lg font-bold mb-2">Authorization code</h3>
+            <p className="text-[#667085] font-medium mb-6">Please enter your passcode to proceed with this action</p>
 
-            <p className="text-[#475467] font-medium mb-4">Input the six digits your 2FA code here</p>
+            <p className="text-[#475467] font-medium mb-4">Input the six digits your passcode here</p>
             
             <div className="mb-6 flex justify-center">
               <OtpInput

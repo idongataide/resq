@@ -1,7 +1,7 @@
 import { getBookings, getBookingsCount, getDailyPayout, getDashboardOperators, getRemittedRevenue, getRevenues } from "@/api/bookingsApi";
 import { getCustomerCount, getCustomers, getCustomersDetails } from "@/api/customersApi";
 import { getOperators, getOperatorData, getDrivers, getDriversByOperatorId, getAssetsbyCordinate, getAssets, getOperatorCount, getAssetsByOperatorId } from "@/api/operatorsApi";
-import { getFees, getFeesCategory, getProfile, getServices, getFeesCount, getServicesCount, getStakeholdersCount } from "@/api/settingsApi";
+import { getFees, getFeesCategory, getProfile, getServices, getFeesCount, getServicesCount, getStakeholdersCount, getBisProcessList } from "@/api/settingsApi";
 import { getTeams, getTeamsCount } from "@/api/teamsApi";
 import { getTransactionCount, TransactionList } from "@/api/transactionsApi";
 import { getBanksList } from "@/api/banks";
@@ -528,6 +528,26 @@ export const useStakeholdersCount = () => {
     );
     return { data, isLoading, mutate };
 };
+
+
+
+export const useGetProcess = () => {
+    const { data, isLoading, mutate } = useSWR(
+      `/users/biz-process/`,
+      () => {
+        return getBisProcessList().then((res) => {
+          return res?.data;
+        });
+      },
+  
+      {
+        revalidateOnFocus: false,
+      },
+    );
+  
+    return { data, isLoading, mutate };
+};
+  
 
 export const useLagosCities = () => {
   const cities = [

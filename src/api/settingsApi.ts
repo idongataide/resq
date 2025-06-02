@@ -312,3 +312,13 @@ export const deleteBisProcess = async (bizId: string) => {
     return error;
   }
 };
+
+export const confirmPickupArrival = async (towing_id: string) => {
+  const response = await axiosAPIInstance.post(`/towings/request-arrive/${towing_id}`);
+  return response.data;
+};
+
+export const confirmDestinationArrival = async (towing_id: string) => {
+  const response = await axiosAPIInstance.post(`/towings/complete-request/${towing_id}`);
+  return response.data;
+};

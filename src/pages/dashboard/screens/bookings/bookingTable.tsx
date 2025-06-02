@@ -375,6 +375,7 @@ const BookingTable: React.FC = () => {
         onClose={handleCloseSidebar}
         booking={selectedBooking}
         fees={feesData}
+        mutate={mutate}
       />
     )}
     </>

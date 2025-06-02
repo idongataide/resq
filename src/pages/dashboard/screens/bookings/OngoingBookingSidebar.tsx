@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAllService } from '@/hooks/useAdmin';
+import { confirmPickupArrival, confirmDestinationArrival } from '@/api/settingsApi';
+import toast from 'react-hot-toast';
 
 interface OngoingBookingsSidebarProps {
   isOpen: boolean;
@@ -17,6 +19,7 @@ interface OngoingBookingsSidebarProps {
     updatedAt: string;
     fee_id: string;
   }>;
+  mutate: () => void;
 }
 
 const steps = [
@@ -55,12 +58,60 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
   onClose,
   booking,
   fees,
+  mutate
 }) => {
   const { data: services } = useAllService(booking?.vehicle_reg);
   const [serviceType, setServiceType] = useState<string | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(false);
 
   const pickupFee = fees?.find(fee => fee.tag === 'PICK_UP_FEE')?.amount || 0;
   const dropoffFee = fees?.find(fee => fee.tag === 'DROP_OFF_FEE')?.amount || 0;
+
+  const handlePickupConfirmation = async () => {
+    if (!booking?.towing_id) {
+      toast.error('Towing ID not found');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await confirmPickupArrival(booking.towing_id);
+      if (response?.status === 'ok') {
+        toast.success('Pickup location arrival confirmed successfully');
+        mutate();
+      } else {
+        toast.error(response?.message || 'Failed to confirm pickup arrival');
+      }
+    } catch (error) {
+      console.error('Error confirming pickup arrival:', error);
+      toast.error('Failed to confirm pickup arrival');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDestinationConfirmation = async () => {
+    if (!booking?.towing_id) {
+      toast.error('Towing ID not found');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await confirmDestinationArrival(booking.towing_id);
+      if (response?.status === 'ok') {
+        toast.success('Destination arrival confirmed successfully');
+        // You might want to refresh the booking data here
+      } else {
+        toast.error(response?.message || 'Failed to confirm destination arrival');
+      }
+    } catch (error) {
+      console.error('Error confirming destination arrival:', error);
+      toast.error('Failed to confirm destination arrival');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (services && booking?.service_id) {
@@ -123,9 +174,24 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
                     <div className="font-[400] text-[#475467] mb-1">{step.title}</div>
                     <div className="mb-1 w-[70%] border-[#F2F4F7] border px-3">
                       <div className="mt-3 text-sm font-medium text-[#475467]">{step.message}</div>
-                      {step.confirm && (
-                        <button className="mt-2 px-3 py-1 mb-3 bg-orange-500 text-white rounded" style={{ fontSize: 14 }}>
-                          Confirm
+                      {step.confirm && step.key === 'pickup' && (
+                        <button 
+                          className="mt-2 px-3 py-1 mb-3 bg-orange-500 text-white rounded disabled:opacity-50" 
+                          style={{ fontSize: 14 }}
+                          onClick={handlePickupConfirmation}
+                          disabled={isLoading}
+                        >
+                          {isLoading ? 'Confirming...' : 'Confirm'}
+                        </button>
+                      )}
+                      {step.confirm && step.key === 'destination' && (
+                        <button 
+                          className="mt-2 px-3 py-1 mb-3 bg-orange-500 text-white rounded disabled:opacity-50" 
+                          style={{ fontSize: 14 }}
+                          onClick={handleDestinationConfirmation}
+                          disabled={isLoading}
+                        >
+                          {isLoading ? 'Confirming...' : 'Confirm'}
                         </button>
                       )}
                     </div>

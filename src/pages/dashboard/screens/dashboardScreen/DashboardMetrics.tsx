@@ -32,7 +32,7 @@ const DashboardMetrics: React.FC = () => {
       </div>
       {/* Pending requests */}
       <div className="bg-white rounded-lg p-6 border border-[#F2F4F7]">
-        <h2 className="text-2xl font-bold text-[#667085]">{bookingsCount?.pending}</h2>
+        <h2 className="text-2xl font-bold text-[#667085] mb-3">{bookingsCount?.pending}</h2>
         <p className="text-sm text-[#475467] mb-3">Pending requests</p>
       </div>
       {/* Successful transactions */}

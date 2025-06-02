@@ -83,7 +83,7 @@ const CompanyProfileCard = () => {
                   <FiMapPin className="w-5 h-5 text-[#667085]" />
                 </div>
                 <div>
-                  <p className="text-base text-[#475467] font-medium">
+                  <p className="text-base capitalize text-[#475467] font-medium">
                     {`${companyData?.lga || 'N/A'}-${companyData?.state || 'N/A'}`}
                   </p>
                   <p className="text-xs text-[#667085] font-normal">LGA-State</p>
@@ -126,7 +126,7 @@ const CompanyProfileCard = () => {
             
             {/* Contact details */}
             <div className="space-y-1">
-              <p className="text-base font-medium text-[#101828]">
+              <p className="text-base capitalize font-medium text-[#101828]">
                 {`${companyData?.contact_rep_firstname || ''} ${companyData?.contact_rep_lastname || ''}`.trim() || 'Not Available'}
               </p>
               <p className="text-sm text-[#667085]">

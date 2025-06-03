@@ -414,11 +414,11 @@ export const useAllTransCount = (countStatus: string = '0') => {
 };
 
 
-export const useDashboardOperators = () => {
+export const useDashboardOperators = (date: string = '0') => {
   const { data, isLoading, mutate } = useSWR(
-    `/towings/get-dashboard-ops/`,
+    `/towings/get-dashboard-ops${date}`,
     () => {
-      return getDashboardOperators().then((res) => {
+      return getDashboardOperators(date).then((res) => {
         return res?.data;
       });
     },

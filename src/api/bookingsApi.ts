@@ -36,10 +36,10 @@ export const getRevenues = async (operatorEarning: string) => {
   }
 };
 
-export const getDashboardOperators = async () => {
+export const getDashboardOperators = async (date: string) => {
   try {
     return await axiosAPIInstance
-      .get(`/towings/get-dashboard-ops/`)
+      .get(`/towings/get-dashboard-ops?${date}`)
       .then((res) => {
         return res?.data;
       });
@@ -47,6 +47,8 @@ export const getDashboardOperators = async () => {
     return error;
   }
 };
+
+
 export const getRemittedRevenue = async () => {
   try {
     return await axiosAPIInstance

@@ -18,9 +18,27 @@ interface RevenueSummary {
 type TimePeriod = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'all';
 
 const RevenueGrowthChart: React.FC = () => {
-  const { data: graph } = useRevenues('revenue-growth');
+  const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('daily');
+
+  // Get the appropriate endpoint based on selected period
+  const getEndpoint = (period: TimePeriod) => {
+    switch (period) {
+      case 'daily':
+      case 'weekly':
+        return 'revenue-growth';
+      case 'monthly':
+        return 'revenue-growth-monthly';
+      case 'yearly':
+        return 'revenue-growth-yearly';
+      case 'all':
+        return 'revenue-growth';
+      default:
+        return 'revenue-growth';
+    }
+  };
+
+  const { data: graph } = useRevenues(getEndpoint(selectedPeriod));
   const { data: revenues } = useRevenues('inflow-earnings');
-  const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('weekly');
 
   console.log(graph,'graph')
 
@@ -29,9 +47,6 @@ const RevenueGrowthChart: React.FC = () => {
     if (!graph) return [];
 
     const revenueData = graph as RevenueData[];
-    // const maxValue = Math.max(...revenueData.map(item => item.amount)) * 1.2;
-    // const tickValues = [0, Math.ceil(maxValue / 4), Math.ceil(maxValue / 2), Math.ceil(maxValue * 3/4), Math.ceil(maxValue)];
-
     return [{
       id: 'Revenue',
       data: revenueData.map(item => ({
@@ -73,6 +88,8 @@ const RevenueGrowthChart: React.FC = () => {
   // Get the period label
   const periodLabel = React.useMemo(() => {
     switch (selectedPeriod) {
+      case 'daily':
+        return 'Today';
       case 'weekly':
         return 'This week';
       case 'monthly':
@@ -84,12 +101,41 @@ const RevenueGrowthChart: React.FC = () => {
     }
   }, [selectedPeriod]);
 
+  const getDateFormat = (period: TimePeriod) => {
+    switch (period) {
+      case 'daily':
+        return 'MMM D';
+      case 'weekly':
+        return 'MMM D';
+      case 'monthly':
+        return 'MMM'; // Changed from 'MMMM' to 'MMM' for abbreviated month names
+      case 'yearly':
+        return 'YYYY';
+      default:
+        return 'MMM D';
+    }
+  };
+
+  // Get the xScale format based on selected period
+  const getXScaleFormat = (period: TimePeriod) => {
+    switch (period) {
+      case 'monthly':
+        return '%Y-%m';
+      case 'yearly':
+        return '%Y';
+      default:
+        return '%Y-%m-%d';
+    }
+  };
+
   const commonProps = {
     margin: { top: 0, right: 20, bottom: 20, left: 50 },
     xScale: {
       type: 'time' as const,
-      format: '%Y-%m-%d',
-      precision: 'day' as const,
+      format: getXScaleFormat(selectedPeriod),
+      precision: selectedPeriod === 'monthly' ? ('month' as const) : 
+                 selectedPeriod === 'yearly' ? ('year' as const) : 
+                 ('day' as const),
       useUTC: false,
     },
     yScale: {
@@ -108,7 +154,8 @@ const RevenueGrowthChart: React.FC = () => {
       legend: '',
       legendOffset: 36,
       legendPosition: 'middle' as const,
-      format: (value: string) => moment(value).format('MMM D'),
+      format: (value: string) => moment(value).format(getDateFormat(selectedPeriod)),
+      tickValues: selectedPeriod === 'monthly' ? 'every 1 month' : undefined, // Add this line
     },
     axisLeft: {
       tickSize: 5,
@@ -176,7 +223,7 @@ const RevenueGrowthChart: React.FC = () => {
           fontSize: '0.875rem'
         }}>
           <div style={{ color: point.serieColor }}>
-            {moment(point.data.x as string).format('MMM D')}
+            {moment(point.data.x as string).format(getDateFormat(selectedPeriod))}
           </div>
           <strong>₦{point?.data?.y?.toLocaleString()}</strong>
         </div>
@@ -197,7 +244,7 @@ const RevenueGrowthChart: React.FC = () => {
           fontSize: '0.875rem'
         }}>
           <div style={{ color: point.serieColor }}>
-            {moment(point.data.x as string).format('MMM D')}
+            {moment(point.data.x as string).format(getDateFormat(selectedPeriod))}
           </div>
           <strong>₦{point?.data?.y?.toLocaleString()}</strong>
         </div>

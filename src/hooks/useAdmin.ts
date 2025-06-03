@@ -432,11 +432,11 @@ export const useDashboardOperators = (date: string = '0') => {
 };
 
 
-export const useRemittedRevenue = () => {
+export const useRemittedRevenue = (date: string = '0') => {
   const { data, isLoading, mutate } = useSWR(
-    `/towings/get-dashboard-ops/`,
+    `/towings/stakeholder-daily-revenue${date}`,
     () => {
-      return getRemittedRevenue().then((res) => {
+      return getRemittedRevenue(date).then((res) => {
         return res?.data;
       });
     },

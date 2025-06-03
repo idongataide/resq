@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Table, type ColumnDefinition } from '@/components/ui/Table';
 import { useRemittedRevenue } from '@/hooks/useAdmin';
 import { StakeholderItemData } from './StakeholderPayoutTable';
@@ -15,10 +15,60 @@ interface RemittedRevenueTableProps {
   onRowClick?: (rowData: any) => void;
 }
 
+type Period = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'all';
+
 const RemittedRevenueTable: React.FC<RemittedRevenueTableProps> = ({ onRowClick }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const { data: revenues, isLoading } = useRemittedRevenue();
+  const [selectedPeriod, setSelectedPeriod] = useState<Period>('daily');
+  const [dateRange, setDateRange] = useState<{ start_date: string; end_date: string }>({
+    start_date: '',
+    end_date: ''
+  });
+
+  // Function to calculate date range based on selected period
+  const calculateDateRange = (period: Period) => {
+    const today = new Date();
+    let startDate = new Date();
+    let endDate = new Date();
+
+    switch (period) {
+      case 'daily':
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
+        break;
+      case 'weekly':
+        startDate.setDate(today.getDate() - 7);
+        break;
+      case 'monthly':
+        startDate.setMonth(today.getMonth() - 1);
+        break;
+      case 'yearly':
+        startDate.setFullYear(today.getFullYear() - 1);
+        break;
+      case 'all':
+        startDate = new Date(0); // Beginning of time
+        endDate = new Date(); // Current date
+        break;
+    }
+
+    setDateRange({
+      start_date: startDate.toISOString().split('T')[0],
+      end_date: endDate.toISOString().split('T')[0]
+    });
+  };
+
+  // Update date range when period changes
+  useEffect(() => {
+    calculateDateRange(selectedPeriod);
+  }, [selectedPeriod]);
+
+  // Format the query string correctly
+  const queryString = dateRange.start_date 
+    ? `?start_date=${dateRange.start_date}&end_date=${dateRange.end_date}`
+    : '';
+
+  const { data: revenues, isLoading } = useRemittedRevenue(queryString);
 
   const handlePageChange = (page: number, size: number) => {
     setCurrentPage(page);
@@ -100,14 +150,52 @@ const RemittedRevenueTable: React.FC<RemittedRevenueTableProps> = ({ onRowClick 
 
   return (
     <div className="mb-6">
-        <div className="py-2 px-4 bg-white rounded-md border-[#E5E9F0] flex justify-between items-center">
-            <h1 className="text-md font-medium mb-0 text-[#344054]">Remitted Revenue (Daily bookings)</h1>
-            <div className="text-sm text-gray-500">
-            <button className="px-3 py-1 text-[#475467] text-xs cursor-pointer rounded-bl-md rounded-tl-md  border border-[#F2F4F7]">Daily</button>
-            <button className="px-3 py-1 text-[#475467] text-xs cursor-pointer  border border-[#F2F4F7]">Weekly</button>
-            <button className="px-3 py-1 text-[#475467] text-xs cursor-pointer rounded-br-md rounded-tr-md  border border-[#F2F4F7]">Monthly</button>
-            </div>
+      <div className="py-2 px-4 bg-white rounded-md border-[#E5E9F0] flex justify-between items-center">
+        <h1 className="text-md font-medium mb-0 text-[#344054]">Remitted Revenue</h1>
+        <div className="text-sm text-gray-500">
+          <button 
+            onClick={() => setSelectedPeriod('daily')}
+            className={`px-3 py-1 text-xs cursor-pointer rounded-bl-md rounded-tl-md border border-[#F2F4F7] ${
+              selectedPeriod === 'daily' ? 'text-[#fff] bg-[#E86229]' : 'text-[#475467]'
+            }`}
+          >
+            Daily
+          </button>
+          <button 
+            onClick={() => setSelectedPeriod('weekly')}
+            className={`px-3 py-1 text-xs cursor-pointer border border-[#F2F4F7] ${
+              selectedPeriod === 'weekly' ? 'text-[#fff] bg-[#E86229]' : 'text-[#475467]'
+            }`}
+          >
+            Weekly
+          </button>
+          <button 
+            onClick={() => setSelectedPeriod('monthly')}
+            className={`px-3 py-1 text-xs cursor-pointer border border-[#F2F4F7] ${
+              selectedPeriod === 'monthly' ? 'text-[#fff] bg-[#E86229]' : 'text-[#475467]'
+            }`}
+          >
+            Monthly
+          </button>
+          <button 
+            onClick={() => setSelectedPeriod('yearly')}
+            className={`px-3 py-1 text-xs cursor-pointer border border-[#F2F4F7] ${
+              selectedPeriod === 'yearly' ? 'text-[#fff] bg-[#E86229]' : 'text-[#475467]'
+            }`}
+          >
+            Yearly
+          </button>
+          <button 
+            onClick={() => setSelectedPeriod('all')}
+            className={`px-3 py-1 text-xs cursor-pointer rounded-br-md rounded-tr-md border border-[#F2F4F7] ${
+              selectedPeriod === 'all' ? 'text-[#fff] bg-[#E86229]' : 'text-[#475467]'
+            }`}
+          >
+            All time
+          </button>
         </div>
+      </div>
+      
       <Table
         columns={columns}
         data={paginatedData}
@@ -123,4 +211,4 @@ const RemittedRevenueTable: React.FC<RemittedRevenueTableProps> = ({ onRowClick 
   );
 };
 
-export default RemittedRevenueTable; 
+export default RemittedRevenueTable;

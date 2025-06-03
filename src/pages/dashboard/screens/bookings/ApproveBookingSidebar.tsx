@@ -46,8 +46,14 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
   const latitude = booking?.start_coord?.latitude;
 
   const { data: drivers, isLoading: isLoadingDrivers } = useGetDriversByOperatorId(towingOperator);
-  const { data: services, isLoading: isLoadingServices } = useAllService(serviceType);
   const { data: assets, isLoading: isLoadingAssets } = useGetAssetsbyCord(longitude, latitude);
+  
+  // Format the query string correctly
+  const queryString =  `?component?type=${serviceType}&operator_id=${towingOperator}`
+  
+  
+  const { data: services, isLoading: isLoadingServices } = useAllService(queryString);
+
 
   useEffect(() => {
       setDriver(undefined);

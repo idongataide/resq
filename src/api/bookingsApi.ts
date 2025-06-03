@@ -49,10 +49,10 @@ export const getDashboardOperators = async (date: string) => {
 };
 
 
-export const getRemittedRevenue = async () => {
+export const getRemittedRevenue = async (date: string) => {
   try {
     return await axiosAPIInstance
-      .get(`/towings/stakeholder-daily-revenue/`)
+      .get(`/towings/stakeholder-daily-revenue${date}`)
       .then((res) => {
         return res?.data;
       });

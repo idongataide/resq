@@ -60,8 +60,6 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
   fees,
   mutate
 }) => {
-  const { data: services } = useAllService(booking?.vehicle_reg);
-  const [serviceType, setServiceType] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
 
   const pickupFee = fees?.find(fee => fee.tag === 'PICK_UP_FEE')?.amount || 0;
@@ -113,14 +111,6 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
     }
   };
 
-  useEffect(() => {
-    if (services && booking?.service_id) {
-      const selectedService = services.find((s: any) => s.service_id === booking.service_id);
-      if (selectedService) {
-        setServiceType(selectedService.service_type);
-      }
-    }
-  }, [services, booking?.service_id]);
 
   if (!isOpen || !booking) {
     return null;

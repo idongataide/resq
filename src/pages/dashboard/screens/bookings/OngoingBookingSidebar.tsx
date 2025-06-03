@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useAllService } from '@/hooks/useAdmin';
+import React, { useState } from 'react';
 import { confirmPickupArrival, confirmDestinationArrival } from '@/api/settingsApi';
 import toast from 'react-hot-toast';
 

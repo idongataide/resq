@@ -69,27 +69,31 @@ const CancelledBookingsSidebar: React.FC<CancelledBookingsSidebarProps> = ({
 
           {/* Vehicle Details */}
           <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">
-             <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
-                <div className=''>
+           <div className="grid grid-cols-[1fr_2fr] gap-4 text-sm text-[#475467]">
+             <div className=''>
                   <p className="font-normal mb-3 text-[#667085]">Vehicle model</p>
                   <p className="font-normal mb-3 text-[#667085]">Vehicle colour</p>
                   <p className="font-normal mb-3 text-[#667085]">Number plate</p>
                   <p className="font-normal mb-3 text-[#667085]">Reason for towing</p>
-                  <p className="font-normal  text-[#667085]">Vehicle loading status</p>
+                  <p className="font-normal mb-3 text-[#667085]">Veh. loading status</p>
+                  <p className="font-normal mb-3 text-[#667085]">Reason for Rejection</p>
+                  <p className="font-normal  text-[#667085]">Rejected By</p>
                 </div>
                  <div className='text-right'>
                   <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.vehicle_model}</p>
                   <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.vehicle_color}</p>
                   <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.plate_number}</p>
                   <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.tow_reason}</p>
-                  <p className='font-normal  text-[#475467] capitalize'>{booking?.vehicle_loaded === 1 ? 'Loaded' : 'Unloaded'}</p>
+                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.vehicle_loaded === 1 ? 'Loaded' : 'Unloaded'}</p>
+                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.cancel_data?.reason}</p>
+                  <p className='font-normal  text-[#475467] capitalize'>{booking?.cancel_data?.cancel_by}</p>
                 </div>
              </div>
           </div>
 
           {/* Pickup and Destination */}
            <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">
-            <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
+            <div className="grid grid-cols-[1fr_2fr] gap-4 text-sm text-[#475467]">
               <div className=''>
                 <p className="font-normal mb-3 text-[#667085]">Pickups</p>
                 <p className="font-normal mb-3 text-[#667085]">Destination</p>

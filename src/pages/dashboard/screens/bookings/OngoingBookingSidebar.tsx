@@ -225,8 +225,8 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
           </div>
 
           <div className="bg-white rounded-lg border border-[#E5E9F0] p-4 mb-3">
-            <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
-              <div>
+          <div className="grid grid-cols-[1fr_2fr] gap-4 text-sm text-[#475467]">
+            <div>
                 <p className="font-normal mb-3 text-[#667085]">Pickup</p>
                 <p className="font-normal text-[#667085]">Destination</p>
               </div>

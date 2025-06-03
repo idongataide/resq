@@ -284,16 +284,16 @@ const RevenueGrowthChart: React.FC = () => {
           </button>
           <button 
             onClick={() => setSelectedPeriod('yearly')}
-            className={`px-3 py-1 text-[#475467] text-xs cursor-pointer border ${selectedPeriod === 'yearly' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'border-[#F2F4F7]'}`}
+            className={`px-3 py-1 text-[#475467] text-xs cursor-pointer rounded-br-md rounded-tr-md border ${selectedPeriod === 'yearly' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'border-[#F2F4F7]'}`}
           >
             Yearly
           </button>
-          <button 
+          {/* <button 
             onClick={() => setSelectedPeriod('all')}
             className={`px-3 py-1 text-[#475467] text-xs cursor-pointer rounded-br-md rounded-tr-md border ${selectedPeriod === 'all' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'border-[#F2F4F7]'}`}
           >
             All time
-          </button>
+          </button> */}
         </div>
       </div>
 

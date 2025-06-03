@@ -248,36 +248,31 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
             </div>
           </div>
 
-          <div className="bg-white rounded-lg border border-[#E5E9F0] p-4 mb-3">
-            <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
-              <div>
-                <p className="font-normal mb-3 text-[#667085]">Towing Operator</p>
-                <p className="font-normal mb-3 text-[#667085]">Service type</p>
-                <p className="font-normal mb-3 text-[#667085]">Service</p>
-                <p className="font-normal mb-3 text-[#667085]">Vehicle assets</p>
-                <p className="font-normal mb-3 text-[#667085]">Approx. Distance</p>
-                <p className="font-normal mb-3 text-[#667085]">Service cost</p>
-                <p className="font-normal mb-3 text-[#667085]">Pickup (Cost/km)</p>
-                <p className="font-normal text-[#667085]">Drop off (Cost/km)</p>
-              </div>
-              <div className='text-right'>
-                <p className='mb-3 capitalize'>{booking?.operator?.name || 'N/A'}</p>
-                <p className='mb-3 capitalize'>{serviceType || 'N/A'}</p>
-                <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.service_data?.service_type || 'N/A'}</p>
-                <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.service_data?.name || 'N/A'}</p>
-                <p className='mb-3 capitalize'>{booking?.asset_data?.plate_number || 'N/A'}</p>
-                <p className='mb-3 capitalize'>₦{booking?.service_fee?.toLocaleString() || 'N/A'}</p>
-                <p className='mb-3 capitalize'>{booking?.drop_off_dst}km</p>
-                <p className='mb-3'>₦{pickupFee}/km</p>
-                <p>₦{dropoffFee}/km</p>
-              </div>
-              <div className="w-100">
-                <div className="flex justify-between text-[#667085] text-base font-medium">
-                    <span>Total cost</span>
-                    <span>₦{booking?.total_cost?.toLocaleString() || 'N/A'}</span>
+          <div className="mb-6 p-4 border border-[#E5E9F0] rounded-lg">
+             <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
+                <div className=''>
+                  <p className="font-normal mb-3 text-[#667085]">Towing operator</p>
+                  <p className="font-normal mb-3 text-[#667085]">Service type</p>
+                  <p className="font-normal mb-3 text-[#667085]">Service</p>
+                  <p className="font-normal mb-3 text-[#667085]">Vehicle assets</p>
+                  <p className="font-normal mb-3 text-[#667085]">Approx. Distance</p>
+                  <p className="font-normal mb-3 text-[#667085]">Service Cost</p>
+                  <p className="font-normal mb-3 text-[#667085]">Pickup (Cost/Km)</p>
+                  <p className="font-normal mb-3 text-[#667085]">Drop off (Cost/Km)</p>
+                  <p className="font-medium  text-[#667085]">Total</p>
                 </div>
-            </div>
-            </div>
+                 <div className='text-right'>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.operator?.name || 'N/A'}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.service_data?.service_type || 'N/A'}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.service_data?.name || 'N/A'}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.asset_data?.plate_number || 'N/A'}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.drop_off_dst}km</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>₦{booking?.service_fee?.toLocaleString() || 'N/A'}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>₦{pickupFee}/km</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>₦{dropoffFee}/km</p>
+                  <p className='font-bold mb-3 text-[#475467] capitalize'>₦{booking?.est_fare?.toLocaleString() || 'N/A'}</p>
+                </div>
+             </div>
           </div>
 
           

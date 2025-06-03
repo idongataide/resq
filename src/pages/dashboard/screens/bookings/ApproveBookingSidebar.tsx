@@ -169,9 +169,9 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
                   <p className="font-normal  text-[#667085]">Phone number</p>
                 </div>
                  <div className='text-right'>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.user_data?.first_name} {booking?.user_data?.last_name}</p>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.user_data?.email || 'N/A'}</p>
-                  <p className='font-normal  text-[#475467] capitalize'>{booking?.user_data?.phone_number || 'N/A'}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.user_data?.first_name} {booking?.user_data?.last_name}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.user_data?.email || 'N/A'}</p>
+                  <p className='font-medium  text-[#475467] capitalize'>{booking?.user_data?.phone_number || 'N/A'}</p>
                 </div>
              </div>
           </div>
@@ -186,11 +186,11 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
                   <p className="text-[#667085]">Vehicle loading status</p>
                 </div>
                  <div className='text-right'>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.vehicle_model}</p>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.vehicle_color}</p>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.plate_number}</p>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.tow_reason}</p>
-                  <p className='font-normal text-[#475467] capitalize'>{booking?.vehicle_loaded === 1 ? 'Loaded' : 'Unloaded'}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.vehicle_model}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.vehicle_color}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.plate_number}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.tow_reason}</p>
+                  <p className='font-medium text-[#475467] capitalize'>{booking?.vehicle_loaded === 1 ? 'Loaded' : 'Unloaded'}</p>
                 </div>
              </div>
           </div>

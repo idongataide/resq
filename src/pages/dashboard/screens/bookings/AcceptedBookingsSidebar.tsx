@@ -62,9 +62,9 @@ const AcceptedBookingsSidebar: React.FC<AcceptedBookingsSidebarProps> = ({
                   <p className="font-normal mb-3 text-[#667085]">Phone number</p>
                 </div>
                  <div className='text-right'>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.user_data?.first_name} {booking?.user_data?.last_name}</p>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.user_data?.email || 'N/A'}</p>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.user_data?.phone_number || 'N/A'}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.user_data?.first_name} {booking?.user_data?.last_name}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.user_data?.email || 'N/A'}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.user_data?.phone_number || 'N/A'}</p>
                 </div>
              </div>
           </div>
@@ -79,11 +79,11 @@ const AcceptedBookingsSidebar: React.FC<AcceptedBookingsSidebarProps> = ({
                   <p className="font-normal  text-[#667085]">Vehicle loading status</p>
                 </div>
                  <div className='text-right'>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.vehicle_model}</p>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.vehicle_color}</p>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.plate_number}</p>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.tow_reason}</p>
-                  <p className='font-normal  text-[#475467] capitalize'>{booking?.vehicle_loaded === 1 ? 'Loaded' : 'Unloaded'}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.vehicle_model}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.vehicle_color}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.plate_number}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.tow_reason}</p>
+                  <p className='font-medium  text-[#475467] capitalize'>{booking?.vehicle_loaded === 1 ? 'Loaded' : 'Unloaded'}</p>
                 </div>
              </div>
           </div>
@@ -97,9 +97,9 @@ const AcceptedBookingsSidebar: React.FC<AcceptedBookingsSidebarProps> = ({
 
               </div>
               <div className='text-right'>
-                <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.start_address}</p>
-                <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.end_address}</p>
-                <p className='font-normal  text-[#475467] capitalize'>{booking?.landmark}</p>
+                <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.start_address}</p>
+                <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.end_address}</p>
+                <p className='font-medium  text-[#475467] capitalize'>{booking?.landmark}</p>
               </div>
             </div>
           </div>
@@ -114,17 +114,19 @@ const AcceptedBookingsSidebar: React.FC<AcceptedBookingsSidebarProps> = ({
                   <p className="font-normal mb-3 text-[#667085]">Approx. Distance</p>
                   <p className="font-normal mb-3 text-[#667085]">Service Cost</p>
                   <p className="font-normal mb-3 text-[#667085]">Pickup (Cost/Km)</p>
-                  <p className="font-normal  text-[#667085]">Drop off (Cost/Km)</p>
+                  <p className="font-normal mb-3 text-[#667085]">Drop off (Cost/Km)</p>
+                  <p className="font-medium  text-[#667085]">Total</p>
                 </div>
                  <div className='text-right'>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.operator?.name || 'N/A'}</p>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.service_data?.service_type || 'N/A'}</p>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.service_data?.name || 'N/A'}</p>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.asset_data?.plate_number || 'N/A'}</p>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.drop_off_dst?.toFixed(2)}km</p>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>₦{booking?.service_fee?.toLocaleString() || 'N/A'}</p>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>₦{pickupFee}/km</p>
-                  <p className='font-normal  text-[#475467] capitalize'>₦{dropoffFee}/km</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.operator?.name || 'N/A'}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.service_data?.service_type || 'N/A'}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.service_data?.name || 'N/A'}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.asset_data?.plate_number || 'N/A'}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.drop_off_dst}km</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>₦{booking?.service_fee?.toLocaleString() || 'N/A'}</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>₦{pickupFee}/km</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>₦{dropoffFee}/km</p>
+                  <p className='font-bold mb-3 text-[#475467] capitalize'>₦{booking?.est_fare?.toLocaleString() || 'N/A'}</p>
                 </div>
              </div>
           </div>

@@ -18,18 +18,12 @@ interface RemittedRevenueTableProps {
 const RemittedRevenueTable: React.FC<RemittedRevenueTableProps> = ({ onRowClick }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-
   const { data: revenues, isLoading } = useRemittedRevenue();
-
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
 
   const handlePageChange = (page: number, size: number) => {
     setCurrentPage(page);
     setPageSize(size);
   };
-  
 
   const processedData = useMemo(() => {
     if (!revenues) return { data: [], columns: [] };
@@ -83,8 +77,9 @@ const RemittedRevenueTable: React.FC<RemittedRevenueTableProps> = ({ onRowClick 
   const { data: tableData, columns } = processedData;
 
   const paginatedData = useMemo(() => {
+    if (!tableData) return [];
     const startIndex = (currentPage - 1) * pageSize;
-    return tableData?.slice(startIndex, startIndex + pageSize);
+    return tableData.slice(startIndex, startIndex + pageSize);
   }, [currentPage, pageSize, tableData]);
 
   const handleRowClick = (id: string) => {
@@ -98,6 +93,10 @@ const RemittedRevenueTable: React.FC<RemittedRevenueTableProps> = ({ onRowClick 
       onRowClick(clickedRowData);
     }
   };
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <div className="mb-6">

@@ -18,25 +18,21 @@ export interface StakeholderItemData {
   };
 }
 
-
 const StakeholderPayoutTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const { data: itemsData, isLoading } = useStakeholderPayouts();
 
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
+  const paginatedData = useMemo(() => {
+    if (!itemsData) return [];
+    const startIndex = (currentPage - 1) * pageSize;
+    return itemsData.slice(startIndex, startIndex + pageSize);
+  }, [currentPage, pageSize, itemsData]);
 
   const handlePageChange = (page: number, size: number) => {
     setCurrentPage(page);
     setPageSize(size);
   };
-
-  const paginatedData = useMemo(() => {
-    const startIndex = (currentPage - 1) * pageSize;
-    return itemsData?.slice(startIndex, startIndex + pageSize);
-  }, [currentPage, pageSize, itemsData]);
 
   const columns: Array<ColumnDefinition<StakeholderItemData>> = [
     {
@@ -81,6 +77,10 @@ const StakeholderPayoutTable: React.FC = () => {
       render: (bank_info: StakeholderItemData['bank_info']) => bank_info?.bank_data?.account_number || 'N/A',
     },
   ];
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <div className="mb-6">

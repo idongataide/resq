@@ -22,6 +22,8 @@ const RevenueGrowthChart: React.FC = () => {
   const { data: revenues } = useRevenues('inflow-earnings');
   const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('weekly');
 
+  console.log(graph,'graph')
+
   // Transform the API data into the format required by nivo
   const transformedData = React.useMemo(() => {
     if (!graph) return [];

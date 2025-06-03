@@ -1,15 +1,65 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
+import { useAllBookingsCount } from "@/hooks/useAdmin";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
+type Period = 'daily' | 'weekly' | 'monthly';
+
 const PerformanceRateChart: React.FC = () => {
-  // Booking data: 62% Successful, 22% Pending, 16% Rejected
+  const [selectedPeriod, setSelectedPeriod] = useState<Period>('daily');
+  const [dateRange, setDateRange] = useState<{ start_date: string; end_date: string }>({
+    start_date: '',
+    end_date: ''
+  });
+
+  // Function to calculate date range based on selected period
+  const calculateDateRange = (period: Period) => {
+    const today = new Date();
+    let startDate = new Date();
+    let endDate = new Date();
+
+    switch (period) {
+      case 'daily':
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
+        break;
+      case 'weekly':
+        startDate.setDate(today.getDate() - 7);
+        break;
+      case 'monthly':
+        startDate.setMonth(today.getMonth() - 1);
+        break;
+    }
+
+    setDateRange({
+      start_date: startDate.toISOString().split('T')[0],
+      end_date: endDate.toISOString().split('T')[0]
+    });
+  };
+
+  // Update date range when period changes
+  useEffect(() => {
+    calculateDateRange(selectedPeriod);
+  }, [selectedPeriod]);
+
+  const { data: bookingsCount } = useAllBookingsCount(`count-status&start_date=${dateRange.start_date}&end_date=${dateRange.end_date}`);
+
+  // Calculate percentages based on total bookings
+  const total = bookingsCount?.total || 0;
+  const completed = bookingsCount?.completed || 0;
+  const pending = bookingsCount?.pending || 0;
+  const cancelled = bookingsCount?.cancelled || 0;
+
+  const completedPercentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+  const pendingPercentage = total > 0 ? Math.round((pending / total) * 100) : 0;
+  const cancelledPercentage = total > 0 ? Math.round((cancelled / total) * 100) : 0;
+
   const bookingData = [
-    { label: 'Successful', percentage: 62, color: '#34B27B' }, // Green
-    { label: 'Pending', percentage: 22, color: '#CE4B4B' }, // Yellow
-    { label: 'Rejected', percentage: 16, color: '#EFC15D' }, // Red
+    { label: 'Completed', percentage: completedPercentage, color: '#34B27B' }, // Green
+    { label: 'Pending', percentage: pendingPercentage, color: '#EFC15D' }, // Yellow
+    { label: 'Cancelled', percentage: cancelledPercentage, color: '#CE4B4B' }, // Red
   ];
 
   const data = {
@@ -27,10 +77,10 @@ const PerformanceRateChart: React.FC = () => {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
-    cutout: '70%', // Add cutout to make it a doughnut chart
+    cutout: '70%',
     plugins: {
       legend: {
-        display: false, // Hide default legend as we have a custom one
+        display: false,
       },
       tooltip: {
         callbacks: {
@@ -49,9 +99,30 @@ const PerformanceRateChart: React.FC = () => {
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-md font-semibold text-[#344054]">Performance rate</h3>
         <div className="text-sm text-gray-500">
-          <button className="px-3 py-1 text-[#475467] text-xs cursor-pointer rounded-bl-md rounded-tl-md  border border-[#F2F4F7]">Daily</button>
-          <button className="px-3 py-1 text-[#475467] text-xs cursor-pointer  border border-[#F2F4F7]">Weekly</button>
-          <button className="px-3 py-1 text-[#475467] text-xs cursor-pointer rounded-br-md rounded-tr-md  border border-[#F2F4F7]">Monthly</button>
+          <button 
+            onClick={() => setSelectedPeriod('daily')}
+            className={`px-3 py-1 text-xs cursor-pointer rounded-bl-md rounded-tl-md border border-[#F2F4F7] ${
+              selectedPeriod === 'daily' ? 'text-[#fff] bg-[#E86229]' : 'text-[#475467]'
+            }`}
+          >
+            Daily
+          </button>
+          <button 
+            onClick={() => setSelectedPeriod('weekly')}
+            className={`px-3 py-1 text-xs cursor-pointer border border-[#F2F4F7] ${
+              selectedPeriod === 'weekly' ? 'text-[#fff] bg-[#E86229]' : 'text-[#475467]'
+            }`}
+          >
+            Weekly
+          </button>
+          <button 
+            onClick={() => setSelectedPeriod('monthly')}
+            className={`px-3 py-1 text-xs cursor-pointer rounded-br-md rounded-tr-md border border-[#F2F4F7] ${
+              selectedPeriod === 'monthly' ? 'text-[#fff] bg-[#E86229]' : 'text-[#475467]'
+            }`}
+          >
+            Monthly
+          </button>
         </div>
       </div>
 
@@ -59,8 +130,8 @@ const PerformanceRateChart: React.FC = () => {
         <div className="w-[168px] h-[168px] flex items-center justify-center relative">
            <Pie data={data} options={options} />
            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-              <div className="text-xl font-bold text-[#475467]">62%</div>
-              <div className="text-sm text-[#667085]">Successful booking</div>
+              <div className="text-xl font-bold text-[#475467]">{completedPercentage}%</div>
+              <div className="text-sm text-[#667085]">Completed booking</div>
            </div>
         </div>
         

@@ -206,6 +206,15 @@ export const getStakeholders = async () => {
   }
 };
 
+export const getNotifications = async () => {
+  try {
+    const response = await axiosAPIInstance.get('/accounts/notification');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const addStakeholder = async (data: { 
   name: string;
   bank_name: string;

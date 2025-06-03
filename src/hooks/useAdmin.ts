@@ -1,7 +1,7 @@
 import { getBookings, getBookingsCount, getDailyPayout, getDashboardOperators, getRemittedRevenue, getRevenues } from "@/api/bookingsApi";
 import { getCustomerCount, getCustomers, getCustomersDetails } from "@/api/customersApi";
 import { getOperators, getOperatorData, getDrivers, getDriversByOperatorId, getAssetsbyCordinate, getAssets, getOperatorCount, getAssetsByOperatorId } from "@/api/operatorsApi";
-import { getFees, getFeesCategory, getProfile, getServices, getFeesCount, getServicesCount, getStakeholdersCount, getBisProcessList } from "@/api/settingsApi";
+import { getFees, getFeesCategory, getProfile, getServices, getFeesCount, getServicesCount, getStakeholdersCount, getBisProcessList, getNotifications } from "@/api/settingsApi";
 import { getTeams, getTeamsCount } from "@/api/teamsApi";
 import { getTransactionCount, TransactionList } from "@/api/transactionsApi";
 import { getBanksList } from "@/api/banks";
@@ -364,6 +364,23 @@ export const useAdminProfile = () => {
   return { data, isLoading, mutate };
 };
 
+export const useGetNotification = () => {
+    const { data, isLoading, mutate } = useSWR(
+      `/accounts/notification`,
+      () => {
+        return getNotifications().then((res) => {
+          return res?.data;
+        });
+      },
+  
+      {
+        revalidateOnFocus: false,
+      },
+    );
+  
+    return { data, isLoading, mutate };
+  };
+
 export const useAllTeamsCount = (countStatus: string = '0') => {
   const { data, isLoading, mutate } = useSWR(
     `/accounts/admin-user?component=${countStatus}`,
@@ -395,6 +412,7 @@ export const useAllTransCount = (countStatus: string = '0') => {
 
   return { data, isLoading, mutate };
 };
+
 
 export const useDashboardOperators = () => {
   const { data, isLoading, mutate } = useSWR(

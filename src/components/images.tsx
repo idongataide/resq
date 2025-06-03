@@ -24,6 +24,7 @@ const Images = {
       siderIcon: "/images/Expand icon.svg",
       filter: "/images/icons/filter.svg",
       medal: "/images/medal.svg",
+      fav: "/images/icons/fav.svg",
     },
   };
   

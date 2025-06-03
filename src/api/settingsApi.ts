@@ -143,7 +143,13 @@ export const deleteFee = async (feeId: string) => {
   }
 };
 
-export const addService = async (data: { amount: string; type: string; name: string; otp: string }) => {
+export const addService = async (data: { 
+  amount: string; 
+  type: string; 
+  name: string; 
+  otp: string;
+  operator_id?: string;
+}) => {
   try {
     return await axiosAPIInstance
       .post(`/settings/services`, data)

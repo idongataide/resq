@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, Select } from 'antd';
 import ConfirmOperator from '@/pages/dashboard/screens/setup/2FA';
 import toast from 'react-hot-toast';
 import { useSWRConfig } from 'swr';
 import { addService } from '@/api/settingsApi';
+import { useAllOperators } from '@/hooks/useAdmin';
 
 
 interface AddServiceCostFormProps {
@@ -15,6 +16,7 @@ interface FormValues {
   name: string;
   amount: string;
   type: 'Private' | 'Commercial';
+  operator_id?: string;
 }
 
 const AddServiceCostForm: React.FC<AddServiceCostFormProps> = ({
@@ -26,6 +28,7 @@ const AddServiceCostForm: React.FC<AddServiceCostFormProps> = ({
   const [show2FA, setShow2FA] = useState(false);
   const [formValues, setFormValues] = useState<FormValues | null>(null);
   const [type, setType] = useState<'Private' | 'Commercial'>('Private');
+  const { data: operators, isLoading: isLoadingOperators } = useAllOperators();
 
   const { mutate: globalMutate } = useSWRConfig();
 
@@ -43,6 +46,7 @@ const AddServiceCostForm: React.FC<AddServiceCostFormProps> = ({
         name: formValues.name,
         amount: formValues.amount,
         type: formValues.type,
+        operator_id: formValues.operator_id,
         otp: otp,
       });
 
@@ -92,6 +96,25 @@ const AddServiceCostForm: React.FC<AddServiceCostFormProps> = ({
                   <div className="form-section mb-4">
                     <h3 className="text-md font-medium text-[#475467] mb-3">Enter required details</h3>
                     <div className='border border-[#F2F4F7] p-3 rounded-lg'>
+
+                      <Form.Item
+                        name="operator_id"
+                        label="Operator"
+                      >
+                        <Select
+                          placeholder="Select operator"
+                          className="!h-[42px] "
+                          loading={isLoadingOperators}
+                          allowClear
+                        >
+                          {operators?.map((operator: any) => (
+                            <Select.Option key={operator.assetco_id} className="capitalize" value={operator.assetco_id}>
+                              {operator.name}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                      
                       <Form.Item
                         name="name"
                         label="Service Name"
@@ -110,6 +133,8 @@ const AddServiceCostForm: React.FC<AddServiceCostFormProps> = ({
                       >
                         <Input type="number" placeholder="Enter details" className="!h-[42px]" />
                       </Form.Item>
+
+                      
 
                       <Form.Item
                         name="type"

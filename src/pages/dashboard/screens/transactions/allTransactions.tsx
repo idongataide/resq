@@ -59,7 +59,7 @@ const AllTransactions: React.FC = () => {
       dataIndex: "user_data",
       key: "customer",
       render: (_, record) => (
-        <span>{record.user_data?.first_name} {record.user_data?.last_name || 'N/A'}</span>
+        <span>{record?.user_data?.first_name} {record?.user_data?.last_name || 'N/A'}</span>
       ),
     },
     {
@@ -67,7 +67,7 @@ const AllTransactions: React.FC = () => {
       dataIndex: "vehicle_model",
       key: "vehicle_model",
       render: (_, record) => (
-        <span>{record.booking_data?.vehicle_model} </span>
+        <span>{record?.booking_data?.vehicle_model} </span>
       ),
     },
     {
@@ -148,15 +148,15 @@ const AllTransactions: React.FC = () => {
       <Table
         columns={columns as ColumnDefinition<{ id: string }>[]}
         data={formattedTransactions.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
-        pagination={formattedTransactions.length > pageSize ? {
+        pagination={formattedTransactions?.length > pageSize ? {
           current: currentPage,
           pageSize: pageSize,
-          total: formattedTransactions.length,
+          total: formattedTransactions?.length,
           onChange: handlePageChange,
         } : undefined}
         showActions
         onRowClick={(id: string) => {
-           const selected = formattedTransactions.find((transaction: Transaction & { id: string | number }) => transaction.id === id);
+           const selected = formattedTransactions?.find((transaction: Transaction & { id: string | number }) => transaction.id === id);
            if (selected) {
              handleViewTransaction(selected as Transaction);
            }

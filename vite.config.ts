@@ -24,10 +24,10 @@ export default defineConfig(({ mode }) => {
       },
       proxy: {
         '/admins': {
-          target: 'https://resq-user.onrender.com',
+          target: 'https://resq-user.onrender.com/',
           changeOrigin: true,
           secure: false,
-          // Remove rewrite if you want to keep the /admins prefix
+          rewrite: (path) => path
         },
         '/maps': {
           target: 'https://maps.googleapis.com',

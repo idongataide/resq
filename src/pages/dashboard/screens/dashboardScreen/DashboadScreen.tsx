@@ -21,11 +21,11 @@ const DashboadScreen: React.FC = () => {
         </div>
       </main>
 
-        <div className="col-span-1 mt-10">
+        <div className="col-span-1 mt-">
           <LagosHotspotsMap />
         </div>         
       
-       <div className="col-span-1 mt-10">
+       <div className="col-span-1 mt-7">
           <TopOperatorsTable />
        </div>
     </div>

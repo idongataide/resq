@@ -8,7 +8,8 @@ export interface StakeholderItemData {
   id: string;
   name: string;
   amount: number;
-  date  : string;
+  date: string;
+  status: number;
   bank_info: {
     bank_data: {
       bank_name: string;
@@ -111,7 +112,8 @@ const StakeholderPayoutTable: React.FC = () => {
       title: "Amount due",
       dataIndex: "amount",
       key: "amountDue",
-      render: (value: number) => `₦${value?.toLocaleString() || 'N/A'}`,
+      render: (value: number, record: StakeholderItemData) => 
+        record?.status === 0 || record?.status === 4 ? null : `₦${value?.toLocaleString() || 'N/A'}`,
     },
     {
       title: "Bank name",

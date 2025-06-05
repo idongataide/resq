@@ -10,6 +10,7 @@ import { useAllOperators } from '@/hooks/useAdmin';
 interface AddServiceCostFormProps {
   isOpen: boolean;
   onClose: () => void;
+  onServiceAdded?: () => void;
 }
 
 interface FormValues {
@@ -22,6 +23,7 @@ interface FormValues {
 const AddServiceCostForm: React.FC<AddServiceCostFormProps> = ({
   isOpen,
   onClose,
+  onServiceAdded,
 }) => {
   const [form] = Form.useForm<FormValues>();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -53,6 +55,8 @@ const AddServiceCostForm: React.FC<AddServiceCostFormProps> = ({
       if (response?.status === 'ok') {
         toast.success('Service cost added successfully');
         globalMutate('/settings/services');
+        globalMutate('/settings/services?component=count');
+        onServiceAdded?.();
         onClose();
       } else {
         const errorMsg = response?.response?.data?.msg;

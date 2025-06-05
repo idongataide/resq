@@ -160,3 +160,19 @@ export const deleteDriver = async (uid: string) => {
     return error;
   }
 };
+
+export const bulkUploadOperators = async (formData: FormData) => {
+  try {
+    return await axiosAPIInstance
+      .post(`/users/bulk-operator-upload`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};

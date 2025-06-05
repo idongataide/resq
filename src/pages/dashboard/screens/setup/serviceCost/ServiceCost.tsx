@@ -2,14 +2,20 @@ import AddServiceCostForm from './AddServiceCostForm';
 import ServiceCostTable from './ServiceCostTable';
 import { FaAngleLeft, FaPlus, FaUsers } from 'react-icons/fa';
 import { useState } from 'react';
-import { useServicesCount } from '@/hooks/useAdmin';
+import { useServicesCount, useServices } from '@/hooks/useAdmin';
 
 const ServiceCost: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const { data: countData } =  useServicesCount();
+  const { data: countData, mutate: mutateCount } = useServicesCount();
+  const { mutate: mutateServices } = useServices();
  
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen); 
+  };
+
+  const handleServiceAdded = () => {
+    mutateServices();
+    mutateCount();
   };
 
   return (
@@ -49,7 +55,7 @@ const ServiceCost: React.FC = () => {
 
     </div>
 
-    <AddServiceCostForm isOpen={isSidebarOpen} onClose={toggleSidebar} />
+    <AddServiceCostForm isOpen={isSidebarOpen} onClose={toggleSidebar} onServiceAdded={handleServiceAdded} />
 
     
   </main>

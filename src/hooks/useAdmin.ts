@@ -1,7 +1,7 @@
 import { getBookings, getBookingsCount, getDailyPayout, getDashboardOperators, getRemittedRevenue, getRevenues } from "@/api/bookingsApi";
 import { getCustomerCount, getCustomers, getCustomersDetails } from "@/api/customersApi";
 import { getOperators, getOperatorData, getDrivers, getDriversByOperatorId, getAssetsbyCordinate, getAssets, getOperatorCount, getAssetsByOperatorId } from "@/api/operatorsApi";
-import { getFees, getFeesCategory, getProfile, getServices, getFeesCount, getServicesCount, getStakeholdersCount, getBisProcessList, getNotifications } from "@/api/settingsApi";
+import { getFees, getFeesCategory, getProfile, getServices, getFeesCount, getServicesCount, getStakeholdersCount, getBisProcessList, getNotifications, getStakeholders } from "@/api/settingsApi";
 import { getTeams, getTeamsCount } from "@/api/teamsApi";
 import { getTransactionCount, TransactionList } from "@/api/transactionsApi";
 import { getBanksList } from "@/api/banks";
@@ -319,7 +319,7 @@ export const useServices = () => {
     `/settings/services`,
     () => {
       return getServices('').then((res) => {
-        return res?.data;
+        return res;
       });
     },
     {
@@ -332,13 +332,12 @@ export const useServices = () => {
 
 export const useFees = () => {
   const { data, isLoading, mutate } = useSWR(
-    `/settings/fees/`,
+    '/settings/fees',
     () => {
       return getFees().then((res) => {
-        return res?.data;
+        return res;
       });
     },
-
     {
       revalidateOnFocus: false,
     },
@@ -494,7 +493,7 @@ export const useFeesCount = () => {
       });
     },
     {
-      revalidateOnFocus: false,
+      revalidateOnFocus: true,
     }
   );
   return { data, isLoading, mutate };
@@ -534,7 +533,7 @@ export const useServicesCount = () => {
 
 export const useStakeholdersCount = () => {
     const { data, isLoading, mutate } = useSWR(
-      `/settings/stakeholders?component=count`,
+      `/users/stakeholders?component=count`,
       () => {
         return getStakeholdersCount().then((res) => {
           return res;
@@ -592,4 +591,20 @@ export const useLagosCities = () => {
   ];
 
   return { data: cities, isLoading: false };
+};
+
+export const useStakeholders = () => {
+  const { data, isLoading, mutate } = useSWR(
+    `/users/stakeholders`,
+    () => {
+      return getStakeholders().then((res) => {
+        return res?.data;
+      });
+    },
+    {
+      revalidateOnFocus: false,
+    },
+  );
+
+  return { data, isLoading, mutate };
 };

@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Table, type ColumnDefinition } from '@/components/ui/Table';
 import { MdOutlineEdit as IconEdit } from 'react-icons/md';
 import { MdOutlineDeleteOutline as IconDelete } from 'react-icons/md';
-import { useServices } from '@/hooks/useAdmin';
+import { useServices, useServicesCount } from '@/hooks/useAdmin';
 import { deleteService } from '@/api/settingsApi';
 import toast, { Toaster } from 'react-hot-toast';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
@@ -22,13 +22,16 @@ interface ServiceItem {
 
 const ServiceCostTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [serviceToDelete, setServiceToDelete] = useState<ServiceItem | null>(null);
   const [showEditModal, setShowEditModal] = useState(false); // For Edit functionality
   const [serviceToEdit, setServiceToEdit] = useState<ServiceItem | null>(null); // For Edit functionality
-  const { data: servicesList, mutate } = useServices();
+  const { data: servicesList, mutate: mutateServices } = useServices();
+  const { mutate: mutateCount } = useServicesCount();
+
+  console.log(servicesList, 'servicesList');
 
   const handleDeleteClick = (service: ServiceItem) => {
     setServiceToDelete(service);
@@ -44,7 +47,8 @@ const ServiceCostTable: React.FC = () => {
 
       if (response) {
         toast.success('Service cost deleted successfully');
-        mutate(); // Refresh the services list
+        mutateServices();
+        mutateCount();
       } else {
         toast.error('Failed to delete service cost');
       }
@@ -136,9 +140,9 @@ const ServiceCostTable: React.FC = () => {
   };
 
   const paginatedData = useMemo(() => {
-    if (!servicesList) return [];
+    if (!servicesList?.data) return [];
     const startIndex = (currentPage - 1) * pageSize;
-    return servicesList.map((service: ServiceItem) => ({
+    return servicesList.data.map((service: ServiceItem) => ({
       ...service,
       id: service._id 
     })).slice(startIndex, startIndex + pageSize);
@@ -149,7 +153,7 @@ const ServiceCostTable: React.FC = () => {
       <Toaster/>
       <div className="py-2 px-4 bg-white rounded-md border-[#E5E9F0] flex justify-between items-center">
         <h1 className="text-lg font-medium mb-0 text-[#344054]">Service costs</h1>
-        <button className="flex items-center gap-2 px-4 py-2 text-[#667085] bg-[#F9FAFB] rounded-lg border border-[#E5E9F0] hover:bg-gray-50"> // For Filters later
+        <button className="flex items-center gap-2 px-4 py-2 text-[#667085] bg-[#F9FAFB] rounded-lg border border-[#E5E9F0] hover:bg-gray-50">
           <span>Filters</span>          
         </button>
       </div>
@@ -157,10 +161,10 @@ const ServiceCostTable: React.FC = () => {
       <Table
         columns={columns}
         data={paginatedData}
-        pagination={servicesList?.length > pageSize ? {
+        pagination={servicesList?.data?.length > pageSize ? {
           current: currentPage,
           pageSize: pageSize,
-          total: servicesList.length,
+          total: servicesList.data.length,
           onChange: handlePageChange,
         } : undefined}
       />

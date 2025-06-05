@@ -3,6 +3,8 @@ import { Table, type ColumnDefinition } from '@/components/ui/Table';
 import { useDailyPayout } from '@/hooks/useAdmin';
 import LoadingScreen from '@/pages/dashboard/common/LoadingScreen';
 
+type Period = 'daily' | 'weekly' | 'monthly';
+
 interface DailyPayout {
   _id: {
     date: string;
@@ -28,8 +30,47 @@ interface TableDailyPayout extends DailyPayout {
 const OperatorPayoutTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [selectedPeriod, setSelectedPeriod] = useState<Period>('daily');
 
   const { data: payouts, isLoading } = useDailyPayout();
+
+  const calculateDateRange = (period: Period) => {
+    const today = new Date();
+    let startDate = new Date();
+    let endDate = new Date();
+
+    switch (period) {
+      case 'daily':
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
+        break;
+      case 'weekly':
+        startDate.setDate(today.getDate() - 7);
+        break;
+      case 'monthly':
+        startDate.setMonth(today.getMonth() - 1);
+        break;
+    }
+
+    return {
+      start_date: startDate.toISOString().split('T')[0],
+      end_date: endDate.toISOString().split('T')[0]
+    };
+  };
+
+  const filteredData = useMemo(() => {
+    if (!payouts) return [];
+    const { start_date, end_date } = calculateDateRange(selectedPeriod);
+    return payouts.filter((payout: DailyPayout) => {
+      const payoutDate = new Date(payout.date);
+      return payoutDate >= new Date(start_date) && payoutDate <= new Date(end_date);
+    });
+  }, [payouts, selectedPeriod]);
+
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize;
+    return filteredData.slice(startIndex, startIndex + pageSize);
+  }, [currentPage, pageSize, filteredData]);
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -39,11 +80,6 @@ const OperatorPayoutTable: React.FC = () => {
     setCurrentPage(page);
     setPageSize(size);
   };
-
-  const paginatedData = useMemo(() => {
-    const startIndex = (currentPage - 1) * pageSize;
-    return payouts?.slice(startIndex, startIndex + pageSize);
-  }, [currentPage, pageSize, payouts]);
 
   const columns: Array<ColumnDefinition<TableDailyPayout>> = [
     {
@@ -92,7 +128,7 @@ const OperatorPayoutTable: React.FC = () => {
     },
   ];
 
-  const tableData: TableDailyPayout[] = (payouts as DailyPayout[] || []).map((payout: DailyPayout) => ({
+  const tableData: TableDailyPayout[] = filteredData.map((payout: DailyPayout) => ({
     ...payout,
     id: payout.operator_id
   }));
@@ -102,9 +138,24 @@ const OperatorPayoutTable: React.FC = () => {
       <div className="py-2 px-4 bg-white rounded-md border-[#E5E9F0] flex justify-between items-center">
         <h1 className="text-md font-medium mb-0 text-[#344054]">Operator Payout</h1>
         <div className="text-sm text-gray-500">
-          <button className="px-3 py-1 text-[#475467] text-xs cursor-pointer rounded-bl-md rounded-tl-md  border border-[#F2F4F7]">Daily</button>
-          <button className="px-3 py-1 text-[#475467] text-xs cursor-pointer  border border-[#F2F4F7]">Weekly</button>
-          <button className="px-3 py-1 text-[#475467] text-xs cursor-pointer rounded-br-md rounded-tr-md  border border-[#F2F4F7]">Monthly</button>
+          <button 
+            className={`px-3 py-1 text-[#475467] text-xs cursor-pointer rounded-bl-md rounded-tl-md border ${selectedPeriod === 'daily' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'border-[#F2F4F7]'}`}
+            onClick={() => setSelectedPeriod('daily')}
+          >
+            Daily
+          </button>
+          <button 
+            className={`px-3 py-1 text-[#475467] text-xs cursor-pointer border ${selectedPeriod === 'weekly' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'border-[#F2F4F7]'}`}
+            onClick={() => setSelectedPeriod('weekly')}
+          >
+            Weekly
+          </button>
+          <button 
+            className={`px-3 py-1 text-[#475467] text-xs cursor-pointer rounded-br-md rounded-tr-md border ${selectedPeriod === 'monthly' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'border-[#F2F4F7]'}`}
+            onClick={() => setSelectedPeriod('monthly')}
+          >
+            Monthly
+          </button>
         </div>
       </div>
       <Table 

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { Button, Form, Input, Select, AutoComplete } from 'antd';
 import { MdOutlineCloudUpload } from 'react-icons/md';
 import { addAssets } from '@/api/operatorsApi';
@@ -18,11 +18,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ showModal, setShowModal, onAssetAdd
   const { id: operatorId } = useParams<{ id: string }>();
   const [availability, setAvailability] = useState<'Available' | 'Unavailable'>('Available');
   const [loading, setLoading] = useState(false);
-  const [addressSuggestions, setAddressSuggestions] = useState<string[]>([]);
-  const [fetchingAddress, setFetchingAddress] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState('');
   const [fetchedCoordinates, setFetchedCoordinates] = useState<{ longitude: number; latitude: number } | null>(null);
-  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+  const [addressSuggestions, setAddressSuggestions] = useState<string[]>([]);
+  const [fetchingAddress, setFetchingAddress] = useState(false);
 
   const handleClose = () => {
     setShowModal(false);
@@ -30,95 +29,66 @@ const AddAsset: React.FC<AddAssetProps> = ({ showModal, setShowModal, onAssetAdd
     setAvailability('Available');
     setLoading(false);
     setFetchedCoordinates(null);
-    setAddressSuggestions([]);
     setSelectedAddress('');
   };
 
-  // Mock function to simulate API call - replace with actual geocoding service
-  const fetchAddressSuggestions = async (query: string) => {
-    if (!query || query.length < 3) {
-      setAddressSuggestions([]);
-      return;
-    }
-
-    setFetchingAddress(true);
-    
-    try {
-      // In a real implementation, you would call your geocoding API here
-      // For example with Google Maps Places API:
-      // const response = await fetch(`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&key=YOUR_API_KEY`);
-      // const data = await response.json();
-      // return data.predictions.map(prediction => prediction.description);
-      
-      // Mock response
-      await new Promise(resolve => setTimeout(resolve, 500));
-      const mockSuggestions = [
-        `${query} Street, Lagos`,
-        `${query} Avenue, Ikeja`,
-        `${query} Road, Victoria Island`,
-        `Near ${query}, Lekki`,
-        `${query} Bus Stop, Mainland`
-      ];
-      setAddressSuggestions(mockSuggestions);
-    } catch (error) {
-      console.error('Error fetching address suggestions:', error);
-      setAddressSuggestions([]);
-    } finally {
-      setFetchingAddress(false);
-    }
-  };
-
-  // Mock function to get coordinates for a selected address
   const fetchCoordinatesForAddress = async (address: string) => {
     if (!address) {
       setFetchedCoordinates(null);
       return;
     }
 
-    setFetchingAddress(true);
+    setLoading(true);
     setFetchedCoordinates(null);
     setSelectedAddress(address);
 
     try {
-      // In a real implementation, you would call your geocoding API here
-      // For example with Google Maps Geocoding API:
-      // const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=YOUR_API_KEY`);
-      // const data = await response.json();
-      // const location = data.results[0].geometry.location;
-      // return { longitude: location.lng, latitude: location.lat };
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyAw3wjMqZQWUIkMNHJCHZPcmyPeTfUnuGQ`
+      );
       
-      // Mock response
-      await new Promise(resolve => setTimeout(resolve, 500));
-      const simulatedLongitude = Math.random() * 180 - 90;
-      const simulatedLatitude = Math.random() * 360 - 180;
-      setFetchedCoordinates({ 
-        longitude: simulatedLongitude, 
-        latitude: simulatedLatitude 
-      });
-      toast.success('Location geocoded successfully (simulated). Please save.');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.status !== 'OK') {
+        throw new Error(data.error_message || 'Failed to geocode address');
+      }
+      
+      if (!data.results || data.results.length === 0) {
+        throw new Error('No results found for this address');
+      }
+      
+      const location = data.results[0].geometry.location;
+      const coordinates = { 
+        longitude: location.lng, 
+        latitude: location.lat 
+      };
+      
+      setFetchedCoordinates(coordinates);
+      toast.success('Location found successfully');
+      return coordinates;
     } catch (error) {
       console.error('Error fetching coordinates:', error);
       toast.error('Failed to get coordinates for this address');
       setFetchedCoordinates(null);
+      return null;
     } finally {
-      setFetchingAddress(false);
+      setLoading(false);
     }
-  };
-
-  const handleAddressSearch = (value: string) => {
-    // Debounce the API calls
-    if (debounceTimer.current) {
-      clearTimeout(debounceTimer.current);
-    }
-    
-    debounceTimer.current = setTimeout(() => {
-      fetchAddressSuggestions(value);
-    }, 300);
   };
 
   const handleAddressSelect = (value: string) => {
     fetchCoordinatesForAddress(value);
     setAddressSuggestions([]);
+  };
+
+  const handleAddressSearch = (value: string) => {
+    if (value.length > 3) {
+      fetchCoordinatesForAddress(value);
+    }
   };
 
   const handleFinish = async (values: any) => {
@@ -128,7 +98,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ showModal, setShowModal, onAssetAdd
     }
 
     if (!fetchedCoordinates) {
-      toast.error('Please select a valid address from the suggestions.');
+      toast.error('Please enter a valid address and wait for coordinates to be fetched.');
       return;
     }
 
@@ -151,12 +121,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ showModal, setShowModal, onAssetAdd
       category: values.Category,
     };
 
-    console.log('Submitting Add Asset Payload:', payload);
-
     try {
       const response = await addAssets(payload);
-      console.log('Add Asset API Response:', response);
-
       if (response?.status !== 'ok') {
         toast.error(response?.response?.data?.msg || 'Failed to add asset.');
       } else {

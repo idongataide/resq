@@ -12,6 +12,7 @@ const { Option } = Select;
 interface AddStakeHolderFormProps {
   isOpen: boolean;
   onClose: () => void;
+  onStakeholderAdded?: () => void;
 }
 
 interface Bank {
@@ -32,6 +33,7 @@ interface FormValues {
 const AddStakeholderForm: React.FC<AddStakeHolderFormProps> = ({
   isOpen,
   onClose,
+  onStakeholderAdded,
 }) => {
   const [form] = Form.useForm<FormValues>();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -135,10 +137,7 @@ const AddStakeholderForm: React.FC<AddStakeHolderFormProps> = ({
   };
 
   const handle2FASuccess = async (otp: string) => {
-     
-    if (!formValues) {
-      return;
-    }
+    if (!formValues) return;
 
     try {
       setIsSubmitting(true);
@@ -149,7 +148,7 @@ const AddStakeholderForm: React.FC<AddStakeHolderFormProps> = ({
 
       if (response?.status === 'ok') {
         toast.success('Stakeholder added successfully');
-        globalMutate('/users/stakeholders');
+        onStakeholderAdded?.();
         onClose();
       } else {
         const errorMsg = response?.response?.data?.msg;

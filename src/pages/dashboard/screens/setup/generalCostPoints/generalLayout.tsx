@@ -3,14 +3,14 @@ import { FaPlus } from "react-icons/fa6";
 import { FaAngleLeft, FaUsers } from "react-icons/fa";
 import GeneralCostTable from "./GeneralCostTable";
 import AddGeneralCostForm from "./AddGeneralCostForm";
-import { useFeesCount } from '@/hooks/useAdmin';
+import { useFeesCount, useFees } from '@/hooks/useAdmin';
 
 const GeneralCostLayout: React.FC = () => {
   const [activeSidebar, setActiveSidebar] = useState<string | null>(null);
 
-  const { data: feesCountData } = useFeesCount();
+  const { data: feesCountData, mutate: mutateCount } = useFeesCount();
+  const { mutate: mutateFees } = useFees();
   const feesCount = feesCountData?.data[0]?.total ?? 0;
-
 
   const handleAddClick = () => {
     setActiveSidebar('add');
@@ -18,6 +18,11 @@ const GeneralCostLayout: React.FC = () => {
 
   const handleCloseSidebar = () => {
     setActiveSidebar(null);
+  };
+
+  const handleFeeAdded = () => {
+    mutateFees();
+    mutateCount();
   };
 
   return (
@@ -56,7 +61,7 @@ const GeneralCostLayout: React.FC = () => {
       </div>
 
       {activeSidebar === 'add' && (
-        <AddGeneralCostForm onClose={handleCloseSidebar} />
+        <AddGeneralCostForm onClose={handleCloseSidebar} onFeeAdded={handleFeeAdded} />
       )}
       
     </main>

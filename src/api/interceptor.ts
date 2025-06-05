@@ -10,8 +10,10 @@ const getAuthTokens = () => {
 };
 
 export const axiosAPIInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/admins',
-  headers: { Authorization: `Bearer ${getAuthTokens()?.access}` },
+  baseURL: '/admins',
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 axiosAPIInstance.interceptors.request.use(

@@ -4,8 +4,7 @@ import { FaAngleLeft, FaUsers } from "react-icons/fa";
 import StakeHolderTable from "./StakeHolderTable";
 import AddStakeHolderForm from "./AddStakeHolderForm";
 import EditStakeholderForm from "./EditStakeholderForm";
-import { useStakeholdersCount } from "@/hooks/useAdmin";
-
+import { useStakeholdersCount, useStakeholders } from "@/hooks/useAdmin";
 
 const StakeHolderLayout: React.FC = () => {
   const [activeSidebar, setActiveSidebar] = useState<'add' | 'edit' | null>(null);
@@ -17,8 +16,14 @@ const StakeHolderLayout: React.FC = () => {
     setEditData(null);
   };
 
-  const { data: stakeholdersCount } = useStakeholdersCount();
-  console.log(stakeholdersCount);
+  const { data: stakeholdersCount, mutate: mutateCount } = useStakeholdersCount();
+  const { mutate: mutateStakeholders } = useStakeholders();
+
+  const handleStakeholderAdded = () => {
+    mutateStakeholders();
+    mutateCount();
+  };
+
   return (
     <main>
       <div className="py-1 px-6 mt-10">
@@ -63,7 +68,8 @@ const StakeHolderLayout: React.FC = () => {
         {activeSidebar === 'add' && (
           <AddStakeHolderForm 
             isOpen={activeSidebar === 'add'} 
-            onClose={handleCloseSidebar} 
+            onClose={handleCloseSidebar}
+            onStakeholderAdded={handleStakeholderAdded}
           />
         )}
 
@@ -73,6 +79,7 @@ const StakeHolderLayout: React.FC = () => {
           isOpen={activeSidebar === 'edit'} 
           onClose={handleCloseSidebar}
           editData={editData}
+          onStakeholderUpdated={handleStakeholderAdded}
         />
       )}
     </main>

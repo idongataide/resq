@@ -4,7 +4,6 @@ import { useBanksList } from '@/hooks/useAdmin';
 import { verifyAccount } from '@/api/banks'; 
 import toast from 'react-hot-toast';
 import ConfirmOperator from '@/pages/dashboard/screens/setup/2FA';
-import { useSWRConfig } from 'swr';
 import { updateStakeholder } from '@/api/settingsApi';
 
 const { Option } = Select;
@@ -12,16 +11,8 @@ const { Option } = Select;
 interface EditStakeholderFormProps {
   isOpen: boolean;
   onClose: () => void;
-  editData: {
-    id: string;
-    name: string;
-    bank_name: string;
-    bank_code: string;
-    account_number: string;
-    account_name: string;
-    amount: string;
-    amount_type: 'percentage' | 'amount';
-  };
+  editData: any;
+  onStakeholderUpdated?: () => void;
 }
 
 interface Bank {
@@ -42,7 +33,8 @@ interface FormValues {
 const EditStakeholderForm: React.FC<EditStakeholderFormProps> = ({
   isOpen,
   onClose,
-  editData
+  editData,
+  onStakeholderUpdated,
 }) => {
   const [form] = Form.useForm<FormValues>();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -53,7 +45,6 @@ const EditStakeholderForm: React.FC<EditStakeholderFormProps> = ({
   const [accountName, setAccountName] = useState<string | null>(editData?.account_name || null);
 
   const { data: bankList, isLoading: isLoadingBanks } = useBanksList();
-  const { mutate: globalMutate } = useSWRConfig();
 
   useEffect(() => {
     if (editData) {
@@ -161,18 +152,24 @@ const EditStakeholderForm: React.FC<EditStakeholderFormProps> = ({
   };
 
   const handle2FASuccess = async (otp: string) => {
-    if (!formValues) return;
+    if (!formValues || !editData) return;
 
     try {
       setIsSubmitting(true);
-      const response = await updateStakeholder(editData.id, { 
-        ...formValues, 
-        otp
+      const stakeholderId = editData.id || editData.stakeholder_id;
+      if (!stakeholderId) {
+        toast.error('Stakeholder ID is missing');
+        return;
+      }
+
+      const response = await updateStakeholder(stakeholderId, {
+        ...formValues,
+        otp: otp,
       });
 
       if (response?.status === 'ok') {
         toast.success('Stakeholder updated successfully');
-        globalMutate('/users/stakeholders');
+        onStakeholderUpdated?.();
         onClose();
       } else {
         const errorMsg = response?.response?.data?.msg;

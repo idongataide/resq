@@ -8,6 +8,7 @@ import { deleteFee } from '@/api/settingsApi';
 import toast, { Toaster } from 'react-hot-toast';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
 import EditGeneralCostForm from './EditGeneralCostForm';
+import { useSWRConfig } from 'swr';
 
 interface FeeItem {
   name: string;
@@ -25,13 +26,14 @@ interface FeeItem {
 
 const GeneralCostTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(20);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [feeToDelete, setFeeToDelete] = useState<FeeItem | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [feeToEdit, setFeeToEdit] = useState<FeeItem | null>(null);
   const { data: feesList, mutate } = useFees();
+  const { mutate: globalMutate } = useSWRConfig();
 
   const handleDeleteClick = (fee: FeeItem) => {
     setFeeToDelete(fee);
@@ -47,7 +49,8 @@ const GeneralCostTable: React.FC = () => {
 
       if (response) {
         toast.success('Fee deleted successfully');
-        mutate(); 
+        mutate();
+        globalMutate('/settings/fees?component=count');
       } else {
         toast.error('Failed to delete fee');
       }
@@ -129,9 +132,9 @@ const GeneralCostTable: React.FC = () => {
   };
 
   const paginatedData = useMemo(() => {
-    if (!feesList) return [];
+    if (!feesList?.data) return [];
     const startIndex = (currentPage - 1) * pageSize;
-    return feesList.map((fee: FeeItem) => ({
+    return feesList.data.map((fee: FeeItem) => ({
       ...fee,
       id: fee.fee_id
     })).slice(startIndex, startIndex + pageSize);
@@ -150,10 +153,10 @@ const GeneralCostTable: React.FC = () => {
       <Table
         columns={columns}
         data={paginatedData}
-        pagination={feesList?.length > pageSize ? {
+        pagination={feesList?.data?.length > pageSize ? {
           current: currentPage,
           pageSize: pageSize,
-          total: feesList.length,
+          total: feesList.data.length,
           onChange: handlePageChange,
         } : undefined}
         // showActions={false} // Actions are handled in render

@@ -199,10 +199,13 @@ export const getServicesCount = async () => {
 
 export const getStakeholders = async () => {
   try {
-    const response = await axiosAPIInstance.get('/users/stakeholders');
-    return response.data;
+    return await axiosAPIInstance
+      .get(`/users/stakeholders`)
+      .then((res) => {
+        return res?.data;
+      });
   } catch (error) {
-    throw error;
+    return error;
   }
 };
 
@@ -267,13 +270,15 @@ export const deleteStakeholder = async (stakeholderId: string) => {
   }
 };
 
-
 export const getStakeholdersCount = async () => {
   try {
-    const response = await axiosAPIInstance.get('/users/stakeholders?component=count');
-    return response.data;
+    return await axiosAPIInstance
+      .get(`/users/stakeholders?component=count`)
+      .then((res) => {
+        return res?.data;
+      });
   } catch (error) {
-    throw error;
+    return error;
   }
 };
   

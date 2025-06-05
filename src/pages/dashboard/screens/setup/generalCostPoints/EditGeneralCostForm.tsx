@@ -74,7 +74,8 @@ const EditGeneralCostForm: React.FC<EditGeneralCostFormProps> = ({
 
       if (response.status === 'ok') {
         toast.success('Fee updated successfully');
-        globalMutate('/settings/fees/'); // Invalidate the cache for the fees list
+        globalMutate('/settings/fees');
+        globalMutate('/settings/fees?component=count');
         onClose();
       } else {
         const errorMsg = response?.response?.data?.msg;

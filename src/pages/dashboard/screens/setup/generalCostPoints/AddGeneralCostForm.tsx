@@ -7,16 +7,15 @@ import { useSWRConfig } from 'swr';
 
 interface AddGeneralCostFormProps {
   onClose: () => void;
+  onFeeAdded?: () => void;
 }
-
-
 
 interface FormValues {
   amount: string;
   tag: string;
 }
 
-const AddGeneralCostForm: React.FC<AddGeneralCostFormProps> = ({ onClose }) => {
+const AddGeneralCostForm: React.FC<AddGeneralCostFormProps> = ({ onClose, onFeeAdded }) => {
   const [form] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [show2FA, setShow2FA] = useState(false);
@@ -42,7 +41,9 @@ const AddGeneralCostForm: React.FC<AddGeneralCostFormProps> = ({ onClose }) => {
       
       if (response.status === 'ok') {
         toast.success('Fee added successfully');
-        globalMutate('/settings/fees/'); 
+        globalMutate('/settings/fees');
+        globalMutate('/settings/fees?component=count');
+        onFeeAdded?.();
         onClose();
       }
       else{
@@ -57,7 +58,6 @@ const AddGeneralCostForm: React.FC<AddGeneralCostFormProps> = ({ onClose }) => {
       setShow2FA(false);
     }
   };
-
 
   return (
     <>

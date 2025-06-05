@@ -2,10 +2,10 @@ import React, { useState, useMemo } from 'react';
 import { Table, type ColumnDefinition } from '@/components/ui/Table';
 import { MdOutlineEdit as IconEdit } from 'react-icons/md';
 import { MdOutlineDeleteOutline as IconDelete } from 'react-icons/md';
-import { getStakeholders, deleteStakeholder } from '@/api/settingsApi';
+import { deleteStakeholder } from '@/api/settingsApi';
 import toast, { Toaster } from 'react-hot-toast';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
-import useSWR from 'swr';
+import { useStakeholders, useStakeholdersCount } from '@/hooks/useAdmin';
 
 interface BankData {
   bank_name: string;
@@ -26,10 +26,7 @@ interface StakeHolderItem {
   updatedAt?: string;
 }
 
-interface StakeholdersResponse {
-  status: string;
-  data: StakeHolderItem[];
-}
+
 
 interface StakeHolderTableProps {
   onEdit: (data: any) => void;
@@ -43,11 +40,16 @@ const StakeHolderTable: React.FC<StakeHolderTableProps> = ({ onEdit }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [stakeholderToDelete, setStakeholderToDelete] = useState<StakeHolderItem | null>(null);
-  const { data: stakeholdersResponse, mutate } = useSWR<StakeholdersResponse>('/users/stakeholders', getStakeholders);
+  const { data: stakeholdersResponse, mutate: mutateStakeholders } = useStakeholders();
+  const { mutate: mutateCount } = useStakeholdersCount();
 
+  console.log(stakeholdersResponse,'stakeholderssResponses')
 
   const handleDeleteClick = (stakeholder: StakeHolderItem) => {
-    setStakeholderToDelete(stakeholder);
+    setStakeholderToDelete({
+      ...stakeholder,
+      id: stakeholder.stakeholder_id
+    });
     setShowDeleteModal(true);
   };
 
@@ -56,11 +58,12 @@ const StakeHolderTable: React.FC<StakeHolderTableProps> = ({ onEdit }) => {
 
     try {
       setIsDeleting(true);
-      const response = await deleteStakeholder(stakeholderToDelete.stakeholder_id);
+      const response = await deleteStakeholder(stakeholderToDelete.id);
 
       if (response) {
         toast.success('Stakeholder deleted successfully');
-        mutate(); // Refresh the stakeholders list
+        mutateStakeholders();
+        mutateCount();
       } else {
         toast.error('Failed to delete stakeholder');
       }
@@ -80,8 +83,9 @@ const StakeHolderTable: React.FC<StakeHolderTableProps> = ({ onEdit }) => {
   };
 
   const handleEditClick = (stakeholder: StakeHolderItem) => {
+    console.log('Stakeholder to edit:', stakeholder); // Debug log
     const formattedData = {
-      id: stakeholder.stakeholder_id,
+      id: stakeholder.stakeholder_id || stakeholder.id, // Try both possible ID fields
       name: stakeholder.name,
       bank_name: stakeholder.bank_data.bank_name,
       bank_code: stakeholder.bank_data.bank_code,
@@ -90,6 +94,7 @@ const StakeHolderTable: React.FC<StakeHolderTableProps> = ({ onEdit }) => {
       value: stakeholder.amount?.toString() || '',
       value_type: stakeholder.amount_type === 'percentage' ? 'Percentage' : 'Amount'
     };
+    console.log('Formatted data:', formattedData); // Debug log
     onEdit(formattedData);
   };
 
@@ -158,16 +163,16 @@ const StakeHolderTable: React.FC<StakeHolderTableProps> = ({ onEdit }) => {
   };
 
   const paginatedData = useMemo(() => {
-    if (!stakeholdersResponse?.data || !Array.isArray(stakeholdersResponse.data)) return [];
+    if (!stakeholdersResponse || !Array.isArray(stakeholdersResponse)) return [];
     const startIndex = (currentPage - 1) * pageSize;
-    return stakeholdersResponse.data.map((stakeholder: StakeHolderItem) => ({
+    return stakeholdersResponse.map((stakeholder: StakeHolderItem) => ({
       ...stakeholder,
-      id: stakeholder.stakeholder_id // Use stakeholder_id as the id
+      id: stakeholder.stakeholder_id
     })).slice(startIndex, startIndex + pageSize);
   }, [currentPage, pageSize, stakeholdersResponse]);
 
   // Ensure total is based on the actual data array length
-  const totalStakeholders = stakeholdersResponse?.data?.length || 0;
+  const totalStakeholders = stakeholdersResponse?.length || 0;
 
   return (
     <div className="mb-6">

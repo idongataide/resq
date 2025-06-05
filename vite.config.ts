@@ -18,17 +18,14 @@ export default defineConfig(({ mode }) => {
 
     server: {
       port: 5173,
-      host: true, // Add this to help with WebSocket connections
-      hmr: {
-        clientPort: 5173, // Explicitly set HMR port
-      },
-      proxy: {
-        '/admins': {
-          target: 'https://resq-user.onrender.com/',
-          changeOrigin: true,
-          secure: false,
-          rewrite: (path) => path
-        },
+        allowedHosts: [""],
+        proxy: {
+          '/admins': {
+            target: 'https://resq-user.onrender.com/',
+            changeOrigin: true,
+            secure: false,
+            rewrite: (path) => path
+          },
         '/maps': {
           target: 'https://maps.googleapis.com',
           changeOrigin: true,

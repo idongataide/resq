@@ -61,10 +61,10 @@ export const getRemittedRevenue = async (date: string) => {
   }
 };
 
-export const getStakeholderPayouts = async () => {
+export const getStakeholderPayouts = async (queryString: string = '') => {
   try {
     return await axiosAPIInstance
-      .get(`/towings/stakeholder-revenue/`)
+      .get(`/towings/stakeholder-revenue/${queryString}`)
       .then((res) => {
         return res?.data;
       });
@@ -115,13 +115,13 @@ export const rejectTowingRequest = async (data: { towing_id: string; reason: str
   }
 }; 
 
-export const getDailyPayout = async () => {
+export const getDailyPayout = async (date: string) => {
   try {
     return await axiosAPIInstance
-      .get(`/towings/daily-revenue-operator`)
-      .then((res) => {
+      .get(`/towings/daily-revenue-operator?${date}`)
+      .then((res) => {  
         return res?.data;
-      });
+      }); 
   } catch (error) {
     return error;
   }

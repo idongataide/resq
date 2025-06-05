@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Table, type ColumnDefinition } from '@/components/ui/Table';
 import { useStakeholderPayouts } from '@/hooks/useAdmin';
 import LoadingScreen from '@/pages/dashboard/common/LoadingScreen';
+import DateRangeFilter, { type Period } from '@/components/ui/DateRangeFilter';
 
 export interface StakeholderItemData {
   id: string;
@@ -21,7 +22,55 @@ export interface StakeholderItemData {
 const StakeholderPayoutTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const { data: itemsData, isLoading } = useStakeholderPayouts();
+  const [selectedPeriod, setSelectedPeriod] = useState<Period>('daily');
+  const [dateRange, setDateRange] = useState<{ start_date: string; end_date: string }>({
+    start_date: '',
+    end_date: ''
+  });
+
+  // Function to calculate date range based on selected period
+  const calculateDateRange = (period: Period) => {
+    const today = new Date();
+    let startDate = new Date();
+    let endDate = new Date();
+
+    switch (period) {
+      case 'daily':
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
+        break;
+      case 'weekly':
+        startDate.setDate(today.getDate() - 7);
+        break;
+      case 'monthly':
+        startDate.setMonth(today.getMonth() - 1);
+        break;
+      case 'yearly':
+        startDate.setFullYear(today.getFullYear() - 1);
+        break;
+      case 'all':
+        startDate = new Date(0); // Beginning of time
+        endDate = new Date(); // Current date
+        break;
+    }
+
+    setDateRange({
+      start_date: startDate.toISOString().split('T')[0],
+      end_date: endDate.toISOString().split('T')[0]
+    });
+  };
+
+  // Update date range when period changes
+  useEffect(() => {
+    calculateDateRange(selectedPeriod);
+  }, [selectedPeriod]);
+
+  // Format the query string correctly
+  const queryString = dateRange.start_date 
+    ? `&start_date=${dateRange.start_date}&end_date=${dateRange.end_date}`
+    : '';
+
+  const { data: itemsData, isLoading } = useStakeholderPayouts(queryString);
 
   const paginatedData = useMemo(() => {
     if (!itemsData) return [];
@@ -84,12 +133,16 @@ const StakeholderPayoutTable: React.FC = () => {
 
   return (
     <div className="mb-6">
-        <div className="py-2 px-4 bg-white rounded-md border-[#E5E9F0] flex justify-between items-center">
+        {/* <div className="py-2 px-4 bg-white rounded-md border-[#E5E9F0] flex justify-between items-center mb-4">
             <h1 className="text-md font-medium mb-0 text-[#344054]">Stakeholder's Payout</h1>
-            <button className="flex items-center gap-2 px-4 py-2 text-[#667085] bg-[#F9FAFB] rounded-lg border border-[#E5E9F0] hover:bg-gray-50">
-              <span>Filter</span>          
-            </button>
-        </div>
+        </div> */}
+        <DateRangeFilter
+          title="Stakeholder's Payout"
+          selectedPeriod={selectedPeriod}
+          onPeriodChange={setSelectedPeriod}
+          periods={['weekly', 'monthly', 'yearly']}
+          variant="outline"
+        />
         <Table 
             columns={columns} 
             data={paginatedData} 

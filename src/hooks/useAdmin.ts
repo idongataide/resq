@@ -448,9 +448,9 @@ export const useRemittedRevenue = (date: string = '0') => {
   return { data, isLoading, mutate };
 };
 
-export const useStakeholderPayouts = () => {
+export const useStakeholderPayouts = (date: string = '0') => {
   const { data, isLoading, mutate } = useSWR(
-    `/towings/stakeholder-daily-revenue/`,
+    `/towings/stakeholder-daily-revenue${date}`,
     () => {
       return getStakeholderPayouts().then((res) => {
         return res?.data;
@@ -465,11 +465,11 @@ export const useStakeholderPayouts = () => {
   return { data, isLoading, mutate };
 };
 
-export const useDailyPayout = () => {
+export const useDailyPayout = (date: string = '0') => {
   const { data, isLoading, mutate } = useSWR(
-    `/towings/daily-revenue-operator/`,
+    `/towings/daily-revenue-operator${date}`,
     () => {
-      return getDailyPayout().then((res) => {
+      return getDailyPayout(date).then((res) => {
         return res?.data;
       });
     },

@@ -11,7 +11,6 @@ const TeamsLayout: React.FC = () => {
   const { data : teams } = useAllTeam()
   const { data : teamsCount } = useAllTeamsCount('count');
 
-  console.log(teamsCount,'teamsCount')
 
   return (
     <main>

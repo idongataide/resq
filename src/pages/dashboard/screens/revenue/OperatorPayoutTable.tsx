@@ -1,11 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, type ColumnDefinition } from '@/components/ui/Table';
 import { useDailyPayout } from '@/hooks/useAdmin';
 import LoadingScreen from '@/pages/dashboard/common/LoadingScreen';
+import DateRangeFilter, { type Period } from '@/components/ui/DateRangeFilter';
 
-type Period = 'daily' | 'weekly' | 'monthly';
-
-interface DailyPayout {
+type DailyPayout = {
   _id: {
     date: string;
     stake_id: string;
@@ -21,7 +20,7 @@ interface DailyPayout {
     account_number: string;
     account_name: string;
   };
-}
+};
 
 interface TableDailyPayout extends DailyPayout {
   id: string;
@@ -31,46 +30,51 @@ const OperatorPayoutTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [selectedPeriod, setSelectedPeriod] = useState<Period>('daily');
+  const [dateRange, setDateRange] = useState<{ start_date: string; end_date: string }>({
+    start_date: '',
+    end_date: ''
+  });
 
-  const { data: payouts, isLoading } = useDailyPayout();
+  // Calculate date range based on selected period
+  useEffect(() => {
+    const calculateDateRange = (period: Period) => {
+      const today = new Date();
+      let startDate = new Date();
+      let endDate = new Date();
 
-  const calculateDateRange = (period: Period) => {
-    const today = new Date();
-    let startDate = new Date();
-    let endDate = new Date();
+      switch (period) {
+        case 'daily':
+          startDate.setHours(0, 0, 0, 0);
+          endDate.setHours(23, 59, 59, 999);
+          break;
+        case 'weekly':
+          startDate.setDate(today.getDate() - 7);
+          break;
+        case 'monthly':
+          startDate.setMonth(today.getMonth() - 1);
+          break;
+      }
 
-    switch (period) {
-      case 'daily':
-        startDate.setHours(0, 0, 0, 0);
-        endDate.setHours(23, 59, 59, 999);
-        break;
-      case 'weekly':
-        startDate.setDate(today.getDate() - 7);
-        break;
-      case 'monthly':
-        startDate.setMonth(today.getMonth() - 1);
-        break;
-    }
-
-    return {
-      start_date: startDate.toISOString().split('T')[0],
-      end_date: endDate.toISOString().split('T')[0]
+      setDateRange({
+        start_date: startDate.toISOString().split('T')[0],
+        end_date: endDate.toISOString().split('T')[0]
+      });
     };
-  };
 
-  const filteredData = useMemo(() => {
+    calculateDateRange(selectedPeriod);
+  }, [selectedPeriod]);
+
+  // Format the query string correctly
+  const queryString = dateRange.start_date 
+    ? `&start_date=${dateRange.start_date}&end_date=${dateRange.end_date}`
+    : '';
+  const { data: payouts, isLoading } = useDailyPayout(queryString);
+
+  const paginatedData = React.useMemo(() => {
     if (!payouts) return [];
-    const { start_date, end_date } = calculateDateRange(selectedPeriod);
-    return payouts.filter((payout: DailyPayout) => {
-      const payoutDate = new Date(payout.date);
-      return payoutDate >= new Date(start_date) && payoutDate <= new Date(end_date);
-    });
-  }, [payouts, selectedPeriod]);
-
-  const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * pageSize;
-    return filteredData.slice(startIndex, startIndex + pageSize);
-  }, [currentPage, pageSize, filteredData]);
+    return payouts.slice(startIndex, startIndex + pageSize);
+  }, [currentPage, pageSize, payouts]);
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -108,12 +112,6 @@ const OperatorPayoutTable: React.FC = () => {
       key: "serviceFee",
       render: (value) => <span className='text-[#475467]'>₦{value.toLocaleString()}</span>,
     },
-    // {
-    //   title: "Amount paid",
-    //   dataIndex: "totalAmount",
-    //   key: "totalAmount",
-    //   render: (value) => <span className='text-[#475467]'>₦{value.toLocaleString()}</span>,
-    // },
     {
       title: "Bank name",
       dataIndex: "bank_info",
@@ -128,40 +126,24 @@ const OperatorPayoutTable: React.FC = () => {
     },
   ];
 
-  const tableData: TableDailyPayout[] = filteredData.map((payout: DailyPayout) => ({
+  const tableData: TableDailyPayout[] = (payouts || []).map((payout: DailyPayout) => ({
     ...payout,
     id: payout.operator_id
   }));
 
   return (
     <div className="mb-6">
-      <div className="py-2 px-4 bg-white rounded-md border-[#E5E9F0] flex justify-between items-center">
-        <h1 className="text-md font-medium mb-0 text-[#344054]">Operator Payout</h1>
-        <div className="text-sm text-gray-500">
-          <button 
-            className={`px-3 py-1 text-[#475467] text-xs cursor-pointer rounded-bl-md rounded-tl-md border ${selectedPeriod === 'daily' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'border-[#F2F4F7]'}`}
-            onClick={() => setSelectedPeriod('daily')}
-          >
-            Daily
-          </button>
-          <button 
-            className={`px-3 py-1 text-[#475467] text-xs cursor-pointer border ${selectedPeriod === 'weekly' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'border-[#F2F4F7]'}`}
-            onClick={() => setSelectedPeriod('weekly')}
-          >
-            Weekly
-          </button>
-          <button 
-            className={`px-3 py-1 text-[#475467] text-xs cursor-pointer rounded-br-md rounded-tr-md border ${selectedPeriod === 'monthly' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'border-[#F2F4F7]'}`}
-            onClick={() => setSelectedPeriod('monthly')}
-          >
-            Monthly
-          </button>
-        </div>
-      </div>
+      <DateRangeFilter
+        title="Operator Payout"
+        selectedPeriod={selectedPeriod}
+        onPeriodChange={setSelectedPeriod}
+        periods={['weekly', 'monthly', 'yearly']}
+        variant="outline"
+      />
       <Table 
         columns={columns} 
         data={paginatedData}
-        pagination={tableData?.length > pageSize ? {
+        pagination={tableData.length > pageSize ? {
           current: currentPage,
           pageSize: pageSize,
           total: tableData.length,

@@ -24,7 +24,7 @@ interface AllCustomersProps {
 const AllCustomers: React.FC<AllCustomersProps> = ({ data }) => {
  
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(20);
 
   const columns: Array<ColumnDefinition<Customer>> = [
     {

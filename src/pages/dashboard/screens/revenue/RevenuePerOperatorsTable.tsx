@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, type ColumnDefinition } from '@/components/ui/Table';
 import { useRevenues } from '@/hooks/useAdmin';
+import DateRangeFilter, { type Period } from '@/components/ui/DateRangeFilter';
 
 interface OperatorRevenue {
   total_count: number;
@@ -17,7 +18,55 @@ interface TableOperatorRevenue extends OperatorRevenue {
 }
 
 const RevenuePerOperatorsTable: React.FC = () => {
-  const { data: revenues } = useRevenues('operator-earning');
+  const [selectedPeriod, setSelectedPeriod] = useState<Period>('daily');
+  const [dateRange, setDateRange] = useState<{ start_date: string; end_date: string }>({
+    start_date: '',
+    end_date: ''
+  });
+
+  // Function to calculate date range based on selected period
+  const calculateDateRange = (period: Period) => {
+    const today = new Date();
+    let startDate = new Date();
+    let endDate = new Date();
+
+    switch (period) {
+      case 'daily':
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
+        break;
+      case 'weekly':
+        startDate.setDate(today.getDate() - 7);
+        break;
+      case 'monthly':
+        startDate.setMonth(today.getMonth() - 1);
+        break;
+      case 'yearly':
+        startDate.setFullYear(today.getFullYear() - 1);
+        break;
+      case 'all':
+        startDate = new Date(0); // Beginning of time
+        endDate = new Date(); // Current date
+        break;
+    }
+
+    setDateRange({
+      start_date: startDate.toISOString().split('T')[0],
+      end_date: endDate.toISOString().split('T')[0]
+    });
+  };
+
+  // Update date range when period changes
+  useEffect(() => {
+    calculateDateRange(selectedPeriod);
+  }, [selectedPeriod]);
+
+  // Format the query string correctly
+  const queryString = dateRange.start_date 
+    ? `&start_date=${dateRange.start_date}&end_date=${dateRange.end_date}`
+    : '';
+
+  const { data: revenues } = useRevenues(`operator-earning${queryString}`);
 
   const columns: Array<ColumnDefinition<TableOperatorRevenue>> = [
     {
@@ -47,15 +96,18 @@ const RevenuePerOperatorsTable: React.FC = () => {
       title: "Date joined",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (value) => (
-        <span className='text-[#475467]'>
-          {new Date(value).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-          })}
-        </span>
-      ),
+      render: (value: string) => {
+        if (!value) return 'N/A';
+        const d = new Date(value);
+        // Format: Mon, 02-06-2025
+        const formatted = d.toLocaleDateString('en-GB', {
+          weekday: 'short',
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        }).replace(/\//g, '-');
+        return <span className='text-[#475467] font-medium'>{formatted}</span>;
+      },
     },
   ];
 
@@ -65,13 +117,13 @@ const RevenuePerOperatorsTable: React.FC = () => {
   }));
 
   return (
-    <div className="mb-6 mt-6">
-      <div className="py-2 px-4 bg-white rounded-md border-[#E5E9F0] flex justify-between items-center">
-        <h1 className="text-md font-medium mb-0 text-[#344054]">Revenue per operator</h1>
-        <button className="flex items-center gap-2 px-4 py-2 text-[#667085] bg-[#F9FAFB] rounded-lg border border-[#E5E9F0] hover:bg-gray-50">
-          <span>Filter</span>          
-        </button>
-      </div>
+    <div className="mb-6">
+      <DateRangeFilter
+        title="Revenue per operator"
+        selectedPeriod={selectedPeriod}
+        onPeriodChange={setSelectedPeriod}
+        periods={['weekly', 'monthly', 'yearly']}
+      />
       
       <Table
         columns={columns}

@@ -253,7 +253,7 @@ const RevenueGrowthChart: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg p-6 border border-[#E5E9F0] min-h-[390px]">
+    <div className="bg-white rounded-lg p-6 mb-6 border border-[#E5E9F0] min-h-[390px]">
       <div className="flex justify-between items-center mb-4">
         <div>
           <h3 className="text-xs font-medium text-[#667085]">Revenue Growth</h3>

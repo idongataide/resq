@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
     ],
     define: {
       "process.env": env,
-      'import.meta.env.VITE_GMAPS_API_KEY': JSON.stringify('AIzaSyAw3wjMqZQWUIkMNHJCHZPcmyPeTfUnuGQ')
+      'import.meta.env.VITE_GMAPS_API_KEY': JSON.stringify('AIzaSyBHlJ9KQFnRZMz5jV6bZh-OQuS9iw16kGA')
     },
 
     server: {

@@ -38,3 +38,15 @@ export const getTeams = async () => {
     return error;
   }
 };
+
+export const deleteTeams = async (id: string) => {
+  try {
+    return await axiosAPIInstance
+      .delete(`/accounts/admin-user/${id}`)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};

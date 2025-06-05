@@ -4,13 +4,17 @@ import { FaPlus } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useAllTeam, useAllTeamsCount } from "@/hooks/useAdmin";
+import LoadingScreen from "@/pages/dashboard/common/LoadingScreen";
 
 
 const TeamsLayout: React.FC = () => {
 
-  const { data : teams } = useAllTeam()
-  const { data : teamsCount } = useAllTeamsCount('count');
+  const { data : teams, isLoading: teamsLoading } = useAllTeam()
+  const { data : teamsCount, isLoading: countLoading } = useAllTeamsCount('count');
 
+  if (teamsLoading || countLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <main>

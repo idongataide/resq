@@ -75,7 +75,7 @@ const LagosHotspotsMap: React.FC = () => {
     lng: 3.3792
   };
 
-  const apiKey = "AIzaSyAw3wjMqZQWUIkMNHJCHZPcmyPeTfUnuGQ"; // Replace with your actual API key
+  const apiKey = import.meta.env.VITE_GMAPS_API_KEY; // Replace with your actual API key
 
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',

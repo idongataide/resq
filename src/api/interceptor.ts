@@ -10,7 +10,7 @@ const getAuthTokens = () => {
 };
 
 export const axiosAPIInstance = axios.create({
-  baseURL: '/admins',
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/admins',
   headers: {
     'Content-Type': 'application/json',
   },

@@ -5,6 +5,38 @@ import { addAssets } from '@/api/operatorsApi';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 
+interface AddressComponent {
+  long_name: string;
+  short_name: string;
+  types: string[];
+}
+
+interface Geometry {
+  location: {
+    lat: number;
+    lng: number;
+  };
+  location_type: string;
+  viewport: {
+    northeast: {
+      lat: number;
+      lng: number;
+    };
+    southwest: {
+      lat: number;
+      lng: number;
+    };
+  };
+}
+
+interface PlaceResult {
+  address_components: AddressComponent[];
+  formatted_address: string;
+  geometry: Geometry;
+  place_id: string;
+  types: string[];
+}
+
 interface AddAssetProps {
   showModal: boolean;
   setShowModal: (show: boolean) => void;
@@ -12,6 +44,51 @@ interface AddAssetProps {
 }
 
 const { Option } = Select;
+
+const AddressDetails: React.FC<{ result: PlaceResult }> = ({ result }) => {
+  return (
+    <div className="bg-[#F9FAFB] rounded-lg p-4 mb-4">
+      <h3 className="text-[#475467] font-medium mb-3">Address Details</h3>
+      
+      <div className="space-y-3">
+        <div>
+          <p className="text-sm text-[#667085]">Full Address</p>
+          <p className="text-[#475467]">{result.formatted_address}</p>
+        </div>
+
+        {/* <div>
+          <p className="text-sm text-[#667085] mb-2">Address Components</p>
+          <div className="space-y-2">
+            {result.address_components.map((component, index) => (
+              <div key={index} className="flex items-start gap-4 p-2 bg-white rounded">
+                <div className="flex-1">
+                  <p className="text-[#475467] font-medium">{component.long_name}</p>
+                  <p className="text-sm text-[#667085]">{component.short_name}</p>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-[#667085]">
+                    Types: {component.types.join(", ")}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div> */}
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="p-2 bg-white rounded">
+            <p className="text-sm text-[#667085]">Latitude</p>
+            <p className="text-[#475467]">{result.geometry.location.lat}</p>
+          </div>
+          <div className="p-2 bg-white rounded">
+            <p className="text-sm text-[#667085]">Longitude</p>
+            <p className="text-[#475467]">{result.geometry.location.lng}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const AddAsset: React.FC<AddAssetProps> = ({ showModal, setShowModal, onAssetAdded }) => {
   const [form] = Form.useForm();
@@ -22,6 +99,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ showModal, setShowModal, onAssetAdd
   const [fetchedCoordinates, setFetchedCoordinates] = useState<{ longitude: number; latitude: number } | null>(null);
   const [addressSuggestions, setAddressSuggestions] = useState<string[]>([]);
   const [fetchingAddress] = useState(false);
+  const [addressDetails, setAddressDetails] = useState<PlaceResult | null>(null);
 
   const handleClose = () => {
     setShowModal(false);
@@ -30,21 +108,24 @@ const AddAsset: React.FC<AddAssetProps> = ({ showModal, setShowModal, onAssetAdd
     setLoading(false);
     setFetchedCoordinates(null);
     setSelectedAddress('');
+    setAddressDetails(null);
   };
 
   const fetchCoordinatesForAddress = async (address: string) => {
     if (!address) {
       setFetchedCoordinates(null);
+      setAddressDetails(null);
       return;
     }
 
     setLoading(true);
     setFetchedCoordinates(null);
     setSelectedAddress(address);
+    setAddressDetails(null);
 
     try {
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyAw3wjMqZQWUIkMNHJCHZPcmyPeTfUnuGQ`
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyBHlJ9KQFnRZMz5jV6bZh-OQuS9iw16kGA`
       );
       
       if (!response.ok) {
@@ -61,19 +142,22 @@ const AddAsset: React.FC<AddAssetProps> = ({ showModal, setShowModal, onAssetAdd
         throw new Error('No results found for this address');
       }
       
-      const location = data.results[0].geometry.location;
+      const result = data.results[0];
+      const location = result.geometry.location;
       const coordinates = { 
         longitude: location.lng, 
         latitude: location.lat 
       };
       
       setFetchedCoordinates(coordinates);
+      setAddressDetails(result);
       toast.success('Location found successfully');
       return coordinates;
     } catch (error) {
       console.error('Error fetching coordinates:', error);
       toast.error('Failed to get coordinates for this address');
       setFetchedCoordinates(null);
+      setAddressDetails(null);
       return null;
     } finally {
       setLoading(false);
@@ -250,11 +334,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ showModal, setShowModal, onAssetAdd
                   notFoundContent={fetchingAddress ? 'Searching...' : null}
                 />
               </Form.Item>
-              {fetchedCoordinates && (
-                <div className="bg-[#E9F7EF] rounded-md px-4 py-3 mb-4 text-[#054F31] font-medium text-sm">
-                  Selected Address: {selectedAddress}<br />
-                  Coordinates: Longitude {fetchedCoordinates.longitude.toFixed(4)}, Latitude {fetchedCoordinates.latitude.toFixed(4)}
-                </div>
+              {addressDetails && (
+                <AddressDetails result={addressDetails} />
               )}
               <Form.Item>
                 <Button

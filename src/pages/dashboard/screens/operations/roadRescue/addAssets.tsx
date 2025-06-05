@@ -57,7 +57,7 @@ const AddressDetails: React.FC<{ result: PlaceResult }> = ({ result }) => {
         </div>
 
         {/* <div>
-          <p className="text-sm text-[#667085] mb-2">Address Components</p>
+          <p className="text-sm text-[#667085] mb-2">Address Componentss</p>
           <div className="space-y-2">
             {result.address_components.map((component, index) => (
               <div key={index} className="flex items-start gap-4 p-2 bg-white rounded">

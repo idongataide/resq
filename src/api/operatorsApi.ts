@@ -167,7 +167,8 @@ export const bulkUploadOperators = async (formData: FormData) => {
       .post(`/users/bulk-operator-upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Accept' : 'application/form-data'
+          // 'Accept' : 'application/form-data',
+          'upload' : 'yes'
         },
       })
       .then((res) => {

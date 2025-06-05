@@ -3,10 +3,15 @@ import { FiEdit2, FiMail, FiPhone, FiMapPin, FiCreditCard } from 'react-icons/fi
 import { useOperatorData } from '@/hooks/useAdmin';
 import { useParams } from 'react-router-dom';
 import LoadingScreen from '@/pages/dashboard/common/LoadingScreen';
+import React from 'react';
+import EditCompanyProfile from './editCompanyProfile';
+import EditContactDetails from './editContactDetails';
 
 const CompanyProfileCard = () => {
   const { id } = useParams<{ id: string }>();
   const { data: companyData, isLoading : companyLoading} = useOperatorData(id || '');
+  const [showEditCompany, setShowEditCompany] = React.useState(false);
+  const [showEditContact, setShowEditContact] = React.useState(false);
 
   // Format date to be more readable
   const formatDate = (dateString: string) => {
@@ -23,6 +28,18 @@ const CompanyProfileCard = () => {
     return `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`.toUpperCase();
   };
 
+  const handleEditCompany = () => {
+    setShowEditCompany(true);
+  };
+
+  const handleEditContact = () => {
+    setShowEditContact(true);
+  };
+
+  const handleEditSuccess = () => {
+    // Refresh data or update state as needed
+  };
+
   if (companyLoading) {
     return (
      <LoadingScreen/>
@@ -36,7 +53,10 @@ const CompanyProfileCard = () => {
         {/* Company Header */}
           <div className="flex justify-between items-start mb-6">
             <h1 className="text-2xl font-bold capitalize text-[#475467]">{companyData?.name}</h1>
-            <button className="flex items-center gap-2 text-[#FF6C2D] hover:text-[#E55B1F]">
+            <button 
+              onClick={handleEditCompany}
+              className="flex items-center gap-2 text-[#FF6C2D] hover:text-[#E55B1F]"
+            >
               <FiEdit2 className="w-5 h-5" />
               <span>Edit</span>
             </button>
@@ -113,7 +133,10 @@ const CompanyProfileCard = () => {
         <div className="w-full md:w-full lg:w-1/4 bg-white rounded-2xl p-6">
           <div className="bg-[#F9FAFB] rounded-lg flex p-2 mb-2">
             <h3 className="text-sm font-medium text-[#475467]">Contact person</h3>
-            <button className="flex items-center gap-2 ms-auto text-[#FF6C2D] hover:text-[#E55B1F]">
+            <button 
+              onClick={handleEditContact}
+              className="flex items-center gap-2 ms-auto text-[#FF6C2D] hover:text-[#E55B1F]"
+            >
               <FiEdit2 className="w-5 h-5" />
               <span>Edit</span>
             </button>
@@ -143,6 +166,25 @@ const CompanyProfileCard = () => {
           </div>
         </div>
       </div>
+
+      {/* Edit Modals */}
+      <EditCompanyProfile
+        isOpen={showEditCompany}
+        onClose={() => setShowEditCompany(false)}
+        operatorData={companyData}
+        onSuccess={handleEditSuccess}
+      />
+
+      <EditContactDetails
+        isOpen={showEditContact}
+        onClose={() => setShowEditContact(false)}
+        initialData={{
+          contact_person: companyData?.contact_person,
+          contact_phone: companyData?.contact_phone,
+          contact_email: companyData?.contact_email
+        }}
+        onNext={handleEditSuccess}
+      />
     </>
   );
 };

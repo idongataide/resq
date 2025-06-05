@@ -42,7 +42,7 @@ const UploadOperatorsForm: React.FC = () => {
 
     try {
       const response = await bulkUploadOperators(formData);
-      if (response?.response?.data?.status === 'ok') {
+      if (response?.data?.status === 'ok') {
         toast.success('Operators uploaded successfully');
         setFile(null);
         if (fileInputRef.current) {
@@ -51,7 +51,8 @@ const UploadOperatorsForm: React.FC = () => {
         // Mutate the operators list to refresh data
         globalMutate('users/operators/');
       } else {
-        toast.error(response?.response?.data?.msg || 'Upload failed');
+        console.log(response)
+        toast.error(response?.data?.message || 'Upload failed');
       }
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Failed to upload operators');
@@ -61,7 +62,7 @@ const UploadOperatorsForm: React.FC = () => {
   };
 
   const handleDownloadTemplate = () => {
-    const headers = ['name', 'email', 'phone_number'];
+    const headers = ['name', 'email', 'phone_number', 'state', 'lga'];
     const csvContent = headers.join(',') + '\n';
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);

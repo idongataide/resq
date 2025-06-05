@@ -111,8 +111,12 @@ const CompanyProfileCard = () => {
         
         {/* Second section: smaller */}
         <div className="w-full md:w-full lg:w-1/4 bg-white rounded-2xl p-6">
-          <div className="bg-[#F9FAFB] rounded-lg p-2 mb-2">
+          <div className="bg-[#F9FAFB] rounded-lg flex p-2 mb-2">
             <h3 className="text-sm font-medium text-[#475467]">Contact person</h3>
+            <button className="flex items-center gap-2 ms-auto text-[#FF6C2D] hover:text-[#E55B1F]">
+              <FiEdit2 className="w-5 h-5" />
+              <span>Edit</span>
+            </button>
           </div>
           
           <div className="text-center gap-4">

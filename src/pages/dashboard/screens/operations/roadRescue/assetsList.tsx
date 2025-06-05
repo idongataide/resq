@@ -14,6 +14,7 @@ import { useParams } from 'react-router-dom';
 interface Vehicle {
   id: string;
   asset_id: string;
+  operator_id: string;
   brand_name: string;
   vehicle_model: string;
   plate_number: string;

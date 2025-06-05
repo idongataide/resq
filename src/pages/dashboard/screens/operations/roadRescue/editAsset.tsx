@@ -10,6 +10,7 @@ interface EditAssetProps {
   onAssetUpdated?: () => void;
   assetData: {
     asset_id: string;
+    operator_id: string;
     brand_name: string;
     vehicle_model: string;
     plate_number: string;
@@ -33,6 +34,7 @@ const EditAsset: React.FC<EditAssetProps> = ({ showModal, setShowModal, onAssetU
         vehicleModel: assetData.vehicle_model,
         numberPlate: assetData.plate_number,
         availability: assetData.availability,
+        operator_id: assetData.operator_id,
         status: assetData.status
       });
     }
@@ -67,6 +69,7 @@ const EditAsset: React.FC<EditAssetProps> = ({ showModal, setShowModal, onAssetU
       plate_number: formValues.numberPlate,
       vehicle_model: formValues.vehicleModel,
       availability: availability,
+      operator_id: assetData.operator_id,
       status: status,
       otp: otp
     };

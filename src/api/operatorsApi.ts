@@ -201,3 +201,15 @@ export const updateDriver = async (driverId: string, data: any) => {
     return error;
   }
 };
+
+export const updateOperator = async (operatorId: string, data: any) => {
+  try {
+    return await axiosAPIInstance
+      .put(`/users/operators/${operatorId}`, data)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};

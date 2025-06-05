@@ -21,7 +21,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ showModal, setShowModal, onAssetAdd
   const [selectedAddress, setSelectedAddress] = useState('');
   const [fetchedCoordinates, setFetchedCoordinates] = useState<{ longitude: number; latitude: number } | null>(null);
   const [addressSuggestions, setAddressSuggestions] = useState<string[]>([]);
-  const [fetchingAddress, setFetchingAddress] = useState(false);
+  const [fetchingAddress] = useState(false);
 
   const handleClose = () => {
     setShowModal(false);

@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import { Form, Input, Button, Select } from 'antd';
 import { useBanksList } from '@/hooks/useAdmin';
 import { verifyAccount } from '@/api/banks'; 
 import toast from 'react-hot-toast';
 import ConfirmOperator from '@/pages/dashboard/screens/setup/2FA';
-import { useSWRConfig } from 'swr';
 import { addStakeholder } from '@/api/settingsApi';
 
 const { Option } = Select;
@@ -44,7 +43,7 @@ const AddStakeholderForm: React.FC<AddStakeHolderFormProps> = ({
   const [accountName, setAccountName] = useState<string | null>(null);
 
   const { data: bankList, isLoading: isLoadingBanks } = useBanksList();
-  const { mutate: globalMutate } = useSWRConfig();
+
 
   const handleVerifyAccount = async (accountNumber: string, bankName: string) => {
     if (!bankName || !accountNumber || accountNumber.length < 10) {

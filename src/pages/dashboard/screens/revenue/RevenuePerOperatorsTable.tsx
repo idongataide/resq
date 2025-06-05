@@ -65,7 +65,7 @@ const RevenuePerOperatorsTable: React.FC = () => {
   }));
 
   return (
-    <div className="mb-6">
+    <div className="mb-6 mt-6">
       <div className="py-2 px-4 bg-white rounded-md border-[#E5E9F0] flex justify-between items-center">
         <h1 className="text-md font-medium mb-0 text-[#344054]">Revenue per operator</h1>
         <button className="flex items-center gap-2 px-4 py-2 text-[#667085] bg-[#F9FAFB] rounded-lg border border-[#E5E9F0] hover:bg-gray-50">

@@ -155,7 +155,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ showModal, setShowModal, onAssetAdd
       return coordinates;
     } catch (error) {
       console.error('Error fetching coordinates:', error);
-      toast.error('Failed to get coordinates for this address');
+      // toast.error('Failed to get coordinates for this address');
       setFetchedCoordinates(null);
       setAddressDetails(null);
       return null;

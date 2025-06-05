@@ -4,6 +4,7 @@ import { FaTrash, FaPlus } from 'react-icons/fa';
 import { MdOutlineEdit } from "react-icons/md";
 import { getStatusStyle } from '@/components/ui/statusStyles';
 import AddAsset from './addAssets';
+import EditAsset from './editAsset';
 import { useAssetsByOperatorId } from '@/hooks/useAdmin';
 import { deleteAsset } from '@/api/operatorsApi';
 import toast from 'react-hot-toast';
@@ -25,16 +26,18 @@ const VehicleAssets: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [showAddAssetModal, setShowAddAssetModal] = useState(false);
+  const [showEditAssetModal, setShowEditAssetModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [assetToDelete, setAssetToDelete] = useState<Vehicle | null>(null);
+  const [assetToEdit, setAssetToEdit] = useState<Vehicle | null>(null);
   const { id } = useParams<{ id: string }>();
 
   const { data : allAssets, mutate } = useAssetsByOperatorId(id || '')
 
-  console.log(allAssets)
 
   const handleEdit = (vehicle: Vehicle) => {
-    console.log('Edit vehicle:', vehicle);
+    setAssetToEdit(vehicle);
+    setShowEditAssetModal(true);
   };
 
   const handleDelete = (vehicle: Vehicle) => {
@@ -170,6 +173,15 @@ const VehicleAssets: React.FC = () => {
         setShowModal={setShowAddAssetModal}
         onAssetAdded={mutate}
       />
+
+      {assetToEdit && (
+        <EditAsset
+          showModal={showEditAssetModal}
+          setShowModal={setShowEditAssetModal}
+          onAssetUpdated={mutate}
+          assetData={assetToEdit}
+        />
+      )}
 
       {showDeleteModal && (
         <div className="fixed inset-0 z-[999] flex items-center justify-center  bg-[#38383880] p-5 bg-opacity-50">

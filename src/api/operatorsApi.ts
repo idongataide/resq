@@ -167,8 +167,33 @@ export const bulkUploadOperators = async (formData: FormData) => {
       .post(`/users/bulk-operator-upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Accept' : 'application/form-data'
         },
       })
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};
+
+export const updateAsset = async (assetId: string, data: any) => {
+  try {
+    return await axiosAPIInstance
+      .put(`/users/assets/${assetId}`, data)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};
+
+export const updateDriver = async (driverId: string, data: any) => {
+  try {
+    return await axiosAPIInstance
+      .put(`/users/drivers/${driverId}`, data)
       .then((res) => {
         return res?.data;
       });

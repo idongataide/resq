@@ -42,8 +42,7 @@ const UploadOperatorsForm: React.FC = () => {
 
     try {
       const response = await bulkUploadOperators(formData);
-
-      if (response?.status === 'ok') {
+      if (response?.response?.data?.status === 'ok') {
         toast.success('Operators uploaded successfully');
         setFile(null);
         if (fileInputRef.current) {
@@ -52,7 +51,7 @@ const UploadOperatorsForm: React.FC = () => {
         // Mutate the operators list to refresh data
         globalMutate('users/operators/');
       } else {
-        throw new Error(response?.message || 'Upload failed');
+        toast.error(response?.response?.data?.msg || 'Upload failed');
       }
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Failed to upload operators');

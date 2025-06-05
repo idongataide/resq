@@ -3,6 +3,7 @@ import { Table, type ColumnDefinition } from '@/components/ui/Table';
 import { FaTrash, FaPlus } from 'react-icons/fa';
 import { MdOutlineEdit } from "react-icons/md";
 import AddDriver from './addDrivers';
+import EditDriver from './editDriver';
 import { useGetDriversByOperatorId } from '@/hooks/useAdmin';
 import { deleteDriver } from '@/api/operatorsApi';
 import toast from 'react-hot-toast';
@@ -32,14 +33,17 @@ const DriversList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [showAddDriverModal, setShowAddDriverModal] = useState(false);
+  const [showEditDriverModal, setShowEditDriverModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [driverToDelete, setDriverToDelete] = useState<Driver | null>(null);
+  const [driverToEdit, setDriverToEdit] = useState<Driver | null>(null);
   const { id } = useParams<{ id: string }>();
 
   const { data: allDrivers, mutate } = useGetDriversByOperatorId(id || '');
 
   const handleEdit = (driver: Driver) => {
-    console.log('Edit driver:', driver);
+    setDriverToEdit(driver);
+    setShowEditDriverModal(true);
   };
 
   const handleDelete = (driver: Driver) => {
@@ -171,6 +175,15 @@ const DriversList: React.FC = () => {
         setShowModal={setShowAddDriverModal}
         onDriverAdded={mutate}
       />
+
+      {driverToEdit && (
+        <EditDriver
+          showModal={showEditDriverModal}
+          setShowModal={setShowEditDriverModal}
+          onDriverUpdated={mutate}
+          driverData={driverToEdit}
+        />
+      )}
 
       {showDeleteModal && (
         <div className="fixed inset-0 z-[999] flex items-center justify-center  bg-[#38383880] p-5 bg-opacity-50">

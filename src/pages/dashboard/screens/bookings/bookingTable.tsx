@@ -6,7 +6,7 @@ import { FaArrowRight, FaCheck, FaTimes } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { FaAngleLeft } from "react-icons/fa6";
-import { useAllBookings, useFees } from "@/hooks/useAdmin";
+import { useAllBookings } from "@/hooks/useAdmin";
 import RejectBookingSidebar from './RejectBookingSidebar';
 import ApproveBookingSidebar from './ApproveBookingSidebar';
 import AcceptedBookingsSidebar from './AcceptedBookingsSidebar';
@@ -80,9 +80,7 @@ const BookingTable: React.FC = () => {
   const [selectedBooking, setSelectedBooking] = useState<BookingData | null>(null);
   const [activeSidebar, setActiveSidebar] = useState<'approve' | 'reject' | 'accepted' | 'completed' | 'cancelled' | 'ongoing' | null>(null);
 
-  const { data: feesData } = useFees();
 
-  console.log(feesData,'feesData')
   
   useEffect(() => {
     if (status) {
@@ -329,7 +327,6 @@ const BookingTable: React.FC = () => {
         isOpen={activeSidebar === 'approve' && !!selectedBooking}
         onClose={handleCloseSidebar}
         booking={selectedBooking}
-        fees={feesData}
         mutate={mutate}
       />
     )}
@@ -346,7 +343,7 @@ const BookingTable: React.FC = () => {
         isOpen={activeSidebar === 'accepted' && !!selectedBooking}
         onClose={handleCloseSidebar}
         booking={selectedBooking}
-        fees={feesData}
+       
       />
     )}
     {activeSidebar === 'completed' && (
@@ -354,7 +351,6 @@ const BookingTable: React.FC = () => {
         isOpen={activeSidebar === 'completed' && !!selectedBooking}
         onClose={handleCloseSidebar}
         booking={selectedBooking}
-        fees={feesData}
       />
     )}
     {activeSidebar === 'cancelled' && (
@@ -362,7 +358,6 @@ const BookingTable: React.FC = () => {
         isOpen={activeSidebar === 'cancelled' && !!selectedBooking}
         onClose={handleCloseSidebar}
         booking={selectedBooking}
-        fees={feesData}
       />
     )}
     {activeSidebar === 'ongoing' && (

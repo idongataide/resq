@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Select, Button, Input } from 'antd';
-import { useGetDriversByOperatorId, useAllService, useGetAssetsbyCord } from '@/hooks/useAdmin';
+import { useGetDriversByOperatorId, useAllService, useGetAssetsbyCord, useFees } from '@/hooks/useAdmin';
 import { approveTowingRequest } from '@/api/bookingsApi';
 import toast from 'react-hot-toast';
 
@@ -8,29 +8,14 @@ interface ApproveBookingSidebarProps {
   isOpen: boolean;
   onClose: () => void;
   booking: any;
-  fees: {
-    status: string;
-    data: Array<{
-      name: string;
-      tag: string;
-      slug: string;
-      amount: number;
-      amount_type: string;
-      amount_sufix: string;
-      data: any[];
-      createdAt: string;
-      updatedAt: string;
-      fee_id: string;
-    }>;
-  };
   mutate: () => void;
 }
+
 
 const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
   isOpen,
   onClose,
   booking,
-  fees,
   mutate
 }) => {
   const [form] = Form.useForm();
@@ -45,6 +30,14 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
   const [selectedAsset, setSelectedAsset] = useState<any>(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const formatFeeName = (name: string) => {
+    return name
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
   const longitude = booking?.start_coord?.longitude;
   const latitude = booking?.start_coord?.latitude;
 
@@ -56,6 +49,9 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
   
   
   const { data: services, isLoading: isLoadingServices } = useAllService(queryString);
+  const { data: feesData } = useFees();
+
+  console.log(feesData,'feesDatass')
 
 
   useEffect(() => {
@@ -82,8 +78,6 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
   }, [service, services]);
 
 
-  const dropoffFeeObject = fees?.data?.find((fee: { tag: string }) => fee.tag === 'DROP_OFF_FEE');
-  const pickupFeeObject = fees?.data?.find((fee: { tag: string }) => fee.tag === 'PICK_UP_FEE');
 
   if (!isOpen || !booking) {
     return null;
@@ -253,16 +247,18 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
                     <div className=''>
                       <p className="font-normal mb-3 text-[#667085]">Approx. Distance</p>
                       <p className="font-normal mb-3 text-[#667085]">Service Cost</p>
-                      <p className="font-normal mb-3 text-[#667085]">Pickup (Cost/Km)</p>
-                      <p className="font-normal mb-3 text-[#667085]">Dropup (Cost/Km)</p>
+                      {feesData?.data?.map((fee: any, index: number) => (
+                        <p key={index} className="font-normal mb-3 text-[#667085]">{formatFeeName(fee.name)}</p>
+                      ))}
                     </div>
                     <div className='text-right'>
                       <p className='font-normal mb-3 text-[#475467] capitalize'>
                         {(booking?.drop_off_dst + (selectedAsset?.distance_km || 0)).toFixed(2)}km
                       </p>
                       <p className='font-normal mb-3 text-[#475467] capitalize'>₦{serviceFee}</p>
-                      <p className='font-normal mb-3 text-[#475467] capitalize'>₦{pickupFeeObject?.amount}/km</p>
-                      <p className='font-normal mb-3 text-[#475467] capitalize'>₦{dropoffFeeObject?.amount}/km</p>
+                      {feesData?.data?.map((fee: any, index: number) => (
+                        <p key={index} className='font-normal mb-3 text-[#475467] capitalize'>₦{fee.amount}/km</p>
+                      ))}
                     </div>
                 </div>
             </div>

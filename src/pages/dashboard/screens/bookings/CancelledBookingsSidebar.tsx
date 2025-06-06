@@ -2,30 +2,15 @@ interface CancelledBookingsSidebarProps {
   isOpen: boolean;
   onClose: () => void;
   booking: any;
-  fees: Array<{
-    name: string;
-    tag: string;
-    slug: string;
-    amount: number;
-    amount_type: string;
-    amount_sufix: string;
-    data: any[];
-    createdAt: string;
-    updatedAt: string;
-    fee_id: string;
-  }>;
 }
 
 const CancelledBookingsSidebar: React.FC<CancelledBookingsSidebarProps> = ({
   isOpen,
   onClose,
   booking,
-  fees = [],
 }) => {
 
-  const pickupFee = Array.isArray(fees) ? fees.find(fee => fee.tag === 'PICK_UP_FEE')?.amount || 0 : 0;
-  const dropoffFee = Array.isArray(fees) ? fees.find(fee => fee.tag === 'DROP_OFF_FEE')?.amount || 0 : 0;
-
+  
   if (!isOpen || !booking) {
     return null;
   }
@@ -127,8 +112,8 @@ const CancelledBookingsSidebar: React.FC<CancelledBookingsSidebarProps> = ({
                   <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.asset_data?.plate_number || 'N/A'}</p>
                   <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.drop_off_dst}km</p>
                   <p className='font-normal mb-3 text-[#475467] capitalize'>₦{booking?.service_fee?.toLocaleString() || 'N/A'}</p>
-                  <p className='font-normal mb-3 text-[#475467] capitalize'>₦{pickupFee}/km</p>
-                  <p className='font-normal  text-[#475467] capitalize'>₦{dropoffFee}/km</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>₦{booking?.towing_params?.pickupFee}/km</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>₦{booking?.towing_params?.dropoffFee}/km</p>
                 </div>
              </div>
           </div>

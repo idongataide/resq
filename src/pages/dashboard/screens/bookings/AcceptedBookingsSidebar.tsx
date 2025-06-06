@@ -3,18 +3,7 @@ interface AcceptedBookingsSidebarProps {
   isOpen: boolean;
   onClose: () => void;
   booking: any;
-  fees: Array<{
-    name: string;
-    tag: string;
-    slug: string;
-    amount: number;
-    amount_type: string;
-    amount_sufix: string;
-    data: any[];
-    createdAt: string;
-    updatedAt: string;
-    fee_id: string;
-  }>;
+  
 }
 
 const AcceptedBookingsSidebar: React.FC<AcceptedBookingsSidebarProps> = ({
@@ -23,10 +12,6 @@ const AcceptedBookingsSidebar: React.FC<AcceptedBookingsSidebarProps> = ({
   booking,
   // fees,
 }) => {
-
-  // const pickupFee = fees?.find(fee => fee.tag === 'PICK_UP_FEE')?.amount || 0;
-  // const dropoffFee = fees?.find(fee => fee.tag === 'DROP_OFF_FEE')?.amount || 0;
-  console.log(booking,'bookings')
 
  
 

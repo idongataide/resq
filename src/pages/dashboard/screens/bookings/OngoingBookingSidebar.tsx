@@ -9,37 +9,6 @@ interface OngoingBookingsSidebarProps {
   mutate: () => void;
 }
 
-const steps = [
-  {
-    key: 'request',
-    title: 'Booking request made',
-    message: 'Booking payment has been completed successfully.',
-    time: 'Today, 10:40am',
-    confirm: false,
-  },
-  {
-    key: 'ongoing',
-    title: 'Booking is ongoing',
-    message: 'This booking is currently ongoing and driver is enroute',
-    time: 'Today, 10:40am',
-    confirm: false,
-  },
-  {
-    key: 'pickup',
-    title: 'Arrived pickup location',
-    message: 'Kindly confirm that towing truck has arrived the pickup location',
-    time: 'Today, 10:40am',
-    confirm: true,
-  },
-  {
-    key: 'destination',
-    title: 'Arrived destination',
-    message: 'Kindly confirm that towing truck has arrived the destination location',
-    time: 'Today, 10:40am',
-    confirm: true,
-  },
-];
-
 const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
   isOpen,
   onClose,
@@ -47,6 +16,37 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
   mutate
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+
+  const steps = [
+    {
+      key: 'request',
+      title: 'Booking request made',
+      message: 'Booking payment has been completed successfully.',
+      time: 'Today, 10:40am',
+      confirm: false,
+    },
+    {
+      key: 'ongoing',
+      title: 'Booking is ongoing',
+      message: 'This booking is currently ongoing and driver is enroute',
+      time: 'Today, 10:40am',
+      confirm: false,
+    },
+    {
+      key: 'pickup',
+      title: 'Arrived pickup location',
+      message: 'Kindly confirm that towing truck has arrived the pickup location',
+      time: 'Today, 10:40am',
+      confirm: booking?.ride_status !== 2,
+    },
+    {
+      key: 'destination',
+      title: 'Arrived destination',
+      message: 'Kindly confirm that towing truck has arrived the destination location',
+      time: 'Today, 10:40am',
+      confirm: true,
+    },
+  ];
 
   const handlePickupConfirmation = async () => {
     if (!booking?.towing_id) {

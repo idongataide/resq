@@ -55,6 +55,11 @@ const OperatorsDirectory: React.FC<AllOperationsProps> = ({ data, isLoading  }) 
       title: "Email address",
       dataIndex: "email",
       key: "email",
+      render: (value) => (
+        <div className="flex items-center gap-2">           
+          <span className='font-medium lowercase text-[#475467]'>{value}</span>
+        </div>
+      ),
     },
     {
       title: "Phone number",
@@ -75,6 +80,17 @@ const OperatorsDirectory: React.FC<AllOperationsProps> = ({ data, isLoading  }) 
       title: "Date onboarded",
       dataIndex: "createdAt",
       key: "createdAt",
+      render: (value: string) => {
+        if (!value) return 'N/A';
+        const d = new Date(value);
+        const formatted = d.toLocaleDateString('en-GB', {
+          weekday: 'short',
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        }).replace(/\//g, '-');
+        return <span className='text-[#475467] font-medium'>{formatted}</span>;
+      },
     },
     {
       title: "Actions",

@@ -177,8 +177,8 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
 
           {/* Details Section */}
           <div className="bg-white rounded-lg border border-[#E5E9F0] p-4 mb-3">
-            <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
-              <div>
+          <div className="grid grid-cols-[1fr_2fr] gap-4 text-sm text-[#475467]">
+          <div>
                 <p className="font-normal mb-3 text-[#667085]">Customer</p>
                 <p className="font-normal mb-3 text-[#667085]">Email</p>
                 <p className="font-normal text-[#667085]">Phone number</p>
@@ -192,8 +192,8 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
           </div>
 
           <div className="bg-white rounded-lg border border-[#E5E9F0] p-4 mb-3">
-            <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
-              <div>
+          <div className="grid grid-cols-[1fr_2fr] gap-4 text-sm text-[#475467]">
+          <div>
                 <p className="font-normal mb-3 text-[#667085]">Vehicle model</p>
                 <p className="font-normal mb-3 text-[#667085]">Number plate</p>
                 <p className="font-normal mb-3 text-[#667085]">Reason for towing</p>

@@ -82,7 +82,6 @@ const BookingTable: React.FC = () => {
 
   const { data: feesData } = useFees();
 
-  console.log(feesData,'feesData')
   
   useEffect(() => {
     if (status) {
@@ -197,11 +196,13 @@ const BookingTable: React.FC = () => {
       title: "Vehicle Reg",
       dataIndex: "vehicle_reg",
       key: "vehicle_reg",
+     
     },
     {
       title: "Vehicle Type",
       dataIndex: "vehicle_type",
       key: "vehicle_type",
+     
     },
     {
       title: "Status",
@@ -218,15 +219,21 @@ const BookingTable: React.FC = () => {
           </span>
         ),
     },
-    ...(status !== 'pending' && status !== 'rejected' ? [{
+    // {
+    //   title: "Reason",
+    //   dataIndex: "tow_reason",
+    //   key: "tow_reason",
+    // },
+    {
       title: "Amount",
-      dataIndex: "est_fare" as keyof BookingData,
+      dataIndex: "est_fare",
       key: "est_fare",
-      render: (value: number) => `₦${value?.toLocaleString()}`
-    }] : []),
+      render: (value: number, record: BookingData) => 
+        record?.ride_status === 0 || record?.ride_status === 4 ? null : `₦${value?.toLocaleString()}`
+    },
     {
       title: "Date & time",
-      dataIndex: "createdAt" as keyof BookingData,
+      dataIndex: "createdAt",
       key: "createdAt",
       render: (value: string) => {
         if (!value) return 'N/A';

@@ -30,8 +30,8 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
   isOpen,
   onClose,
   booking,
-  mutate,
-  fees
+  fees,
+  mutate
 }) => {
   const [form] = Form.useForm();
   const [towingOperator, setTowingOperator] = useState<string | undefined>(undefined);
@@ -72,6 +72,18 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
     setSelectedOperatorName(undefined);
   }, [isOpen, booking]);
 
+  useEffect(() => {
+    if (service) {
+      const selectedService = services?.find((s: any) => s.id === service);
+      if (selectedService) {
+        setServiceFee(selectedService.amount);
+      }
+    }
+  }, [service, services]);
+
+
+  const dropoffFeeObject = fees?.data?.find((fee: { tag: string }) => fee.tag === 'DROP_OFF_FEE');
+  const pickupFeeObject = fees?.data?.find((fee: { tag: string }) => fee.tag === 'PICK_UP_FEE');
 
   if (!isOpen || !booking) {
     return null;
@@ -124,9 +136,6 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
       form.setFieldsValue({ service: value });
     }
   };
-
-  const dropoffFeeObject = fees?.data?.find((fee: { tag: string }) => fee.tag === 'DROP_OFF_FEE');
-  const pickupFeeObject = fees?.data?.find((fee: { tag: string }) => fee.tag === 'PICK_UP_FEE');
 
   return (
     <div className="fixed inset-0 z-[999] flex justify-end bg-[#38383880] p-5 bg-opacity-50" onClick={onClose}>

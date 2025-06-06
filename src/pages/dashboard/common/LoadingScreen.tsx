@@ -20,7 +20,7 @@ const LoadingScreen: React.FC = () => {
           size={20}
           className="absolute top-12 animate-spin"
         />
-        <img className=" h-[28px] mt-2 animate-pulse" src={Images.logo} />
+        <img className=" h-[28px] mt-2 animate-pulse" src={Images.logodark} />
       </div>
 
       <div className="w-full flex-col flex items-center mt-3">

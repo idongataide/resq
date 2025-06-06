@@ -229,7 +229,7 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
               </Form.Item>
 
               <Form.Item label="Service" name="service" rules={[{ required: true, message: 'Please select a service!' }]}>
-                <Select placeholder="Select" value={service} onChange={handleServiceChange} className='!h-[42px]' loading={isLoadingServices}>
+                <Select placeholder="Select" value={service} onChange={handleServiceChange} className='!h-[42px] capitalize' loading={isLoadingServices}>
                   {services?.map((service: any, index:number) => (
                       <Select.Option key={index} value={service.name}>
                           {service.name} - ₦{service.amount}

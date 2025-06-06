@@ -48,6 +48,17 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
     },
   ];
 
+  if (!isOpen || !booking) {
+    return null;
+  }
+
+  // Determine the active step based on booking status
+  let activeStep = 1; // Default to ongoing
+  if (booking?.ride_status === 2) { // Assuming 2 corresponds to Arrived pickup
+    activeStep = 2;
+  }
+  // Add more conditions here for other ride_status values if needed
+
   const handlePickupConfirmation = async () => {
     if (!booking?.towing_id) {
       toast.error('Towing ID not found');
@@ -93,14 +104,6 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
       setIsLoading(false);
     }
   };
-
-
-  if (!isOpen || !booking) {
-    return null;
-  }
-
-  // You can control which step is active based on booking status
-  const activeStep = 1; // Example: 0 = request, 1 = ongoing, 2 = pickup, 3 = destination
 
   return (
     <div className="fixed inset-0 z-[999] flex justify-end bg-[#38383880] p-5 bg-opacity-50" onClick={onClose}>

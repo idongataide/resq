@@ -257,7 +257,9 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
                       <p className="font-normal mb-3 text-[#667085]">Dropup (Cost/Km)</p>
                     </div>
                     <div className='text-right'>
-                      <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.drop_off_dst + (selectedAsset?.distance_km || 0)}km</p>
+                      <p className='font-normal mb-3 text-[#475467] capitalize'>
+                        {(booking?.drop_off_dst + (selectedAsset?.distance_km || 0)).toFixed(2)}km
+                      </p>
                       <p className='font-normal mb-3 text-[#475467] capitalize'>₦{serviceFee}</p>
                       <p className='font-normal mb-3 text-[#475467] capitalize'>₦{pickupFeeObject?.amount}/km</p>
                       <p className='font-normal mb-3 text-[#475467] capitalize'>₦{dropoffFeeObject?.amount}/km</p>

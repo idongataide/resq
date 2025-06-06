@@ -93,7 +93,10 @@ const BookingTable: React.FC = () => {
   const handleViewRequest = (request: BookingData) => {
     console.log('Clicked booking ride_status:', request.ride_status, request.charge_status);
     if (request.ride_status === 1 && request.charge_status === 1) {
-      console.log('request');
+      setSelectedBooking(request);
+      setActiveSidebar('ongoing');
+    } else if (request.ride_status === 2 ){
+      console.log('ongoing')
       setSelectedBooking(request);
       setActiveSidebar('ongoing');
     } else if (request.ride_status === 1) {
@@ -366,8 +369,7 @@ const BookingTable: React.FC = () => {
       <OngoingBookingsSidebar
         isOpen={activeSidebar === 'ongoing' && !!selectedBooking}
         onClose={handleCloseSidebar}
-        booking={selectedBooking}
-        fees={feesData}
+        booking={selectedBooking}     
         mutate={mutate}
       />
     )}

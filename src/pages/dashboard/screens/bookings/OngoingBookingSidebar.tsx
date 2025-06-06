@@ -5,19 +5,7 @@ import toast from 'react-hot-toast';
 interface OngoingBookingsSidebarProps {
   isOpen: boolean;
   onClose: () => void;
-  booking: any;
-  fees: Array<{
-    name: string;
-    tag: string;
-    slug: string;
-    amount: number;
-    amount_type: string;
-    amount_sufix: string;
-    data: any[];
-    createdAt: string;
-    updatedAt: string;
-    fee_id: string;
-  }>;
+  booking: any; 
   mutate: () => void;
 }
 

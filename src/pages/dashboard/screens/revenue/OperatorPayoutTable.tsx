@@ -9,16 +9,19 @@ type DailyPayout = {
     date: string;
     stake_id: string;
   };
-  serviceFee: number;
+  service_fee: number;
+  booking_ref: number;
   totalAmount: number;
-  date: string;
+  createdAt: string;
   operator_id: string;
-  name: string;
   bank_info: {
-    bank_name: string;
-    bank_code: string;
-    account_number: string;
-    account_name: string;
+    name: string;
+    bank_data: {
+      bank_name: string;
+      bank_code: string;
+      account_number: string;
+      account_name: string;
+    };
   };
 };
 
@@ -88,8 +91,8 @@ const OperatorPayoutTable: React.FC = () => {
   const columns: Array<ColumnDefinition<TableDailyPayout>> = [
     {
       title: "Date",
-      dataIndex: "date",
-      key: "date",
+      dataIndex: "createdAt",
+      key: "createdAt",
       render: (value) => (
         <span className='text-[#475467]'>
           {new Date(value).toLocaleDateString('en-US', {
@@ -101,28 +104,35 @@ const OperatorPayoutTable: React.FC = () => {
       ),
     },
     {
-      title: "Beneficiary",
-      dataIndex: "name",
-      key: "name",
+      title: "Booking Id",
+      dataIndex: "booking_ref",
+      key: "booking_ref",
       render: (value) => <span className='font-medium text-[#475467]'>{value}</span>,
     },
     {
+      title: "Beneficiary",
+      dataIndex: "bank_info",
+      key: "name",
+      render: (_, record) => <span className='text-[#475467]'>{record.bank_info.name || 'N/A'}</span>,
+    },
+  
+    {
       title: "Amount due",
-      dataIndex: "serviceFee",
-      key: "serviceFee",
+      dataIndex: "service_fee",
+      key: "service_fee",
       render: (value) => <span className='text-[#475467]'>₦{value.toLocaleString()}</span>,
     },
     {
       title: "Bank name",
       dataIndex: "bank_info",
       key: "bank_name",
-      render: (_, record) => <span className='text-[#475467]'>{record.bank_info.bank_name || 'N/A'}</span>,
+      render: (_, record) => <span className='text-[#475467]'>{record.bank_info.bank_data.bank_name || 'N/A'}</span>,
     },
     {
       title: "Account number",
       dataIndex: "bank_info",
       key: "account_number",
-      render: (_, record) => <span className='text-[#475467]'>{record.bank_info.account_number || 'N/A'}</span>,
+      render: (_, record) => <span className='text-[#475467]'>{record.bank_info.bank_data.account_number || 'N/A'}</span>,
     },
   ];
 

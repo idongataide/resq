@@ -6,11 +6,11 @@ import DateRangeFilter, { type Period } from '@/components/ui/DateRangeFilter';
 
 export interface StakeholderItemData {
   id: string;
-  name: string;
   amount: number;
-  date: string;
+  createdAt: string;
   status: number;
   bank_info: {
+    name: string;
     bank_data: {
       bank_name: string;
       bank_code: string;
@@ -87,8 +87,8 @@ const StakeholderPayoutTable: React.FC = () => {
   const columns: Array<ColumnDefinition<StakeholderItemData>> = [
     {
       title: "Date",
-      dataIndex: "date",
-      key: "date",
+      dataIndex: "createdAt",
+      key: "createdAt",
       render: (date: string) => {
         if (!date) return 'N/A';
         const d = new Date(date);
@@ -104,7 +104,7 @@ const StakeholderPayoutTable: React.FC = () => {
     },
     {
       title: "Beneficiary",
-      dataIndex: "name",
+      dataIndex: "bank_info",
       key: "beneficiary",
       render: (value: string) => <span className='text-[#475467] font-medium'>{value}</span>,
     },

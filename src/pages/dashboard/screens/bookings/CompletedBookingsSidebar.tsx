@@ -21,11 +21,7 @@ const CompletedBookingsSidebar: React.FC<CompletedBookingsSidebarProps> = ({
   isOpen,
   onClose,
   booking,
-  fees,
 }) => {
-
-  const pickupFee = fees?.find(fee => fee.tag === 'PICK_UP_FEE')?.amount || 0;
-  const dropoffFee = fees?.find(fee => fee.tag === 'DROP_OFF_FEE')?.amount || 0;
 
 
   if (!isOpen || !booking) {
@@ -119,15 +115,15 @@ const CompletedBookingsSidebar: React.FC<CompletedBookingsSidebarProps> = ({
                   <p className="font-normal mb-3 text-[#667085]">Drop off (Cost/Km)</p>
                   <p className="font-medium  text-[#667085]">Total</p>
                 </div>
-                 <div className='text-right'>
+                <div className='text-right'>
                   <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.operator?.name || 'N/A'}</p>
                   <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.service_data?.service_type || 'N/A'}</p>
                   <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.service_data?.name || 'N/A'}</p>
                   <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.asset_data?.plate_number || 'N/A'}</p>
                   <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.drop_off_dst}km</p>
                   <p className='font-medium mb-3 text-[#475467] capitalize'>₦{booking?.service_fee?.toLocaleString() || 'N/A'}</p>
-                  <p className='font-medium mb-3 text-[#475467] capitalize'>₦{pickupFee}/km</p>
-                  <p className='font-medium mb-3 text-[#475467] capitalize'>₦{dropoffFee}/km</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>₦{booking?.towing_params?.pickupFee}/km</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>₦{booking?.towing_params?.dropoffFee}/km</p>
                   <p className='font-bold mb-3 text-[#475467] capitalize'>₦{booking?.est_fare?.toLocaleString() || 'N/A'}</p>
                 </div>
              </div>

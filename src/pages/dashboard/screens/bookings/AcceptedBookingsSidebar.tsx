@@ -21,11 +21,12 @@ const AcceptedBookingsSidebar: React.FC<AcceptedBookingsSidebarProps> = ({
   isOpen,
   onClose,
   booking,
-  fees,
+  // fees,
 }) => {
 
-  const pickupFee = fees?.find(fee => fee.tag === 'PICK_UP_FEE')?.amount || 0;
-  const dropoffFee = fees?.find(fee => fee.tag === 'DROP_OFF_FEE')?.amount || 0;
+  // const pickupFee = fees?.find(fee => fee.tag === 'PICK_UP_FEE')?.amount || 0;
+  // const dropoffFee = fees?.find(fee => fee.tag === 'DROP_OFF_FEE')?.amount || 0;
+  console.log(booking,'bookings')
 
  
 
@@ -37,7 +38,7 @@ const AcceptedBookingsSidebar: React.FC<AcceptedBookingsSidebarProps> = ({
     <div className="fixed inset-0 z-[999] flex justify-end bg-[#38383880] p-5 bg-opacity-50" onClick={onClose}>
       <div className="md:w-[48%] lg:w-1/3 w-100 z-[9999] h-full bg-white rounded-xl slide-in overflow-hidden" onClick={e => e.stopPropagation()}>
         <div className="flex justify-between items-center py-3 px-6 border-b border-[#D6DADD]">
-          <h2 className="text-md font-semibold text-[#1C2023]">Approved Booking</h2>
+          <h2 className="text-md font-semibold text-[#1C2023]">Accepted Booking</h2>
           <button
             onClick={onClose}
             className="text-[#7D8489] bg-[#EEF0F2] cursor-pointer py-2 px-3 rounded-3xl hover:text-black"
@@ -55,7 +56,7 @@ const AcceptedBookingsSidebar: React.FC<AcceptedBookingsSidebarProps> = ({
           </div>
 
           <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">
-             <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
+            <div className="grid grid-cols-[1fr_2fr] gap-4 text-sm text-[#475467]">
                 <div className=''>
                   <p className="font-normal mb-3 text-[#667085]">Customer Name</p>
                   <p className="font-normal mb-3 text-[#667085]">Email</p>
@@ -63,7 +64,7 @@ const AcceptedBookingsSidebar: React.FC<AcceptedBookingsSidebarProps> = ({
                 </div>
                  <div className='text-right'>
                   <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.user_data?.first_name} {booking?.user_data?.last_name}</p>
-                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.user_data?.email || 'N/A'}</p>
+                  <p className='font-medium mb-3 text-[#475467] lowercase'>{booking?.user_data?.email || 'N/A'}</p>
                   <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.user_data?.phone_number || 'N/A'}</p>
                 </div>
              </div>
@@ -89,7 +90,7 @@ const AcceptedBookingsSidebar: React.FC<AcceptedBookingsSidebarProps> = ({
           </div>
 
           <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">
-            <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
+            <div className="grid grid-cols-[1fr_2fr] gap-4 text-sm text-[#475467]">
               <div className=''>
                 <p className="font-normal mb-3 text-[#667085]">Pickups</p>
                 <p className="font-normal mb-3 text-[#667085]">Destination</p>
@@ -124,8 +125,8 @@ const AcceptedBookingsSidebar: React.FC<AcceptedBookingsSidebarProps> = ({
                   <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.asset_data?.plate_number || 'N/A'}</p>
                   <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.drop_off_dst}km</p>
                   <p className='font-medium mb-3 text-[#475467] capitalize'>₦{booking?.service_fee?.toLocaleString() || 'N/A'}</p>
-                  <p className='font-medium mb-3 text-[#475467] capitalize'>₦{pickupFee}/km</p>
-                  <p className='font-medium mb-3 text-[#475467] capitalize'>₦{dropoffFee}/km</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>₦{booking?.towing_params?.pickupFee}/km</p>
+                  <p className='font-medium mb-3 text-[#475467] capitalize'>₦{booking?.towing_params?.dropoffFee}/km</p>
                   <p className='font-bold mb-3 text-[#475467] capitalize'>₦{booking?.est_fare?.toLocaleString() || 'N/A'}</p>
                 </div>
              </div>

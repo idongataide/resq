@@ -38,6 +38,22 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
       .join(' ');
   };
 
+  const calculateTotal = () => {
+    if (!feesData?.data || !selectedAsset || !booking) return 0;
+
+    const pickupFee = feesData.data.find((fee: any) => fee.name.toLowerCase().includes('pickup'))?.amount || 0;
+    const dropoffFee = feesData.data.find((fee: any) => fee.name.toLowerCase().includes('dropoff'))?.amount || 0;
+    const otherFees = feesData.data
+      .filter((fee: any) => !fee.name.toLowerCase().includes('pickup') && !fee.name.toLowerCase().includes('dropoff'))
+      .reduce((sum: number, fee: any) => sum + Number(fee.amount), 0);
+
+    const pickupTotal = Number(pickupFee) * (selectedAsset?.distance_km || 0);
+    const dropoffTotal = Number(dropoffFee) * (booking?.drop_off_dst || 0);
+    const serviceFeeTotal = Number(serviceFee) || 0;
+
+    return pickupTotal + dropoffTotal + otherFees + serviceFeeTotal;
+  };
+
   const longitude = booking?.start_coord?.longitude;
   const latitude = booking?.start_coord?.latitude;
 
@@ -250,6 +266,7 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
                       {feesData?.data?.map((fee: any, index: number) => (
                         <p key={index} className="font-normal mb-3 text-[#667085]">{formatFeeName(fee.name)}</p>
                       ))}
+                      <p className="font-medium text-[#667085]">Total</p>
                     </div>
                     <div className='text-right'>
                       <p className='font-normal mb-3 text-[#475467] capitalize'>
@@ -259,6 +276,7 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
                       {feesData?.data?.map((fee: any, index: number) => (
                         <p key={index} className='font-normal mb-3 text-[#475467] capitalize'>₦{fee.amount}/km</p>
                       ))}
+                      <p className='font-bold mb-3 text-[#475467] capitalize'>₦{calculateTotal().toLocaleString()}</p>
                     </div>
                 </div>
             </div>

@@ -8,18 +8,21 @@ interface ApproveBookingSidebarProps {
   isOpen: boolean;
   onClose: () => void;
   booking: any;
-  fees: Array<{
-    name: string;
-    tag: string;
-    slug: string;
-    amount: number;
-    amount_type: string;
-    amount_sufix: string;
-    data: any[];
-    createdAt: string;
-    updatedAt: string;
-    fee_id: string;
-  }>;
+  fees: {
+    status: string;
+    data: Array<{
+      name: string;
+      tag: string;
+      slug: string;
+      amount: number;
+      amount_type: string;
+      amount_sufix: string;
+      data: any[];
+      createdAt: string;
+      updatedAt: string;
+      fee_id: string;
+    }>;
+  };
   mutate: () => void;
 }
 
@@ -27,8 +30,8 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
   isOpen,
   onClose,
   booking,
-  fees,
-  mutate
+  mutate,
+  fees
 }) => {
   const [form] = Form.useForm();
   const [towingOperator, setTowingOperator] = useState<string | undefined>(undefined);
@@ -69,17 +72,6 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
     setSelectedOperatorName(undefined);
   }, [isOpen, booking]);
 
-  useEffect(() => {
-    if (service) {
-      const selectedService = services?.find((s: any) => s.id === service);
-      if (selectedService) {
-        setServiceFee(selectedService.amount);
-      }
-    }
-  }, [service, services]);
-
-  const pickupFee = fees?.find(fee => fee.tag === 'PICK_UP_FEE')?.amount || 0;
-  const dropoffFee = fees?.find(fee => fee.tag === 'DROP_OFF_FEE')?.amount || 0;
 
   if (!isOpen || !booking) {
     return null;
@@ -132,6 +124,9 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
       form.setFieldsValue({ service: value });
     }
   };
+
+  const dropoffFeeObject = fees?.data?.find((fee: { tag: string }) => fee.tag === 'DROP_OFF_FEE');
+  const pickupFeeObject = fees?.data?.find((fee: { tag: string }) => fee.tag === 'PICK_UP_FEE');
 
   return (
     <div className="fixed inset-0 z-[999] flex justify-end bg-[#38383880] p-5 bg-opacity-50" onClick={onClose}>
@@ -255,8 +250,8 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
                     <div className='text-right'>
                       <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.drop_off_dst + (selectedAsset?.distance_km || 0)}km</p>
                       <p className='font-normal mb-3 text-[#475467] capitalize'>₦{serviceFee}</p>
-                      <p className='font-normal mb-3 text-[#475467] capitalize'>₦{pickupFee}/km</p>
-                      <p className='font-normal mb-3 text-[#475467] capitalize'>₦{dropoffFee}/km</p>
+                      <p className='font-normal mb-3 text-[#475467] capitalize'>₦{pickupFeeObject?.amount}/km</p>
+                      <p className='font-normal mb-3 text-[#475467] capitalize'>₦{dropoffFeeObject?.amount}/km</p>
                     </div>
                 </div>
             </div>

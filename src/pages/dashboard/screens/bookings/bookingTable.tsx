@@ -82,6 +82,7 @@ const BookingTable: React.FC = () => {
 
   const { data: feesData } = useFees();
 
+  console.log(feesData,'feesData')
   
   useEffect(() => {
     if (status) {

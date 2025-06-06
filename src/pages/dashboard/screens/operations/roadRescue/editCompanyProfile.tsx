@@ -2,10 +2,10 @@ import React from 'react';
 import { Modal } from 'antd';
 import EditCompanyDetails from './editCompanyDetails';
 import EditAccountDetails from './editAccountDetails';
-import EditContactDetailsStep from './editContactDetailsStep';
 import ConfirmOperator from '@/pages/dashboard/screens/operations/2FA';
 import { updateOperator } from '@/api/operatorsApi';
 import toast from 'react-hot-toast';
+import { useOperatorData } from '@/hooks/useAdmin';
 
 interface EditCompanyProfileProps {
   isOpen: boolean;
@@ -23,11 +23,18 @@ const EditCompanyProfile: React.FC<EditCompanyProfileProps> = ({
   const [currentStep, setCurrentStep] = React.useState(1);
   const [formData, setFormData] = React.useState<any>({});
   const [show2FA, setShow2FA] = React.useState(false);
+  const { mutate } = useOperatorData(operatorData?.assetco_id || '');
+
+  React.useEffect(() => {
+    if (isOpen && operatorData) {
+      setFormData(operatorData);
+    }
+  }, [isOpen, operatorData]);
 
   const handleStepComplete = (data: any) => {
     setFormData((prev: Record<string, any>) => ({ ...prev, ...data }));
     
-    if (currentStep < 3) {
+    if (currentStep < 2) {
       setCurrentStep(prev => prev + 1);
     } else {
       setShow2FA(true);
@@ -44,15 +51,25 @@ const EditCompanyProfile: React.FC<EditCompanyProfileProps> = ({
 
   const handle2FAComplete = async (otp: string) => {
     try {
+      if (!operatorData?.assetco_id) {
+        toast.error('Operator ID is missing');
+        return;
+      }
+
       const payload = {
-        ...formData,
+        company_name: formData.companyName,
+        company_email: formData.email,
+        phone_number: formData.phone,
+        state: formData.state,
+        lga: formData.lga,
         otp
       };
 
-      const response = await updateOperator(operatorData.id, payload);
+      const response = await updateOperator(operatorData.assetco_id, payload);
       
       if (response?.status === 'ok') {
         toast.success('Operator profile updated successfully');
+        await mutate();
         onSuccess();
         onClose();
       } else {
@@ -82,15 +99,7 @@ const EditCompanyProfile: React.FC<EditCompanyProfileProps> = ({
             onNext={handleStepComplete}
             initialData={operatorData}
           />
-        );
-      case 3:
-        return (
-          <EditContactDetailsStep
-            onBack={handleBack}
-            onNext={handleStepComplete}
-            initialData={operatorData}
-          />
-        );
+        );     
       default:
         return null;
     }

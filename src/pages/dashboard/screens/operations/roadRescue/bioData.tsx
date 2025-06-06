@@ -179,9 +179,11 @@ const CompanyProfileCard = () => {
         isOpen={showEditContact}
         onClose={() => setShowEditContact(false)}
         initialData={{
-          contact_person: companyData?.contact_person,
-          contact_phone: companyData?.contact_phone,
-          contact_email: companyData?.contact_email
+          assetco_id: companyData?.assetco_id,
+          first_name: companyData?.contact_rep_firstname,
+          last_name: companyData?.contact_rep_lastname,
+          contact_phone: companyData?.contact_rep_phone,
+          contact_email: companyData?.contact_rep_email
         }}
         onNext={handleEditSuccess}
       />

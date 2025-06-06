@@ -32,7 +32,7 @@ const ConfirmOperator: React.FC<ConfirmOperatorProps> = ({ onClose, onSuccess })
   };
 
   return (
-    <div className="fixed inset-0 bg-[#38383880] z-[9999] flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-[#38383880] z-[999999]! flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl w-full max-w-[430px] relative overflow-hidden">
         <div className="flex justify-between items-center border-b bg-[#F2F4F7] overflow-hidden
          border-[#F2F4F7] px-6 py-4">

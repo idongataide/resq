@@ -90,6 +90,59 @@ const AddressDetails: React.FC<{ result: PlaceResult }> = ({ result }) => {
   );
 };
 
+const carBrands = [
+  "Toyota",
+  "Honda",
+  "Ford",
+  "Nissan",
+  "Hyundai",
+  "Kia",
+  "Mercedes-Benz",
+  "BMW",
+  "Audi",
+  "Volkswagen",
+  "Lexus",
+  "Mazda",
+  "Subaru",
+  "Mitsubishi",
+  "Suzuki",
+  "Isuzu",
+  "Peugeot",
+  "Renault",
+  "Chevrolet",
+  "Jeep",
+  "Land Rover",
+  "Porsche",
+  "Volvo",
+  "Jaguar",
+  "Mini",
+  "Fiat",
+  "Dodge",
+  "Chrysler",
+  "GMC",
+  "Buick",
+  "Cadillac",
+  "Lincoln",
+  "Acura",
+  "Infiniti",
+  "Genesis",
+  "Bentley",
+  "Rolls-Royce",
+  "Lamborghini",
+  "Ferrari",
+  "Maserati",
+  "Alfa Romeo",
+  "Aston Martin",
+  "Bugatti",
+  "McLaren",
+  "Tesla",
+  "Rivian",
+  "Lucid",
+  "Polestar",
+  "BYD",
+  "Geely"
+];
+
 const AddAsset: React.FC<AddAssetProps> = ({ showModal, setShowModal, onAssetAdded }) => {
   const [form] = Form.useForm();
   const { id: operatorId } = useParams<{ id: string }>();
@@ -260,14 +313,24 @@ const AddAsset: React.FC<AddAssetProps> = ({ showModal, setShowModal, onAssetAdd
               onFinish={handleFinish}
             >
               <Form.Item
-                label="Brand name"
-                name="brandName"
-                rules={[{ required: true, message: 'Please select brand name' }]}
+                label="Brand"
+                name="brand"
+                rules={[{ required: true, message: 'Please select brand' }]}
               >
-                <Select placeholder="Select" className='!h-[42px]'>
-                  <Option value="Toyota">Toyota</Option>
-                  <Option value="Honda">Honda</Option>
-                  <Option value="Ford">Ford</Option>
+                <Select 
+                  placeholder="Select" 
+                  className='!h-[42px]'
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    (option?.children as unknown as string)
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                >
+                  {carBrands.map((brand) => (
+                    <Option key={brand} value={brand}>{brand}</Option>
+                  ))}
                 </Select>
               </Form.Item>
               <Form.Item

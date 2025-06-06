@@ -2,14 +2,18 @@ import React from 'react';
 import { IoClose } from 'react-icons/io5';
 import OtpInput from 'react-otp-input';
 import toast from 'react-hot-toast';
+import { Button } from 'antd';
 
 interface ConfirmOperatorProps {
   onClose: () => void;
   onSuccess: (otp: string, otp_request_id?: string) => void;
+  isLoading?: boolean;
 }
 
-const ConfirmOperator: React.FC<ConfirmOperatorProps> = ({ onClose, onSuccess }) => {
+const ConfirmOperator: React.FC<ConfirmOperatorProps> = ({ onClose, onSuccess, isLoading }) => {
   const [otp, setOtp] = React.useState('');
+
+  console.log(isLoading,'isLoading')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,28 +21,22 @@ const ConfirmOperator: React.FC<ConfirmOperatorProps> = ({ onClose, onSuccess })
       toast.error('Please enter complete OTP');
       return;
     }
-    onSuccess(otp);
-    // try {
-    //   // Verify OTP
-    //   const res = await confirmOtp({ otp });
-    //   if (res?.response?.data?.status === 'error') {
-    //     toast.error(res?.response?.data?.msg|| 'Invalid OTP');
-    //     return;
-    //   }
-    //   onSuccess(otp);
-    // } catch (error: any) {
-    //   toast.error(error.message || 'An error occurred');
-    // }
+    try {
+      onSuccess(otp);
+    } catch (error: any) {
+      toast.error(error.message || 'An error occurred');
+    }
   };
 
   return (
-    <div className="fixed inset-0 bg-[#38383880] z-[999999]! flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-[#38383880] z-[99999]! flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl w-full max-w-[430px] relative overflow-hidden">
         <div className="flex justify-between items-center border-b bg-[#F2F4F7] overflow-hidden
          border-[#F2F4F7] px-6 py-4">
           <button 
             className="text-[#3F3F46] ms-auto hover:text-[#1C2023] cursor-pointer"
             onClick={onClose}
+            disabled={isLoading}
           >
             <IoClose className="w-5 h-5" />
           </button>
@@ -60,12 +58,12 @@ const ConfirmOperator: React.FC<ConfirmOperatorProps> = ({ onClose, onSuccess })
                   if (index === 2) {
                     return (
                       <span key={index} style={{ display: 'flex', alignItems: 'center' }}>
-                        <input {...props} style={{ ...props.style, }} />
+                        <input {...props} style={{ ...props.style, }} disabled={isLoading} />
                         <span className='mx-3 font-bold text-[#D0D5DD] text-3xl'> - </span>
                       </span>
                     );
                   }
-                  return <input {...props} key={index} />;
+                  return <input {...props} key={index} disabled={isLoading} />;
                 }}
                 shouldAutoFocus
                 inputStyle={{
@@ -83,17 +81,15 @@ const ConfirmOperator: React.FC<ConfirmOperatorProps> = ({ onClose, onSuccess })
               />
             </div>
 
-            <button
-              type="submit"
-              disabled={otp.length !== 6}
-              className={`w-full h-[46px] mt-5 rounded-lg font-medium text-lg transition border-0 ${
-                otp.length === 6 
-                  ? 'bg-[#FF6C2D] text-white hover:bg-[#E55B1F] cursor-pointer'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              }`}
+            <Button
+              type="primary"
+              htmlType="submit"
+              disabled={otp.length !== 6 || isLoading}
+              loading={isLoading} // This should now properly show the loading state
+              className="h-[46px]! px-10! mt-5! rounded-lg bg-[#FF6C2D] text-white font-medium text-lg hover:bg-[#E55B1F] transition border-0 w-full"
             >
               Proceed
-            </button>
+            </Button>
           </form>
         </div>
       </div>

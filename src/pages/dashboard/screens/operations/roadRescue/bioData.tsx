@@ -55,9 +55,9 @@ const CompanyProfileCard = () => {
             <h1 className="text-2xl font-bold capitalize text-[#475467]">{companyData?.name}</h1>
             <button 
               onClick={handleEditCompany}
-              className="flex items-center gap-2 text-[#FF6C2D] hover:text-[#E55B1F]"
+              className="flex items-center text-sm gap-2 text-[#FF6C2D] cursor-pointer hover:text-[#E55B1F]"
             >
-              <FiEdit2 className="w-5 h-5" />
+              <FiEdit2 className="w-3 h-3 cursor-pointer" />
               <span>Edit</span>
             </button>
           </div>
@@ -135,9 +135,9 @@ const CompanyProfileCard = () => {
             <h3 className="text-sm font-medium text-[#475467]">Contact person</h3>
             <button 
               onClick={handleEditContact}
-              className="flex items-center gap-2 ms-auto text-[#FF6C2D] hover:text-[#E55B1F]"
+              className="flex items-center text-sm cursor-pointer gap-2 ms-auto text-[#FF6C2D] hover:text-[#E55B1F]"
             >
-              <FiEdit2 className="w-5 h-5" />
+              <FiEdit2 className="w-3 h-3 cursor-pointer" />
               <span>Edit</span>
             </button>
           </div>

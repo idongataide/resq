@@ -9,7 +9,7 @@ const RoadRescue = () => {
   return (
     <>
       <Toaster containerStyle={{ zIndex: 999999 }}/>
-     <div className="py-1 px-6 mt-10">
+     <div className="py-1 px-6 mt-10-">
         <div 
             className="flex items-center mb-5 mt-10 cursor-pointer"
             onClick={() => window.history.back()}

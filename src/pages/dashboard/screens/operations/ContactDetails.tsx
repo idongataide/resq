@@ -10,15 +10,21 @@ import { FaAngleLeft } from 'react-icons/fa';
 const ContactDetails: React.FC = () => {
   const [form] = Form.useForm();
   const [show2FAModal, setShow2FAModal] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const { setNavPath, setFormData, formData } = useOnboardingStore();
   const navigate = useNavigate()
 
   const handleFinish = async (values: any) => {
-    setFormData({ ...formData, contactDetails: values });      
-    setShow2FAModal(true);
+    try {
+      setFormData({ ...formData, contactDetails: values });      
+      setShow2FAModal(true);
+    } catch (error: any) {
+      toast.error(error.message || 'An error occurred');
+    }
   };
 
   const handle2FASuccess = async (otp?: string) => {
+    setIsSubmitting(true);
     try {
       const finalData = {
         operator_name: formData?.companyDetails?.companyName,
@@ -38,27 +44,29 @@ const ContactDetails: React.FC = () => {
       };
 
       const submitResponse = await addOperators(finalData);
-      console.log(submitResponse?.response?.data?.status)
       if (submitResponse?.response?.data?.status === 'error') {
         toast.error(submitResponse?.response?.data?.msg || 'Failed to add operator');
         return;
       }
 
       toast.success('Operator added successfully');
-      navigate('/operators')
+      navigate(`/operators/roadrescue/${submitResponse?.data?._id}`);
       setShow2FAModal(false);
     } catch (error: any) {
       toast.error(error.message || 'An error occurred');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div className="w-full mx-auto">        
-      {show2FAModal && (
-        <ConfirmOperator 
-          onClose={() => setShow2FAModal(false)} 
-          onSuccess={handle2FASuccess}
-        />
+          {show2FAModal && (
+            <ConfirmOperator 
+            onClose={() => setShow2FAModal(false)} 
+            onSuccess={handle2FASuccess}
+            isLoading={isSubmitting} // This passes the loading state down
+          />
       )}
           
       <div className="flex items-center mb-7">
@@ -120,6 +128,8 @@ const ContactDetails: React.FC = () => {
           <Button
             type="primary"
             htmlType="submit"
+            loading={isSubmitting}
+            disabled={isSubmitting}
             className="h-[46px]! px-10! mt-5! rounded-lg bg-[#FF6C2D] text-white font-medium text-lg hover:bg-[#E55B1F] transition border-0"
           >
             Proceed

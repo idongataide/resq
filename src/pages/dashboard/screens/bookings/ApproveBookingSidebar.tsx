@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Form, Select, Button, Input } from 'antd';
 import { useGetDriversByOperatorId, useAllService, useGetAssetsbyCord, useFees } from '@/hooks/useAdmin';
 import { approveTowingRequest } from '@/api/bookingsApi';
@@ -23,12 +23,22 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
   const [selectedOperatorName, setSelectedOperatorName] = useState<string | undefined>(undefined);
   const [serviceType, setServiceType] = useState<string | undefined>(undefined);
   const [service, setService] = useState<string | undefined>(undefined);
-  const [serviceFee, setServiceFee] = useState<number | undefined>(undefined);
+  const [serviceFee, setServiceFee] = useState<number>(0);
   const [serviceId, setServiceID] = useState<number | undefined>(undefined);
   const [vehicle, setVehicle] = useState<string | undefined>(undefined);
   const [driver, setDriver] = useState<string | undefined>(undefined);
   const [selectedAsset, setSelectedAsset] = useState<any>(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { data: feesData } = useFees();
+
+  const pickupTotal = useMemo(() => {
+    return ((feesData?.data?.find((fee: any) => fee.name.toLowerCase().includes('pickup'))?.amount || 0) * (selectedAsset?.distance_km || 0)).toLocaleString();
+  }, [feesData, selectedAsset]);
+
+  const dropoffTotal = useMemo(() => {
+    return ((feesData?.data?.find((fee: any) => fee.name.toLowerCase().includes('dropoff'))?.amount || 0) * (booking?.drop_off_dst || 0)).toLocaleString();
+  }, [feesData, booking]);
 
   const formatFeeName = (name: string) => {
     return name
@@ -38,21 +48,20 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
       .join(' ');
   };
 
-  const calculateTotal = () => {
-    if (!feesData?.data || !selectedAsset || !booking) return 0;
+  const calculateTotal = useMemo(() => {
+    if (!feesData?.data || !selectedAsset || !booking || serviceFee === undefined) return 0;
 
     const pickupFee = feesData.data.find((fee: any) => fee.name.toLowerCase().includes('pickup'))?.amount || 0;
     const dropoffFee = feesData.data.find((fee: any) => fee.name.toLowerCase().includes('dropoff'))?.amount || 0;
     const otherFees = feesData.data
       .filter((fee: any) => !fee.name.toLowerCase().includes('pickup') && !fee.name.toLowerCase().includes('dropoff'))
-      .reduce((sum: number, fee: any) => sum + Number(fee.amount), 0);
+      .reduce((sum: number, fee: any) => sum + (fee.amount || 0), 0);
 
-    const pickupTotal = Number(pickupFee) * (selectedAsset?.distance_km || 0);
-    const dropoffTotal = Number(dropoffFee) * (booking?.drop_off_dst || 0);
-    const serviceFeeTotal = Number(serviceFee) || 0;
+    const calculatedPickupTotal = pickupFee * (selectedAsset?.distance_km || 0);
+    const calculatedDropoffTotal = dropoffFee * (booking?.drop_off_dst || 0);
 
-    return pickupTotal + dropoffTotal + otherFees + serviceFeeTotal;
-  };
+    return (serviceFee || 0) + calculatedPickupTotal + calculatedDropoffTotal + otherFees;
+  }, [feesData, selectedAsset, booking, serviceFee]);
 
   const longitude = booking?.start_coord?.longitude;
   const latitude = booking?.start_coord?.latitude;
@@ -65,9 +74,7 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
   
   
   const { data: services, isLoading: isLoadingServices } = useAllService(queryString);
-  const { data: feesData } = useFees();
 
-  console.log(feesData,'feesDatass')
 
 
   useEffect(() => {
@@ -263,7 +270,15 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
                     <div className=''>
                       <p className="font-normal mb-3 text-[#667085]">Approx. Distance</p>
                       <p className="font-normal mb-3 text-[#667085]">Service Cost</p>
-                      {feesData?.data?.map((fee: any, index: number) => (
+                      {feesData?.data?.find((fee: any) => fee.name.toLowerCase().includes('pickup')) && (
+                          <p className="font-normal mb-3 text-[#667085]">{formatFeeName(feesData.data.find((fee: any) => fee.name.toLowerCase().includes('pickup')).name)}</p>
+                      )}
+                      {feesData?.data?.find((fee: any) => fee.name.toLowerCase().includes('dropoff')) && (
+                          <p className="font-normal mb-3 text-[#667085]">{formatFeeName(feesData.data.find((fee: any) => fee.name.toLowerCase().includes('dropoff')).name)}</p>
+                      )}
+                      {feesData?.data?.filter((fee: any) =>
+                          !fee.name.toLowerCase().includes('pickup') && !fee.name.toLowerCase().includes('dropoff')
+                      ).map((fee: any, index: number) => (
                         <p key={index} className="font-normal mb-3 text-[#667085]">{formatFeeName(fee.name)}</p>
                       ))}
                       <p className="font-medium text-[#667085]">Total</p>
@@ -273,10 +288,24 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
                         {(booking?.drop_off_dst + (selectedAsset?.distance_km || 0)).toFixed(2)}km
                       </p>
                       <p className='font-normal mb-3 text-[#475467] capitalize'>₦{serviceFee}</p>
-                      {feesData?.data?.map((fee: any, index: number) => (
-                        <p key={index} className='font-normal mb-3 text-[#475467] capitalize'>₦{fee.amount}/km</p>
+                      {feesData?.data?.find((fee: any) => fee.name.toLowerCase().includes('pickup')) && (
+                          <p className='font-normal mb-3 text-[#475467] capitalize'>
+                              ₦{pickupTotal}
+                          </p>
+                      )}
+                      {feesData?.data?.find((fee: any) => fee.name.toLowerCase().includes('dropoff')) && (
+                          <p className='font-normal mb-3 text-[#475467] capitalize'>
+                              ₦ {dropoffTotal}
+                          </p>
+                      )}
+                      {feesData?.data?.filter((fee: any) =>
+                          !fee.name.toLowerCase().includes('pickup') && !fee.name.toLowerCase().includes('dropoff')
+                      ).map((fee: any, index: number) => (
+                          <p key={index} className='font-normal mb-3 text-[#475467] capitalize'>
+                              ₦{fee.amount?.toLocaleString() || '0'}
+                          </p>
                       ))}
-                      <p className='font-bold mb-3 text-[#475467] capitalize'>₦{calculateTotal().toLocaleString()}</p>
+                      <p className='font-bold mb-3 text-[#475467] capitalize'>₦{calculateTotal.toLocaleString()}</p>
                     </div>
                 </div>
             </div>

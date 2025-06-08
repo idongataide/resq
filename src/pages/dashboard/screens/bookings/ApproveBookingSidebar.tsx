@@ -281,7 +281,7 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
                       ).map((fee: any, index: number) => (
                         <p key={index} className="font-normal mb-3 text-[#667085]">{formatFeeName(fee.name)}</p>
                       ))}
-                      <p className="font-medium text-[#667085]">Total</p>
+                      <p className="font-medium text-lg text-[#667085]">Total</p>
                     </div>
                     <div className='text-right'>
                       <p className='font-normal mb-3 text-[#475467] capitalize'>
@@ -305,7 +305,7 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
                               ₦{fee.amount?.toLocaleString() || '0'}
                           </p>
                       ))}
-                      <p className='font-bold mb-3 text-[#475467] capitalize'>₦{calculateTotal.toLocaleString()}</p>
+                      <p className='font-bold mb-3 text-[#475467] text-lg capitalize'>₦{calculateTotal.toLocaleString()}</p>
                     </div>
                 </div>
             </div>

@@ -107,6 +107,18 @@ export const getFeesCount = async () => {
   }
 };
 
+export const getAreas = async () => {
+  try {
+    return await axiosAPIInstance
+      .get(`/settings/areas`)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};
+
 export const addFees = async (data: any) => {
   try {
     return await axiosAPIInstance

@@ -1,4 +1,4 @@
-import { useAllBookingsCount, useAllTransCount, useOperatorCount } from "@/hooks/useAdmin";
+import { useAllBookingsCount, useAllTransCount, useGetArea, useOperatorCount } from "@/hooks/useAdmin";
 import React, { useState, useEffect } from "react";
 
 type Period = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'all';
@@ -49,7 +49,10 @@ const DashboardMetrics: React.FC = () => {
   const { data: operatorCount } = useOperatorCount(`count&start_date=${dateRange.start_date}&end_date=${dateRange.end_date}`);
   const { data: bookingsCount } = useAllBookingsCount(`count-status&start_date=${dateRange.start_date}&end_date=${dateRange.end_date}`);
   const { data: transCount } = useAllTransCount(`count&start_date=${dateRange.start_date}&end_date=${dateRange.end_date}&status=1`);
+  
+  const { data : Areas } = useGetArea()
 
+  console.log(Areas,'Areass')
 
   return (
     <>
@@ -95,28 +98,32 @@ const DashboardMetrics: React.FC = () => {
           All time
         </button>
     </div>
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
       {/* Total Revenue */}
       <div className="bg-white rounded-lg p-6 border border-[#F2F4F7]">
         <h2 className="text-2xl font-bold text-[#667085] mb-3">₦{bookingsCount?.total_amount || 0}</h2>
         <p className="text-sm text-[#475467]">Total Revenue</p>
       </div>
+
       {/* Total number of operators */}
       <div className="bg-white rounded-lg p-6 border border-[#F2F4F7]">
         <h2 className="text-2xl font-bold text-[#667085] mb-3">{operatorCount?.total || 0}</h2>
         <p className="text-sm text-[#475467]">Total number of operators</p>
       </div>
+
       {/* Pending requests */}
       <div className="bg-white rounded-lg p-6 border border-[#F2F4F7]">
         <h2 className="text-2xl font-bold text-[#667085] mb-3">{bookingsCount?.pending || 0}</h2>
         <p className="text-sm text-[#475467] mb-3">Pending requests</p>
       </div>
+
       {/* Successful transactions */}
       <div className="bg-white rounded-lg p-6 border border-[#F2F4F7]">
         <h2 className="text-2xl font-bold text-[#667085] mb-3">{transCount?.total || 0}</h2>
         <p className="text-sm text-[#475467]">Successful transactions</p>
       </div>
     </div>
+
     </>
   );
 };

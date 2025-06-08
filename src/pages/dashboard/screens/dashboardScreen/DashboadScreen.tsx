@@ -12,14 +12,15 @@ const DashboadScreen: React.FC = () => {
       <DashboardMetrics />
 
       {/* Charts Row */}
-      <main className="grid grid-cols-1 md:grid-cols-6 mt-5 gap-5">
-        <div className="col-span-1 md:col-span-2">
+      <main className="grid grid-cols-1 lg:grid-cols-6 mt-5 gap-5">
+        <div className="col-span-1 lg:col-span-2">
           <PerformanceRateChart />
         </div>
-        <div className="col-span-1 md:col-span-4">
+        <div className="col-span-1 lg:col-span-4">
           <RevenueGrowthChart />
         </div>
       </main>
+
 
         <div className="col-span-1 mt-">
           <LagosHotspotsMap />

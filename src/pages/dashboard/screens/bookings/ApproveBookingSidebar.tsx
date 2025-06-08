@@ -271,10 +271,10 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
                       <p className="font-normal mb-3 text-[#667085]">Approx. Distance</p>
                       <p className="font-normal mb-3 text-[#667085]">Service Cost</p>
                       {feesData?.data?.find((fee: any) => fee.name.toLowerCase().includes('pickup')) && (
-                          <p className="font-normal mb-3 text-[#667085]">Pickup Total</p>
+                          <p className="font-normal mb-3 text-[#667085]">Pickup Fee</p>
                       )}
                       {feesData?.data?.find((fee: any) => fee.name.toLowerCase().includes('dropoff')) && (
-                          <p className="font-normal mb-3 text-[#667085]">Dropoff Total</p>
+                          <p className="font-normal mb-3 text-[#667085]">Dropoff Fee</p>
                       )}
                       {feesData?.data?.filter((fee: any) =>
                           !fee.name.toLowerCase().includes('pickup') && !fee.name.toLowerCase().includes('dropoff')

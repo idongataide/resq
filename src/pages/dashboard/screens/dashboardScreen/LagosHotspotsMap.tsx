@@ -1,7 +1,8 @@
 import Images from "@/components/images";
 import { useAllBookingsCount } from "@/hooks/useAdmin";
 import React, { useState, useEffect } from "react";
-import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader, OverlayView } from '@react-google-maps/api';
+import './LagosHotspotsMap.css';
 
 // Define interface for the data points
 interface BookingDataPoint {
@@ -12,6 +13,45 @@ interface BookingDataPoint {
 }
 
 type Period = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'all';
+type DemandLevel = 'high' | 'mid' | 'low';
+
+// Custom marker component with ripple effect
+const RippleMarker: React.FC<{
+  position: { lat: number; lng: number };
+  title: string;
+  demandLevel: DemandLevel;
+}> = ({ position, title, demandLevel }) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+  const getPixelPositionOffset = (width: number, height: number) => ({
+    x: -(width / 2),
+    y: -(height / 2),
+  });
+
+  return (
+    <OverlayView
+      position={position}
+      mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+      getPixelPositionOffset={getPixelPositionOffset}
+    >
+      <div 
+        className="relative"
+        onMouseEnter={() => setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
+      >
+        <div className={`location-ripple ${demandLevel}-demand`} />
+        {showTooltip && (
+          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-white rounded-lg shadow-lg text-sm whitespace-nowrap z-10">
+            <div className="text-gray-800 font-medium capitalize">{title}</div>
+            <div className="text-gray-500 text-xs mt-1">
+              {demandLevel === 'high' ? 'High Demand Area' : 
+               demandLevel === 'mid' ? 'Mid Demand Area' : 'Low Demand Area'}
+            </div>
+          </div>
+        )}
+      </div>
+    </OverlayView>
+  );
+};
 
 const LagosHotspotsMap: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<Period>('daily');
@@ -63,6 +103,9 @@ const LagosHotspotsMap: React.FC = () => {
     : 'area-map';
 
   const { data: bookingsCount } = useAllBookingsCount(queryString);
+  // const { data: bookingsCounts } = useAllBookingsCount(`count&${queryString}`);
+
+  // Calculate total bookings for the selected period
 
   const containerStyle = {
     width: '100%',
@@ -75,12 +118,24 @@ const LagosHotspotsMap: React.FC = () => {
     lng: 3.3792
   };
 
-  const apiKey = import.meta.env.VITE_GMAPS_API_KEY; // Replace with your actual API key
+  const apiKey = import.meta.env.VITE_GMAPS_API_KEY;
 
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: apiKey
   });
+
+  // Calculate demand level for each area based on period total
+  const getDemandLevel = (total: number): DemandLevel => {
+    // Find the maximum bookings in any area
+    const maxBookings = Math.max(...(bookingsCount?.map((point: BookingDataPoint) => point.total) || [0]));
+    // Calculate percentage relative to the maximum
+    const percentage = (total / maxBookings) * 100;
+    
+    if (percentage >= 60) return 'high';
+    if (percentage >= 20 && percentage <= 40) return 'mid';
+    return 'low';
+  };
 
   return (
     <div className="bg-white border border-[#E5E9F0] rounded-lg p-6">
@@ -138,24 +193,29 @@ const LagosHotspotsMap: React.FC = () => {
             zoom={10}
           >
             {/* Add markers here based on the data */}
-            {bookingsCount?.map((point: BookingDataPoint, index: number) => (
-              <Marker
-                key={index}
-                position={{
-                  lat: point.latitude,
-                  lng: point.longitude
-                }}
-                title={`${point.area} (${point.total} requests)`}
-              />
-            ))}
+            {bookingsCount?.map((point: BookingDataPoint, index: number) => {
+              const demandLevel = getDemandLevel(point.total);
+              return (
+                <RippleMarker
+                  key={index}
+                  position={{
+                    lat: point.latitude,
+                    lng: point.longitude
+                  }}
+                  title={`${point.area || 'Unknown Area'} (${point.total} requests)`}
+                  demandLevel={demandLevel}
+                />
+              );
+            })}
           </GoogleMap>
         ) : (
           <img src={Images.map} alt="Filter" className="w-full rounded-lg" /> // Fallback to image if map not loaded
         )}
       </div>
       <div className="mt-4 flex items-center gap-4 text-sm">
-        <p><span className="inline-block w-3 h-3 mr-1 rounded-sm bg-orange-500"></span>High demand area</p>
-        <p><span className="inline-block w-3 h-3 mr-1 rounded-sm bg-green-500"></span>Partial demand area</p>
+        <p><span className="inline-block w-3 h-3 mr-1 rounded-sm bg-red-500"></span>High demand area (≥60%)</p>
+        <p><span className="inline-block w-3 h-3 mr-1 rounded-sm bg-green-500"></span>Mid demand area (20-40%)</p>
+        <p><span className="inline-block w-3 h-3 mr-1 rounded-sm bg-yellow-500"></span>Low demand area (&lt;20%)</p>
       </div>
     </div>
   );

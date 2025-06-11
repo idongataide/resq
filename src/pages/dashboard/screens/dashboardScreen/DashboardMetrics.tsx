@@ -1,4 +1,4 @@
-import { useAllBookingsCount, useAllTransCount, useGetArea, useOperatorCount } from "@/hooks/useAdmin";
+import { useAllBookingsCount, useAllTransCount, useOperatorCount } from "@/hooks/useAdmin";
 import React, { useState, useEffect } from "react";
 
 type Period = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'all';
@@ -50,9 +50,6 @@ const DashboardMetrics: React.FC = () => {
   const { data: bookingsCount } = useAllBookingsCount(`count-status&start_date=${dateRange.start_date}&end_date=${dateRange.end_date}`);
   const { data: transCount } = useAllTransCount(`count&start_date=${dateRange.start_date}&end_date=${dateRange.end_date}&status=1`);
   
-  const { data : Areas } = useGetArea()
-
-  console.log(Areas,'Areass')
 
   return (
     <>

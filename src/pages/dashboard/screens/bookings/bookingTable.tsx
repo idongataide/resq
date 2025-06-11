@@ -69,6 +69,9 @@ interface BookingData {
     _id: string;
     name: string;
   };
+  cancel_data?: {
+    cancel_by: string;
+  };
 }
 
 const BookingTable: React.FC = () => {
@@ -89,12 +92,10 @@ const BookingTable: React.FC = () => {
   }, [status]);
 
   const handleViewRequest = (request: BookingData) => {
-    console.log('Clicked booking ride_status:', request.ride_status, request.charge_status);
     if (request.ride_status === 1 && request.charge_status === 1) {
       setSelectedBooking(request);
       setActiveSidebar('ongoing');
     } else if (request.ride_status === 2 ){
-      console.log('ongoing')
       setSelectedBooking(request);
       setActiveSidebar('ongoing');
     } else if (request.ride_status === 1) {
@@ -213,6 +214,14 @@ const BookingTable: React.FC = () => {
           <span className={getStatusStyle('Ongoing')}>
              Ongoing
           </span>
+        ) : record.ride_status === 4 ? (
+          <div className="">          
+            {record.cancel_data?.cancel_by && (
+              <span className="text-[#B11B1B] bg-[#FFEFEF] px-2 py-1 rounded-full whitespace-nowrap text-xs font-medium">
+                Cancelled by: {record.cancel_data.cancel_by}
+              </span>
+            )}
+          </div>
         ) : (
           <span className={getStatusStyle(getStatusText(value))}>
             {getStatusText(value)}

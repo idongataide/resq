@@ -40,7 +40,7 @@ const BookingCategory: React.FC = () => {
     },
     {
       count: bookingsCount?.cancelled || '00',
-      title: "Rejected requests",
+      title: "Canceled request",
       description: "Overview of rejected customer requests",
       action: "View →",
       path: "rejected"

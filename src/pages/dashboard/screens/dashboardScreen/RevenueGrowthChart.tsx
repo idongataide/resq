@@ -22,10 +22,14 @@ const RevenueGrowthChart: React.FC = () => {
 
   // Get the appropriate endpoint based on selected period
   const getEndpoint = (period: TimePeriod) => {
+    const today = moment().format('YYYY-MM-DD');
+    const startOfWeek = moment().startOf('week').format('YYYY-MM-DD');
+
     switch (period) {
       case 'daily':
+        return `revenue-growth&start_date=${today}&end_date=${today}`;
       case 'weekly':
-        return 'revenue-growth';
+        return `revenue-growth&start_date=${startOfWeek}&end_date=${today}`;
       case 'monthly':
         return 'revenue-growth-monthly';
       case 'yearly':
@@ -40,7 +44,6 @@ const RevenueGrowthChart: React.FC = () => {
   const { data: graph } = useRevenues(getEndpoint(selectedPeriod));
   const { data: revenues } = useRevenues('inflow-earnings');
 
-  console.log(graph,'graph')
 
   // Transform the API data into the format required by nivo
   const transformedData = React.useMemo(() => {
@@ -288,12 +291,6 @@ const RevenueGrowthChart: React.FC = () => {
           >
             Yearly
           </button>
-          {/* <button 
-            onClick={() => setSelectedPeriod('all')}
-            className={`px-3 py-1 text-[#475467] text-xs cursor-pointer rounded-br-md rounded-tr-md border ${selectedPeriod === 'all' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'border-[#F2F4F7]'}`}
-          >
-            All time
-          </button> */}
         </div>
       </div>
 

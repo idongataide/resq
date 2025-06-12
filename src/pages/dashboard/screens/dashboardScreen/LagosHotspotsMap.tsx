@@ -128,12 +128,11 @@ const LagosHotspotsMap: React.FC = () => {
   // Calculate demand level for each area based on period total
   const getDemandLevel = (total: number): DemandLevel => {
     // Find the maximum bookings in any area
-    const maxBookings = Math.max(...(bookingsCount?.map((point: BookingDataPoint) => point.total) || [0]));
+    const maxBookings = bookingsCount?.reduce((sum: number, point: BookingDataPoint) => sum + point.total, 0) || 0;
     // Calculate percentage relative to the maximum
     const percentage = (total / maxBookings) * 100;
-    
-    if (percentage >= 50) return 'high';
-    if (percentage >= 20 && percentage <= 50) return 'mid';
+    if (percentage >= 51) return 'high';
+    if (percentage >= 21 && percentage <= 50) return 'mid';
     return 'low';
   };
 

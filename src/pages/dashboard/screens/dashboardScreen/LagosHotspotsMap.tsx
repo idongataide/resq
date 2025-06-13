@@ -131,6 +131,7 @@ const LagosHotspotsMap: React.FC = () => {
     const maxBookings = bookingsCount?.reduce((sum: number, point: BookingDataPoint) => sum + point.total, 0) || 0;
     // Calculate percentage relative to the maximum
     const percentage = (total / maxBookings) * 100;
+    console.log(percentage,maxBookings,'percentssagess')
     if (percentage >= 51) return 'high';
     if (percentage >= 21 && percentage <= 50) return 'mid';
     return 'low';

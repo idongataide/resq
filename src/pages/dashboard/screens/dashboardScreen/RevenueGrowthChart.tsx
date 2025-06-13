@@ -3,6 +3,14 @@ import { ResponsiveLine } from '@nivo/line';
 import moment from 'moment';
 import { HiMiniArrowTrendingUp } from "react-icons/hi2";
 import { useRevenues } from '@/hooks/useAdmin';
+// import type { RangePickerProps } from 'antd/es/date-picker';
+import generatePicker from 'antd/es/date-picker/generatePicker';
+import momentGenerateConfig from 'rc-picker/lib/generate/moment';
+import { Moment } from 'moment';
+import toast, { Toaster } from "react-hot-toast";
+
+const MomentDatePicker = generatePicker<Moment>(momentGenerateConfig);
+const RangePicker = MomentDatePicker.RangePicker;
 
 interface RevenueData {
   date: string;
@@ -15,48 +23,113 @@ interface RevenueSummary {
   thisQuarter: number;
 }
 
-type TimePeriod = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'all';
+type TimePeriod = 'weekly' | 'monthly' | 'yearly';
 
 const RevenueGrowthChart: React.FC = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('daily');
+  const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('weekly');
+  const [customDates, setCustomDates] = useState<[moment.Moment, moment.Moment] | null>(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  // Disable dates based on selected period
+  const disabledDate = (current: moment.Moment) => {
+    if (!current) return false;
+    
+    const today = moment().endOf('day');
+    
+    // Can't select dates in the future
+    if (current.isAfter(today)) return true;
+
+    // Additional checks based on selectedPeriod for past dates
+    if (selectedPeriod === 'weekly') {
+      // For weekly view, allow selecting any past date
+      return false;
+    } else if (selectedPeriod === 'monthly') {
+      const twelveMonthsAgo = moment().subtract(12, 'months').startOf('month');
+      if (current.isBefore(twelveMonthsAgo)) return true;
+    } else if (selectedPeriod === 'yearly') {
+      const oneYearAgo = moment().subtract(1, 'year').startOf('year');
+      if (current.isBefore(oneYearAgo)) return true;
+    }
+    
+    return false;
+  };
+
+  // Handle date range change for custom period
+  const handleRangePickerChange = (dates: [Moment | null, Moment | null] | null) => {
+    if (dates && dates[0] && dates[1]) {
+      const start = dates[0];
+      const end = dates[1];
+
+      if (selectedPeriod === 'weekly') {
+        // For weekly, ensure range is not more than 10 days
+        if (end.diff(start, 'days') > 14) {
+          toast.error('Date range cannot exceed 10 days for weekly view.');
+          setCustomDates(null);
+          return;
+        }
+      }
+      setCustomDates([start, end]);
+    } else {
+      setCustomDates(null);
+    }
+  };
 
   // Get the appropriate endpoint based on selected period
   const getEndpoint = (period: TimePeriod) => {
     const today = moment().format('YYYY-MM-DD');
     const startOfWeek = moment().startOf('week').format('YYYY-MM-DD');
+    const startOfMonth = moment().startOf('month').format('YYYY-MM-DD');
+    const startOfYear = moment().startOf('year').format('YYYY-MM-DD');
 
-    switch (period) {
-      case 'daily':
-        return `revenue-growth&start_date=${today}&end_date=${today}`;
-      case 'weekly':
-        return `revenue-growth&start_date=${startOfWeek}&end_date=${today}`;
-      case 'monthly':
-        return 'revenue-growth-monthly';
-      case 'yearly':
-        return 'revenue-growth-yearly';
-      case 'all':
-        return 'revenue-growth';
-      default:
-        return 'revenue-growth';
+    const startDate = customDates ? customDates[0].format('YYYY-MM-DD') : '';
+    const endDate = customDates ? customDates[1].format('YYYY-MM-DD') : '';
+
+    if (period === 'weekly') {
+      return `revenue-growth-weekly&start_date=${startDate || startOfWeek}&end_date=${endDate || today}`;
+    } else if (period === 'monthly') {
+      return `revenue-growth-monthly&start_date=${startDate || startOfMonth}&end_date=${endDate || today}`;
+    } else if (period === 'yearly') {
+      return `revenue-growth-yearly&start_date=${startDate || startOfYear}&end_date=${endDate || today}`;
     }
+
+    return 'revenue-growth';
   };
 
   const { data: graph } = useRevenues(getEndpoint(selectedPeriod));
   const { data: revenues } = useRevenues('inflow-earnings');
 
+  console.log(graph,'graph')
 
   // Transform the API data into the format required by nivo
   const transformedData = React.useMemo(() => {
     if (!graph) return [];
 
-    const revenueData = graph as RevenueData[];
-    return [{
+    const revenueData = graph as any[]; // Use 'any' to allow for 'week' or 'date'
+    const data = [{
       id: 'Revenue',
-      data: revenueData.map(item => ({
-        x: item.date,
-        y: item.amount,
-      })),
+      data: revenueData
+        .filter(item => {
+          // Filter out null/undefined dates/weeks and invalid dates/weeks
+          return (item.date !== null && item.date !== undefined && moment(item.date).isValid()) ||
+                 (item.week !== null && item.week !== undefined && moment(item.week, 'YYYY-WW').isValid());
+        })
+        .map(item => {
+          let xValue: string;
+          if (item.week) {
+            // If it's weekly data, convert 'YYYY-Wxx' to the start of the ISO week in YYYY-MM-DD format
+            xValue = moment(item.week, 'YYYY-WW').startOf('isoWeek').format('YYYY-MM-DD');
+          } else {
+            // Otherwise, assume it's a direct date
+            xValue = item.date;
+          }
+          return {
+            x: xValue,
+            y: item.amount,
+          };
+        }),
     }];
+    console.log('Transformed Data:', data); // Log the transformed data
+    return data;
   }, [graph]);
 
   const maxValue = React.useMemo(() => {
@@ -76,23 +149,55 @@ const RevenueGrowthChart: React.FC = () => {
 
   // Get the current period's revenue
   const currentPeriodRevenue = React.useMemo(() => {
-    switch (selectedPeriod) {
-      case 'weekly':
-        return revenueSummary.thisWeek;
-      case 'monthly':
-        return revenueSummary.thisMonth;
-      case 'yearly':
-        return revenueSummary.thisQuarter;
-      default:
-        return revenueSummary.thisWeek;
+    if (!graph) return 0;
+    const revenueData = graph as any[];
+
+    let sum = 0;
+
+    if (selectedPeriod === 'weekly' && customDates) {
+      const start = customDates[0];
+      const end = customDates[1];
+      sum = revenueData.reduce((acc, item) => {
+        const itemDate = moment(item.week, 'YYYY-WW').startOf('isoWeek');
+        if (itemDate.isBetween(start, end, 'day', '[]')) {
+          return acc + item.amount;
+        }
+        return acc;
+      }, 0);
+    } else if (selectedPeriod === 'monthly' && customDates) {
+      const start = customDates[0];
+      const end = customDates[1];
+      sum = revenueData.reduce((acc, item) => {
+        const itemDate = moment(item.date);
+        if (itemDate.isBetween(start, end, 'month', '[]')) {
+          return acc + item.amount;
+        }
+        return acc;
+      }, 0);
+    } else if (selectedPeriod === 'yearly' && customDates) {
+      const start = customDates[0];
+      const end = customDates[1];
+      sum = revenueData.reduce((acc, item) => {
+        const itemDate = moment(item.date);
+        if (itemDate.isBetween(start, end, 'year', '[]')) {
+          return acc + item.amount;
+        }
+        return acc;
+      }, 0);
+    } else if (selectedPeriod === 'weekly' || selectedPeriod === 'monthly' || selectedPeriod === 'yearly') {
+      // For non-custom periods, sum all amounts in the graph data as the backend should return the correct range
+      sum = revenueData.reduce((acc, item) => acc + item.amount, 0);
+    } else {
+      // Fallback for custom or any other case, sum all amounts in graph
+      sum = revenueData.reduce((acc, item) => acc + item.amount, 0);
     }
-  }, [selectedPeriod, revenueSummary]);
+    
+    return sum;
+  }, [selectedPeriod, customDates, graph]);
 
   // Get the period label
   const periodLabel = React.useMemo(() => {
     switch (selectedPeriod) {
-      case 'daily':
-        return 'Today';
       case 'weekly':
         return 'This week';
       case 'monthly':
@@ -106,12 +211,10 @@ const RevenueGrowthChart: React.FC = () => {
 
   const getDateFormat = (period: TimePeriod) => {
     switch (period) {
-      case 'daily':
-        return 'MMM D';
       case 'weekly':
         return 'MMM D';
       case 'monthly':
-        return 'MMM'; // Changed from 'MMMM' to 'MMM' for abbreviated month names
+        return 'MMM';
       case 'yearly':
         return 'YYYY';
       default:
@@ -128,6 +231,23 @@ const RevenueGrowthChart: React.FC = () => {
         return '%Y';
       default:
         return '%Y-%m-%d';
+    }
+  };
+
+  const handlePeriodButtonClick = (period: TimePeriod) => {
+    setSelectedPeriod(period);
+    setShowDatePicker(true);
+    setCustomDates(null);
+  };
+
+  const getPickerType = (period: TimePeriod) => {
+    switch (period) {
+      case 'monthly':
+        return 'month';
+      case 'yearly':
+        return 'year';
+      default:
+        return 'date';
     }
   };
 
@@ -158,7 +278,7 @@ const RevenueGrowthChart: React.FC = () => {
       legendOffset: 36,
       legendPosition: 'middle' as const,
       format: (value: string) => moment(value).format(getDateFormat(selectedPeriod)),
-      tickValues: selectedPeriod === 'monthly' ? 'every 1 month' : undefined, // Add this line
+      tickValues: selectedPeriod === 'monthly' ? 'every 1 month' : undefined,
     },
     axisLeft: {
       tickSize: 5,
@@ -257,6 +377,8 @@ const RevenueGrowthChart: React.FC = () => {
 
   return (
     <div className="bg-white rounded-lg p-6 mb-6 border border-[#E5E9F0] min-h-[390px]">
+
+    <Toaster/>
       <div className="flex justify-between items-center mb-4">
         <div>
           <h3 className="text-xs font-medium text-[#667085]">Revenue Growth</h3>
@@ -266,31 +388,42 @@ const RevenueGrowthChart: React.FC = () => {
             <HiMiniArrowTrendingUp className="text-[20px] ml-2 text-[#69B574]" />
           </div>
         </div>
-        <div className="text-sm text-gray-500">
-          <button 
-            onClick={() => setSelectedPeriod('daily')}
-            className={`px-3 py-1 text-[#475467] text-xs cursor-pointer rounded-bl-md rounded-tl-md border ${selectedPeriod === 'daily' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'border-[#F2F4F7]'}`}
-          >
-            Daily
-          </button>
-          <button 
-            onClick={() => setSelectedPeriod('weekly')}
-            className={`px-3 py-1 text-[#475467] text-xs cursor-pointer border ${selectedPeriod === 'weekly' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'border-[#F2F4F7]'}`}
-          >
-            Weekly
-          </button>
-          <button 
-            onClick={() => setSelectedPeriod('monthly')}
-            className={`px-3 py-1 text-[#475467] text-xs cursor-pointer border ${selectedPeriod === 'monthly' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'border-[#F2F4F7]'}`}
-          >
-            Monthly
-          </button>
-          <button 
-            onClick={() => setSelectedPeriod('yearly')}
-            className={`px-3 py-1 text-[#475467] text-xs cursor-pointer rounded-br-md rounded-tr-md border ${selectedPeriod === 'yearly' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'border-[#F2F4F7]'}`}
-          >
-            Yearly
-          </button>
+        <div className="flex items-center gap-2">
+          <div className="text-sm text-gray-500 flex">
+            <button 
+              onClick={() => handlePeriodButtonClick('weekly')}
+              className={`px-3 py-1 text-[#475467] text-xs cursor-pointer border ${selectedPeriod === 'weekly' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'border-[#F2F4F7]'}`}
+            >
+              Weekly
+            </button>
+            <button 
+              onClick={() => handlePeriodButtonClick('monthly')}
+              className={`px-3 py-1 text-[#475467] text-xs cursor-pointer border ${selectedPeriod === 'monthly' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'border-[#F2F4F7]'}`}
+            >
+              Monthly
+            </button>
+            <button 
+              onClick={() => handlePeriodButtonClick('yearly')}
+              className={`px-3 py-1 text-[#475467] text-xs cursor-pointer rounded-br-md rounded-tr-md border ${selectedPeriod === 'yearly' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'border-[#F2F4F7]'}`}
+            >
+              Yearly
+            </button>
+          </div>
+          {showDatePicker && (
+            <RangePicker
+              size="small"
+              style={{ width: 220 }}
+              disabledDate={disabledDate}
+              onChange={handleRangePickerChange}
+              value={customDates}
+              picker={getPickerType(selectedPeriod)}
+              ranges={{
+                'This Week': [moment().startOf('week'), moment().endOf('week')],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'This Year': [moment().startOf('year'), moment().endOf('year')],
+              }}
+            />
+          )}
         </div>
       </div>
 

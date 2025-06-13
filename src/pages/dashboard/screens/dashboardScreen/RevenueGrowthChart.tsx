@@ -96,7 +96,6 @@ const RevenueGrowthChart: React.FC = () => {
   };
 
   const { data: graph } = useRevenues(getEndpoint(selectedPeriod));
-  const { data: revenues } = useRevenues('inflow-earnings');
 
   console.log(graph,'graph')
 
@@ -140,12 +139,6 @@ const RevenueGrowthChart: React.FC = () => {
   const tickValues = React.useMemo(() => {
     return [0, Math.ceil(maxValue / 4), Math.ceil(maxValue / 2), Math.ceil(maxValue * 3/4), Math.ceil(maxValue)];
   }, [maxValue]);
-
-  // Get the revenue summary
-  const revenueSummary = React.useMemo(() => {
-    if (!revenues) return { thisWeek: 0, thisMonth: 0, thisQuarter: 0 };
-    return revenues as RevenueSummary;
-  }, [revenues]);
 
   // Get the current period's revenue
   const currentPeriodRevenue = React.useMemo(() => {

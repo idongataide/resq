@@ -42,7 +42,7 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
     {
       key: 'destination',
       title: 'Arrived destination',
-      message: 'Kindly confirm that towing truck has arrived the destination location',
+      message: 'Driver arrived pickup location',
       time: 'Today, 10:40am',
       confirm: true,
     },

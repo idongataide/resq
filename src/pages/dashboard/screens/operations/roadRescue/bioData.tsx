@@ -9,7 +9,7 @@ import EditContactDetails from './editContactDetails';
 
 const CompanyProfileCard = () => {
   const { id } = useParams<{ id: string }>();
-  const { data: companyData, isLoading : companyLoading} = useOperatorData(id || '');
+  const { data: companyData, isLoading: companyLoading } = useOperatorData(id || '');
   const [showEditCompany, setShowEditCompany] = React.useState(false);
   const [showEditContact, setShowEditContact] = React.useState(false);
 
@@ -41,16 +41,15 @@ const CompanyProfileCard = () => {
   };
 
   if (companyLoading) {
-    return (
-     <LoadingScreen/>
-    );
+    return <LoadingScreen />;
   }
+
   return (
     <>
-    <div className="flex flex-col md:flex-row gap-4">
-{/* First section: bigger */}
-        <div className="w-full md:w-3/4 bg-white rounded-2xl p-6">
-        {/* Company Header */}
+      <div className="flex flex-col md:flex-row gap-4">
+        {/* First section - takes 2/3 on md screens, 3/4 on lg screens */}
+        <div className="w-full md:w-2/3 lg:w-3/4 bg-white rounded-2xl p-6">
+          {/* Company Header */}
           <div className="flex justify-between items-start mb-6">
             <h1 className="text-2xl font-bold capitalize text-[#475467]">{companyData?.name}</h1>
             <button 
@@ -129,8 +128,8 @@ const CompanyProfileCard = () => {
           </div>    
         </div>
         
-        {/* Second section: smaller */}
-        <div className="w-full md:w-full lg:w-1/4 bg-white rounded-2xl p-6">
+        {/* Second section - takes 1/3 on md screens, 1/4 on lg screens */}
+        <div className="w-full md:w-1/3 lg:w-1/4 bg-white rounded-2xl p-6">
           <div className="bg-[#F9FAFB] rounded-lg flex p-2 mb-2">
             <h3 className="text-sm font-medium text-[#475467]">Contact person</h3>
             <button 

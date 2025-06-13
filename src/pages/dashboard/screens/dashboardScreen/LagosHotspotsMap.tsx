@@ -213,8 +213,8 @@ const LagosHotspotsMap: React.FC = () => {
         )}
       </div>
       <div className="mt-4 flex items-center gap-4 text-sm">
-        <p><span className="inline-block w-3 h-3 mr-1 rounded-sm bg-red-500"></span>High demand area (≥50%)</p>
-        <p><span className="inline-block w-3 h-3 mr-1 rounded-sm bg-green-500"></span>Mid demand area (20-50%)</p>
+        <p><span className="inline-block w-3 h-3 mr-1 rounded-sm bg-red-500"></span>High demand area (≥51%)</p>
+        <p><span className="inline-block w-3 h-3 mr-1 rounded-sm bg-green-500"></span>Mid demand area (21-50%)</p>
         <p><span className="inline-block w-3 h-3 mr-1 rounded-sm bg-yellow-500"></span>Low demand area (&lt;20%)</p>
       </div>
     </div>

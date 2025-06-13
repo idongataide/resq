@@ -314,7 +314,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ showModal, setShowModal, onAssetAdd
             >
               <Form.Item
                 label="Brand"
-                name="brand"
+                name="brandName"
                 rules={[{ required: true, message: 'Please select brand' }]}
               >
                 <Select 

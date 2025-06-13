@@ -18,6 +18,11 @@ interface ServiceItem {
   updatedAt: string;
   id: string;
   service_id: string;
+  operator: {
+    _id: string;
+    name: string;
+    phone_number: string;
+  };
 }
 
 const ServiceCostTable: React.FC = () => {
@@ -85,12 +90,18 @@ const ServiceCostTable: React.FC = () => {
       render: (value: string) => <span className='text-[#475467] font-medium capitalize'>{value}</span>,
     },
     {
+      title: "Operator",
+      dataIndex: "operator",
+      key: "operator",
+      render: (value: { name: string }) => <span className='text-[#475467] font-medium capitalize'>{value?.name || 'N/A'}</span>,
+    },
+    {
       title: "Amount",
       dataIndex: "amount",
       key: "amount",
       render: (value: number) => `₦${value?.toLocaleString() || 'N/A'}`,
     },
-     {
+    {
       title: "Type",
       dataIndex: "service_type",
       key: "service_type",

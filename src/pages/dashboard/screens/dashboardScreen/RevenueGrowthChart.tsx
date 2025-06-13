@@ -17,11 +17,7 @@ interface RevenueData {
   amount: number;
 }
 
-interface RevenueSummary {
-  thisWeek: number;
-  thisMonth: number;
-  thisQuarter: number;
-}
+
 
 type TimePeriod = 'weekly' | 'monthly' | 'yearly';
 

@@ -3,6 +3,7 @@ import { Form, Select, Button, Input } from 'antd';
 import { useGetDriversByOperatorId, useAllService, useGetAssetsbyCord, useFees } from '@/hooks/useAdmin';
 import { approveTowingRequest } from '@/api/bookingsApi';
 import toast from 'react-hot-toast';
+import BookingInfo from '@/components/BookingInfo';
 
 interface ApproveBookingSidebarProps {
   isOpen: boolean;
@@ -156,7 +157,7 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
 
   return (
     <div className="fixed inset-0 z-[999] flex justify-end bg-[#38383880] p-5 bg-opacity-50" onClick={onClose}>
-      <div className="md:w-[48%] lg:w-1/3 w-100 z-[9999] h-full bg-white rounded-xl slide-in overflow-hidden" onClick={e => e.stopPropagation()}>
+      <div className="md:w-[58%] lg:w-1/3 w-100 z-[9999] h-full bg-white rounded-xl slide-in overflow-hidden" onClick={e => e.stopPropagation()}>
         <div className="flex justify-between items-center py-3 px-6 border-b border-[#D6DADD]">
           <h2 className="text-md font-semibold text-[#1C2023]">Approve Booking</h2>
           <button
@@ -172,55 +173,9 @@ const ApproveBookingSidebar: React.FC<ApproveBookingSidebarProps> = ({
                 <h3 className="text-sm font-normal mb-3 text-[#667085]">Booking ID {booking?.booking_ref}</h3>
                 <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800">Pending</span>
           </div>
-          <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">
-          <div className="grid grid-cols-[1fr_2fr] gap-4 text-sm text-[#475467]">
-            <div className=''>
-                <p className="font-normal mb-3 text-[#667085]">Pickups</p>
-                <p className="font-normal mb-3 text-[#667085]">Destination</p>
-                <p className="font-normal mb-3 text-[#667085]">Pickup landmark</p>
 
-              </div>
-              <div className='text-right'>
-                <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.start_address}</p>
-                <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.end_address}</p>
-                <p className='font-normal mb-3 text-[#475467] capitalize'>{booking?.landmark}</p>
-              </div>
-            </div>
-          </div>
+          <BookingInfo booking={booking} />
 
-          <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">
-          <div className="grid grid-cols-[1fr_2fr] gap-4 text-sm text-[#475467]">
-            <div className=''>
-                  <p className="font-normal mb-3 text-[#667085]">Customer Name</p>
-                  <p className="font-normal mb-3 text-[#667085]">Email</p>
-                  <p className="font-normal  text-[#667085]">Phone number</p>
-                </div>
-                 <div className='text-right'>
-                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.user_data?.first_name} {booking?.user_data?.last_name}</p>
-                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.user_data?.email || 'N/A'}</p>
-                  <p className='font-medium  text-[#475467] capitalize'>{booking?.user_data?.phone_number || 'N/A'}</p>
-                </div>
-             </div>
-          </div>
-
-          <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">
-             <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
-                <div className=''>
-                  <p className="font-normal mb-3 text-[#667085]">Vehicle model</p>
-                  <p className="font-normal mb-3 text-[#667085]">Vehicle colour</p>
-                  <p className="font-normal mb-3 text-[#667085]">Number plate</p>
-                  <p className="font-normal mb-3 text-[#667085]">Reason for towing</p>
-                  <p className="text-[#667085]">Vehicle loading status</p>
-                </div>
-                 <div className='text-right'>
-                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.vehicle_model}</p>
-                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.vehicle_color}</p>
-                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.plate_number}</p>
-                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.tow_reason}</p>
-                  <p className='font-medium text-[#475467] capitalize'>{booking?.vehicle_loaded === 1 ? 'Loaded' : 'Unloaded'}</p>
-                </div>
-             </div>
-          </div>
 
           <Form form={form} layout="vertical" onFinish={handleFinish} className="flex flex-col justify-between flex-grow">
             <div>

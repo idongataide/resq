@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { Form, Select, Button } from 'antd';
 import { rejectTowingRequest } from '@/api/bookingsApi';
 import toast from 'react-hot-toast';
+import BookingInfo from '@/components/BookingInfo';
+
 
 interface RejectBookingSidebarProps {
   isOpen: boolean;
@@ -73,54 +75,9 @@ const RejectBookingSidebar: React.FC<RejectBookingSidebarProps> = ({
                 <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800">Pending</span>
           </div>          
 
-          <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">
-             <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
-                <div className=''>
-                  <p className="font-normal mb-3 text-[#667085]">Customer Name</p>
-                  <p className="font-normal mb-3 text-[#667085]">Email</p>
-                  <p className="font-normal  text-[#667085]">Phone number</p>
-                </div>
-                 <div className='text-right'>
-                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.user_data?.first_name} {booking?.user_data?.last_name}</p>
-                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.user_data?.email || 'N/A'}</p>
-                  <p className='font-medium  text-[#475467] capitalize'>{booking?.user_data?.phone_number || 'N/A'}</p>
-                </div>
-             </div>
-          </div>
+          <BookingInfo booking={booking} />
 
-          <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">
-             <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">
-                <div className=''>
-                  <p className="font-normal mb-3 text-[#667085]">Vehicle model</p>
-                  <p className="font-normal mb-3 text-[#667085]">Vehicle colour</p>
-                  <p className="font-normal mb-3 text-[#667085]">Number plate</p>
-                  <p className="font-normal mb-3 text-[#667085]">Reason for towing</p>
-                  <p className="font-normal  text-[#667085]">Vehicle loading status</p>
-                </div>
-                 <div className='text-right'>
-                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.vehicle_model}</p>
-                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.vehicle_color}</p>
-                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.plate_number}</p>
-                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.tow_reason}</p>
-                  <p className='font-medium  text-[#475467] capitalize'>{booking?.vehicle_loaded === 1 ? 'Loaded' : 'Unloaded'}</p>
-                </div>
-             </div>
-          </div>
-          <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">
-           <div className="grid grid-cols-[1fr_2fr] gap-4 text-sm text-[#475467]">
-            <div className=''>
-                <p className="font-normal mb-3 text-[#667085]">Pickup</p>
-                <p className="font-normal mb-3 text-[#667085]">Destination</p>
-                <p className="font-normal  text-[#667085]">Pickup landmark</p>
 
-              </div>
-              <div className='text-right'>
-                <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.start_address}</p>
-                <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.end_address}</p>
-                <p className='font-medium  text-[#475467] capitalize'>{booking?.landmark}</p>
-              </div>
-            </div>
-          </div>
 
           <Form layout="vertical"> {/* Using a form just for item layout, no submit */}
              <Form.Item label="Reason for rejection" rules={[{ required: true, message: 'Please select a rejection reason!' }]}> {/* Added required rule */}

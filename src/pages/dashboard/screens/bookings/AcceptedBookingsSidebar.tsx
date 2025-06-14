@@ -1,3 +1,4 @@
+import BookingInfo from '@/components/BookingInfo';
 
 interface AcceptedBookingsSidebarProps {
   isOpen: boolean;
@@ -40,20 +41,7 @@ const AcceptedBookingsSidebar: React.FC<AcceptedBookingsSidebarProps> = ({
                 </span>
           </div>
 
-          <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">
-            <div className="grid grid-cols-[1fr_2fr] gap-4 text-sm text-[#475467]">
-                <div className=''>
-                  <p className="font-normal mb-3 text-[#667085]">Customer Name</p>
-                  <p className="font-normal mb-3 text-[#667085]">Email</p>
-                  <p className="font-normal mb-3 text-[#667085]">Phone number</p>
-                </div>
-                 <div className='text-right'>
-                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.user_data?.first_name} {booking?.user_data?.last_name}</p>
-                  <p className='font-medium mb-3 text-[#475467] lowercase'>{booking?.user_data?.email || 'N/A'}</p>
-                  <p className='font-medium mb-3 text-[#475467] capitalize'>{booking?.user_data?.phone_number || 'N/A'}</p>
-                </div>
-             </div>
-          </div>
+          <BookingInfo booking={booking} />
 
           <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">
              <div className="grid grid-cols-2 gap-4 text-sm text-[#475467]">

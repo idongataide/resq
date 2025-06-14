@@ -128,7 +128,6 @@ const RevenueGrowthChart: React.FC = () => {
           };
         }),
     }];
-    console.log('Transformed Data:', data); // Log the transformed data
     return data;
   }, [graph]);
 

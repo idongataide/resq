@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 type Period = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'all';
 
 const DashboardMetrics: React.FC = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState<Period>('daily');
+  const [selectedPeriod, setSelectedPeriod] = useState<Period>('yearly');
   const [dateRange, setDateRange] = useState<{ start_date: string; end_date: string }>({
     start_date: '',
     end_date: ''

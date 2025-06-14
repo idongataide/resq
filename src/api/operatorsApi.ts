@@ -214,3 +214,20 @@ export const updateOperator = async (operatorId: string, data: any) => {
     return error;
   }
 };
+
+export const bulkUploadDrivers = async (operatorId: string, formData: FormData) => {
+  try {
+    return await axiosAPIInstance
+      .post(`/users/bulk-driver-upload/${operatorId}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'upload': 'yes'
+        },
+      })
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};

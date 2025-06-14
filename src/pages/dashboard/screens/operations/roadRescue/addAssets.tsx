@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Button, Form, Input, Select, AutoComplete } from 'antd';
-import { MdOutlineCloudUpload } from 'react-icons/md';
 import { addAssets } from '@/api/operatorsApi';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
@@ -290,23 +289,8 @@ const AddAsset: React.FC<AddAssetProps> = ({ showModal, setShowModal, onAssetAdd
         </div>
         <div className='overflow-y-auto flex flex-col border-t border-[#D6DADD] justify-between mb-5 h-[87%] slide-in scrollbar-hide hover:scrollbar-show'>
           <div className="px-10 pt-3 mt-8">
-            <div className="text-[#475467] font-medium mb-4">Road Rescue</div>
-            <div className="border border-[#E5E9F0] rounded-xl p-6 mb-6">
-                <div className="bg-[#FCFCFD] border border-[#F2F4F7] rounded-xl p-6 mb-6">
-                <div className="flex items-center gap-4 mb-2">
-                    <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#FFF3ED]">
-                    <MdOutlineCloudUpload className="text-[#FF6C2D] tex t-2xl" />
-                    </span>
-                    <div>
-                    <div className="text-[#475467] font-medium text-base">Upload Assets</div>
-                    <div className="text-[#667085] text-sm">Upload an csv file to add assets</div>
-                    </div>
-                </div>              
-              </div>
-            <div className="text-[#475467] text-sm mt-2">
-                Get a template to upload assets. <a href="#" className="text-[#FF6C2D] underline font-medium">Download now</a>
-                </div>
-            </div>
+            <div className="text-[#475467] font-medium mb-4">Add Assets</div>
+       
             <Form
               form={form}
               layout="vertical"

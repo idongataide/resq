@@ -24,7 +24,7 @@ const AddOperatorLayout: React.FC = () => {
 
         <main className="flex flex-col md:flex-row min-h-screen bg-[#F9FAFB] gap-5 p-5">
           {/* Left Navigation - Full width on md, 45% on xl */}
-          <div className="w-full md:w-[55%] xl:w-[45%] flex flex-col justify-start">
+          <div className="w-full lg:w-[30%]  xl:w-[45%] flex flex-col justify-start">
             <div className="mb-5">
               <img src={Images[selected === 'upload' ? 'ads' : 'ads2']} alt='' className="w-full"/>
             </div>
@@ -57,7 +57,7 @@ const AddOperatorLayout: React.FC = () => {
           </div>
           
           {/* Right Content - Full width on md, 55% on xl */}
-          <div className="w-full md:w-[45%] xl:w-[55%] flex flex-col items-stretch justify-start">
+          <div className="w-full lg:w-[70%] xl:w-[55%] flex flex-col items-stretch justify-start">
             <div className="bg-white rounded-lg border-[0.6px] border-[#E5E9F0] min-h-[425px]">
               {selected === 'upload' ? <UploadOperatorsForm /> : <AddOperatorsForm />}
             </div>

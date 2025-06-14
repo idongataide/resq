@@ -155,34 +155,34 @@ const EditAsset: React.FC<EditAssetProps> = ({ showModal, setShowModal, onAssetU
     setAddressSuggestions([]);
   };
 
-  const fetchAddressSuggestions = async (input: string) => {
-    if (!input || input.length < 3) {
-      setAddressSuggestions([]);
-      return;
-    }
+  // const fetchAddressSuggestions = async (input: string) => {
+  //   if (!input || input.length < 3) {
+  //     setAddressSuggestions([]);
+  //     return;
+  //   }
 
-    try {
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&key=AIzaSyBHlJ9KQFnRZMz5jV6bZh-OQuS9iw16kGA`
-      );
+  //   try {
+  //     const response = await fetch(
+  //       `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&key=AIzaSyBHlJ9KQFnRZMz5jV6bZh-OQuS9iw16kGA`
+  //     );
       
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
       
-      const data = await response.json();
+  //     const data = await response.json();
       
-      if (data.status !== 'OK' && data.status !== 'ZERO_RESULTS') {
-        throw new Error(data.error_message || 'Failed to fetch address suggestions');
-      }
+  //     if (data.status !== 'OK' && data.status !== 'ZERO_RESULTS') {
+  //       throw new Error(data.error_message || 'Failed to fetch address suggestions');
+  //     }
       
-      const suggestions = data.predictions?.map((prediction: any) => prediction.description) || [];
-      setAddressSuggestions(suggestions);
-    } catch (error) {
-      console.error('Error fetching address suggestions:', error);
-      setAddressSuggestions([]);
-    }
-  };
+  //     const suggestions = data.predictions?.map((prediction: any) => prediction.description) || [];
+  //     setAddressSuggestions(suggestions);
+  //   } catch (error) {
+  //     console.error('Error fetching address suggestions:', error);
+  //     setAddressSuggestions([]);
+  //   }
+  // };
 
   const fetchCoordinatesForAddress = async (address: string) => {
     if (!address) {

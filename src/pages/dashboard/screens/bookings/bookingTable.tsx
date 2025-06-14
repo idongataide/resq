@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Table, type ColumnDefinition } from '@/components/ui/Table';
 import Images from '@/components/images';
 import { getStatusStyle, getAvatarColor } from '@/components/ui/statusStyles';
@@ -76,6 +76,7 @@ interface BookingData {
 
 const BookingTable: React.FC = () => {
   const { status } = useParams<{ status: string }>();
+  const filterRef = useRef<HTMLDivElement>(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
@@ -85,7 +86,6 @@ const BookingTable: React.FC = () => {
   const [cancelledByFilter, setCancelledByFilter] = useState<string | undefined>(undefined);
   const [toggle1, setToggle1] = useState(false);
   const [selected, setSelected] = useState<{ id: string; title: string; icon: React.ReactNode } | null>(null);
-  const [filterRef, setFilterRef] = useState<React.RefObject<HTMLDivElement> | null>(null);
   const [startDate, setStartDate] = useState<string | undefined>(undefined);
   const [endDate, setEndDate] = useState<string | undefined>(undefined);
 

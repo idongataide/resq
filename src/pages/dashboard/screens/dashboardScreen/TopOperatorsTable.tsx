@@ -18,7 +18,7 @@ interface TableOperator extends Operator {
 type Period = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'all';
 
 const TopOperators: React.FC = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState<Period>('daily');
+  const [selectedPeriod, setSelectedPeriod] = useState<Period>('yearly');
   const [dateRange, setDateRange] = useState<{ start_date: string; end_date: string }>({
     start_date: '',
     end_date: ''

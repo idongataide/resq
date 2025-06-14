@@ -8,7 +8,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 type Period = 'daily' | 'weekly' | 'monthly';
 
 const PerformanceRateChart: React.FC = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState<Period>('daily');
+  const [selectedPeriod, setSelectedPeriod] = useState<Period>('monthly');
   const [dateRange, setDateRange] = useState<{ start_date: string; end_date: string }>({
     start_date: '',
     end_date: ''

@@ -1,12 +1,11 @@
 import { axiosAPIInstance } from "./interceptor";
 
-export const getBookings = async (ride_status: string = '0') => {
+export const getBookings = async (ride_status: string = '0', cancelled_by?: string, start_date?: string, end_date?: string) => {
     try {
-      return await axiosAPIInstance
-        .get(`/towings?ride_status=${ride_status}`)
-        .then((res) => {
-          return res?.data;
-        });
+      const response = await axiosAPIInstance.get(
+        `/towings?ride_status=${ride_status}${cancelled_by ? `&cancelled_by=${cancelled_by}` : ''}${start_date ? `&start_date=${start_date}` : ''}${end_date ? `&end_date=${end_date}` : ''}`
+      );
+      return response?.data;
     } catch (error) {
       return error;
     }

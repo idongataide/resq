@@ -82,6 +82,12 @@ const BookingTable: React.FC = () => {
   const [title, setTitle] = useState('');
   const [selectedBooking, setSelectedBooking] = useState<BookingData | null>(null);
   const [activeSidebar, setActiveSidebar] = useState<'approve' | 'reject' | 'accepted' | 'completed' | 'cancelled' | 'ongoing' | null>(null);
+  const [cancelledByFilter, setCancelledByFilter] = useState<string | undefined>(undefined);
+  const [toggle1, setToggle1] = useState(false);
+  const [selected, setSelected] = useState<{ id: string; title: string; icon: React.ReactNode } | null>(null);
+  const [filterRef, setFilterRef] = useState<React.RefObject<HTMLDivElement> | null>(null);
+  const [startDate, setStartDate] = useState<string | undefined>(undefined);
+  const [endDate, setEndDate] = useState<string | undefined>(undefined);
 
 
   
@@ -113,7 +119,6 @@ const BookingTable: React.FC = () => {
   };
 
   const handleApprove = (request: BookingData) => {
-    console.log('Approved:', request);
     setSelectedBooking(request);
     setActiveSidebar('approve');
   };
@@ -153,7 +158,7 @@ const BookingTable: React.FC = () => {
   };
  
 
-  const { data: bookingData, isLoading, mutate } = useAllBookings(getRideStatus(status));
+  const { data: bookingData, isLoading, mutate } = useAllBookings(getRideStatus(status), cancelledByFilter, startDate, endDate);
 
   
   if (isLoading) {
@@ -310,11 +315,107 @@ const BookingTable: React.FC = () => {
         <p className='ml-2 font-bold text-[#667085] text-lg'>Back</p>
       </div>
       <div className="py-2 px-4 bg-white rounded-md border-[#E5E9F0] flex justify-between items-center">
-        <h1 className="text-lg font-bold mb-0! text-[#1C2023]">{title}</h1>
-        <button className="flex items-center gap-2 px-4 py-2 text-[#667085] bg-[#F9FAFB] rounded-lg border border-[#E5E9F0] hover:bg-gray-50">
-          <img src={Images.icon.filter} alt="Filter" className="w-4 h-4" />
-          <span>Filter</span>          
-        </button>
+        <h1 className="text-lg font-bold mb-0! text-[#1C2023]">{title}</h1>       
+        <div className="relative">
+          <div 
+            onClick={() => setToggle1(!toggle1)}
+            className="flex items-center gap-2 px-4 py-2 text-[#667085] bg-[#F9FAFB] rounded-lg border border-[#E5E9F0] hover:bg-gray-50 cursor-pointer"
+          >
+            <img src={Images.icon.filter} alt="Filter" className="w-4 h-4" />
+            <span>Filter</span>
+          </div>
+
+          {toggle1 && (
+            <div ref={filterRef} className="absolute border border-gray-200 min-h-[120px] w-[200px] bg-white rounded-md right-0 top-full mt-2 z-50 p-2 text-[14px] shadow-lg">
+              <p className="text-[14px] text-left text-gray-400 mb-2">
+                Filter by
+              </p>
+
+              {status === 'rejected' ? (
+                // Filter options for rejected status
+                [
+                  { id: 'all', title: 'All', icon: null },
+                  { id: 'admin', title: 'Cancelled By: Admin', icon: null },
+                  { id: 'user', title: 'Cancelled By: User', icon: null }
+                ].map((el) => (
+                  <div
+                    onClick={() => {
+                      setSelected(el);
+                      setCancelledByFilter(el.id === 'all' ? undefined : el.id);
+                      setToggle1(false);
+                    }}
+                    key={el.id}
+                    className={`flex gap-2 items-center mb-1 cursor-pointer hover:bg-gray-500/20 hover:border border-transparent border hover:border-gray-400 transition-all duration-300 p-2 rounded-md font-[300] text-gray-500 ${el.id === selected?.id && "bg-gray-500/20 border border-gray-400"}`}
+                  >
+                    {el.icon}
+                    <div>{el.title}</div>
+                  </div>
+                ))
+              ) : (
+                // Date filter options for other statuses
+                [
+                  { 
+                    id: 'this_week', 
+                    title: 'This Week', 
+                    icon: null,
+                    getDateRange: () => {
+                      const now = new Date();
+                      const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+                      const endOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + 6));
+                      return {
+                        start_date: startOfWeek.toISOString().split('T')[0],
+                        end_date: endOfWeek.toISOString().split('T')[0]
+                      };
+                    }
+                  },
+                  { 
+                    id: 'this_month', 
+                    title: 'This Month', 
+                    icon: null,
+                    getDateRange: () => {
+                      const now = new Date();
+                      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+                      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                      return {
+                        start_date: startOfMonth.toISOString().split('T')[0],
+                        end_date: endOfMonth.toISOString().split('T')[0]
+                      };
+                    }
+                  },
+                  { 
+                    id: 'this_year', 
+                    title: 'This Year', 
+                    icon: null,
+                    getDateRange: () => {
+                      const now = new Date();
+                      const startOfYear = new Date(now.getFullYear(), 0, 1);
+                      const endOfYear = new Date(now.getFullYear(), 11, 31);
+                      return {
+                        start_date: startOfYear.toISOString().split('T')[0],
+                        end_date: endOfYear.toISOString().split('T')[0]
+                      };
+                    }
+                  }
+                ].map((el) => (
+                  <div
+                    onClick={() => {
+                      setSelected(el);
+                      const dateRange = el.getDateRange();
+                      setStartDate(dateRange.start_date);
+                      setEndDate(dateRange.end_date);
+                      setToggle1(false);
+                    }}
+                    key={el.id}
+                    className={`flex gap-2 items-center font-medium mb-1 cursor-pointer hover:bg-gray-100 hover:border border-transparent border hover:border-gray-300 transition-all duration-300 p-2 rounded-md text-gray-600 ${el.id === selected?.id ? "bg-gray-100 border border-gray-300" : "hover:shadow-sm"}`}
+                  >
+                    {el.icon}
+                    <div>{el.title}</div>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </div>
       </div>
       
       <Table

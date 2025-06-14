@@ -229,11 +229,11 @@ export const useGetDriversByOperatorId = (operatorId: string | undefined) => {
   return { data, isLoading, mutate };
 };
 
-export const useAllBookings = (ride_status: string = '0') => {
+export const useAllBookings = (ride_status: string = '0', cancelledBy?: string, startDate?: string, endDate?: string) => {
   const { data, isLoading, mutate } = useSWR(
-    `/towings?ride_status=${ride_status}`,
+    `/towings?ride_status=${ride_status}${cancelledBy ? `&cancelled_by=${cancelledBy}` : ''}${startDate ? `&start_date=${startDate}` : ''}${endDate ? `&end_date=${endDate}` : ''}`,
     () => {
-      return getBookings(ride_status).then((res) => {
+      return getBookings(ride_status, cancelledBy, startDate, endDate).then((res) => {
         return res?.data;
       });
     },

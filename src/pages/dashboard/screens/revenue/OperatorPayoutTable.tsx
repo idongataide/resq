@@ -32,7 +32,7 @@ interface TableDailyPayout extends DailyPayout {
 const OperatorPayoutTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [selectedPeriod, setSelectedPeriod] = useState<Period>('daily');
+  const [selectedPeriod, setSelectedPeriod] = useState<Period>('yearly');
   const [dateRange, setDateRange] = useState<{ start_date: string; end_date: string }>({
     start_date: '',
     end_date: ''
@@ -55,6 +55,9 @@ const OperatorPayoutTable: React.FC = () => {
           break;
         case 'monthly':
           startDate.setMonth(today.getMonth() - 1);
+          break;
+        case 'yearly':
+          startDate.setFullYear(today.getFullYear() - 1);
           break;
       }
 

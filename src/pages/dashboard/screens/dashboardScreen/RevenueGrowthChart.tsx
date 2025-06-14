@@ -22,7 +22,7 @@ interface RevenueData {
 type TimePeriod = 'weekly' | 'monthly' | 'yearly';
 
 const RevenueGrowthChart: React.FC = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('weekly');
+  const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('yearly');
   const [customDates, setCustomDates] = useState<[moment.Moment, moment.Moment] | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -74,8 +74,8 @@ const RevenueGrowthChart: React.FC = () => {
   const getEndpoint = (period: TimePeriod) => {
     const today = moment().format('YYYY-MM-DD');
     const startOfWeek = moment().startOf('week').format('YYYY-MM-DD');
-    const startOfMonth = moment().startOf('month').format('YYYY-MM-DD');
-    const startOfYear = moment().startOf('year').format('YYYY-MM-DD');
+    // const startOfMonth = moment().startOf('month').format('YYYY-MM-DD');
+    // const startOfYear = moment().startOf('year').format('YYYY-MM-DD');
 
     const startDate = customDates ? customDates[0].format('YYYY-MM-DD') : '';
     const endDate = customDates ? customDates[1].format('YYYY-MM-DD') : '';
@@ -83,9 +83,15 @@ const RevenueGrowthChart: React.FC = () => {
     if (period === 'weekly') {
       return `revenue-growth-weekly&start_date=${startDate || startOfWeek}&end_date=${endDate || today}`;
     } else if (period === 'monthly') {
-      return `revenue-growth-monthly&start_date=${startDate || startOfMonth}&end_date=${endDate || today}`;
+      // For monthly view, show a rolling one-month period
+      const end = endDate ? moment(endDate) : moment();
+      const start = startDate ? moment(startDate).subtract(1, 'month') : moment().subtract(1, 'month');
+      return `revenue-growth-monthly&start_date=${start.format('YYYY-MM-DD')}&end_date=${end.format('YYYY-MM-DD')}`;
     } else if (period === 'yearly') {
-      return `revenue-growth-yearly&start_date=${startDate || startOfYear}&end_date=${endDate || today}`;
+      // For yearly view, show a rolling one-year period
+      const end = endDate ? moment(endDate) : moment();
+      const start = startDate ? moment(startDate).subtract(1, 'year') : moment().subtract(1, 'year');
+      return `revenue-growth-yearly&start_date=${start.format('YYYY-MM-DD')}&end_date=${end.format('YYYY-MM-DD')}`;
     }
 
     return 'revenue-growth';
@@ -93,7 +99,6 @@ const RevenueGrowthChart: React.FC = () => {
 
   const { data: graph } = useRevenues(getEndpoint(selectedPeriod));
 
-  console.log(graph,'graph')
 
   // Transform the API data into the format required by nivo
   const transformedData = React.useMemo(() => {

@@ -23,7 +23,7 @@ export interface StakeholderItemData {
 const StakeholderPayoutTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [selectedPeriod, setSelectedPeriod] = useState<Period>('daily');
+  const [selectedPeriod, setSelectedPeriod] = useState<Period>('yearly');
   const [dateRange, setDateRange] = useState<{ start_date: string; end_date: string }>({
     start_date: '',
     end_date: ''

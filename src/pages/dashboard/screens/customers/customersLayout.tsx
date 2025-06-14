@@ -56,7 +56,7 @@ const customersLayouts: React.FC = () => {
 
           <div className="bg-white rounded-lg border border-[#E5E9F0] p-4 flex flex-col justify-center">
             <h2 className="text-2xl font-semibold text-[#475467] flex items-center gap-1">
-              {customerCount?.data?.avg_rating || 0} <FaStar className="text-yellow-500" />
+              {(customerCount?.data?.avg_rating || 0).toFixed(2)} <FaStar className="text-yellow-500" />
             </h2>
             <p className="text-sm text-[#667085]">Average user rating</p>
           </div>

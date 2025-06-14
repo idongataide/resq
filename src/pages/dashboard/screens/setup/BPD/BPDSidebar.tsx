@@ -156,14 +156,13 @@ const BPDSidebar: React.FC<BPDSidebarProps> = ({ open, onClose, mode, initialDat
                               </div>
                               <div className='flex flex-col'>
                                   <span className="text-[#475467] font-medium">Click to upload</span>
-                                  <span className="text-xs text-[#667085]">PDF | DOCX 2mb max.</span>                            
+                                  <span className="text-xs text-[#667085]">Any file type | 2mb max.</span>                            
                               </div>
                           </div>                         
                           <input
                             id="bpd-upload"
                             ref={fileInputRef}
                             type="file"
-                            accept=".pdf,.docx"
                             className="hidden"
                             onChange={handleFileChange}
                           />

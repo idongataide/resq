@@ -79,7 +79,7 @@ const Profile: React.FC = () => {
         <div className="flex justify-between items-center">
           <div className=''>
             <h4 className="font-semibold mb-1 text-[#344054]">Profile Information</h4>
-            <p className="text-[#667085]">Lorem ipsum dolour of the dorlor rolor</p>
+            {/* <p className="text-[#667085]">Lorem ipsum dolour of the dorlor rolor</p> */}
           </div>            
           {!isEditing && (
             <span 

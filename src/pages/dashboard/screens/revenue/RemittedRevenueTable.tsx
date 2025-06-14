@@ -8,6 +8,7 @@ interface RemittedRevenueData {
   id: string;
   date: string;
   totalRevenue: number;
+  serviceFee: number;
   [key: string]: any;
 }
 
@@ -20,7 +21,7 @@ type Period = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'all';
 const RemittedRevenueTable: React.FC<RemittedRevenueTableProps> = ({ onRowClick }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [selectedPeriod, setSelectedPeriod] = useState<Period>('daily');
+  const [selectedPeriod, setSelectedPeriod] = useState<Period>('yearly');
   const [dateRange, setDateRange] = useState<{ start_date: string; end_date: string }>({
     start_date: '',
     end_date: ''
@@ -84,6 +85,7 @@ const RemittedRevenueTable: React.FC<RemittedRevenueTableProps> = ({ onRowClick 
         id: revenue?.id || revenue?.date,
         date: revenue?.date,
         totalRevenue: revenue?.totalAmount,
+        serviceFee: revenue?.serviceFee,
         originalItems: revenue?.items || []
       };
       revenue?.items?.forEach((item: any) => {
@@ -113,6 +115,12 @@ const RemittedRevenueTable: React.FC<RemittedRevenueTableProps> = ({ onRowClick 
         key: "totalRevenue",
         render: (value: number) => `₦${value?.toLocaleString() || 'N/A'}`,
       },
+      {
+        title: "Operator Earnings",
+        dataIndex: "serviceFee",
+        key: "serviceFee",
+        render: (value: number) => `₦${value?.toLocaleString() || 'N/A'}`,
+      },
     ];
 
     const allColumns = [...staticColumns, ...dynamicColumns];
@@ -135,7 +143,6 @@ const RemittedRevenueTable: React.FC<RemittedRevenueTableProps> = ({ onRowClick 
   const handleRowClick = (id: string) => {
     if (!id) return; // Early return if no id is provided
     
-    console.log('Clicked row ID:', id);
     // Find the full row data using the id and assert the type
     const clickedRowData = tableData?.find((row: RemittedRevenueData & { originalItems: StakeholderItemData[] }): row is RemittedRevenueData & { originalItems: StakeholderItemData[] } => row.id === id);
     

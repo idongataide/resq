@@ -88,12 +88,12 @@ const AllCustomers: React.FC<AllCustomersProps> = ({ data }) => {
     <Table
         columns={columns}
         data={data?.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
-        pagination={{
+        pagination={data?.length >= 30 ? {
           current: currentPage,
           pageSize: pageSize,
           total: data?.length,
           onChange: handlePageChange,
-        }}
+        } : undefined}
         showActions
       />
       

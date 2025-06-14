@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaFilePdf } from 'react-icons/fa';
+import { FaFile } from 'react-icons/fa';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FaAngleLeft, FaUsers, FaPlus } from 'react-icons/fa';
 import BPDSidebar from './BPDSidebar';
@@ -132,9 +132,9 @@ const BPDListing: React.FC = () => {
             key={doc.biz_id}
             className="flex items-center border border-[#E5E9F0] rounded-lg p-4 bg-white relative"
           >
-            <FaFilePdf className="text-red-500 text-2xl mr-3" />
+            <FaFile className="text-[#FF6C2D] text-2xl mr-3" />
             <div className="flex-1">
-              <div className="font-medium text-[16px] text-[#475467]">{doc.name}</div>
+              <div className="font-medium capitalize text-[16px] text-[#475467]">{doc.name}</div>
               <div className="text-xs font-md text-[#667085]">
                 {doc.file ? (
                   <div className='flex items-center'>
@@ -144,7 +144,7 @@ const BPDListing: React.FC = () => {
                         rel="noopener noreferrer"
                         className="text-[#FF6C2D] hover:underline"
                     >
-                        View PDF
+                        View File
                     </a>
                     <div className="text-xs  text-[#667085] ml-3">
                         Created: {new Date(doc.createdAt).toLocaleDateString()}

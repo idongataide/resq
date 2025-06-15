@@ -48,7 +48,7 @@ const CompanyProfileCard = () => {
     <>
       <div className="flex flex-col md:flex-row gap-4">
         {/* First section - takes 2/3 on md screens, 3/4 on lg screens */}
-        <div className="w-full md:w-2/3 lg:w-3/4 bg-white rounded-2xl p-6">
+        <div className="w-full lg:w-3/4 bg-white rounded-2xl p-6">
           {/* Company Header */}
           <div className="flex justify-between items-start mb-6">
             <h1 className="text-2xl font-bold capitalize text-[#475467]">{companyData?.name}</h1>

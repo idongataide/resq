@@ -97,7 +97,11 @@ const EditCompanyProfile: React.FC<EditCompanyProfileProps> = ({
           <EditAccountDetails
             onBack={handleBack}
             onNext={handleStepComplete}
-            initialData={operatorData}
+            initialData={{
+              bank_name: operatorData?.bank_data?.bank_name,
+              account_number: operatorData?.bank_data?.account_number,
+              account_name: operatorData?.bank_data?.account_name,
+            }}
           />
         );     
       default:

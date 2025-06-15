@@ -378,7 +378,9 @@ const AddAsset: React.FC<AddAssetProps> = ({ showModal, setShowModal, onAssetAdd
                   onSearch={handleAddressSearch}
                   className='!h-[42px]'
                   placeholder="Start typing an address..."
-                  notFoundContent={fetchingAddress ? 'Searching...' : null}
+                  notFoundContent={loading ? 'Searching...' : null}
+                  value={selectedAddress}
+                  onChange={(value) => setSelectedAddress(value)}
                 />
               </Form.Item>
               {addressDetails && (

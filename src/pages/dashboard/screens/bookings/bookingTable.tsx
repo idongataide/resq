@@ -345,7 +345,7 @@ const BookingTable: React.FC = () => {
                       setToggle1(false);
                     }}
                     key={el.id}
-                    className={`flex gap-2 items-center mb-1 cursor-pointer hover:bg-gray-500/20 hover:border border-transparent border hover:border-gray-400 transition-all duration-300 p-2 rounded-md font-[300] text-gray-500 ${el.id === selected?.id && "bg-gray-500/20 border border-gray-400"}`}
+                    className={`flex gap-2 items-center mb-1 cursor-pointer hover:bg-gray-500/20 hover:border border-transparent border hover:border-gray-400 transition-all duration-300 p-2 rounded-md font-[500] text-gray-500 ${el.id === selected?.id && "bg-gray-500/20 border border-gray-400"}`}
                   >
                     {el.icon}
                     <div>{el.title}</div>

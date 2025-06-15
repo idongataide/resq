@@ -41,6 +41,11 @@ const AllCustomers: React.FC<AllCustomersProps> = ({ data }) => {
       title: "Email address",
       dataIndex: "email",
       key: "email",
+      render: (value) => (
+        <span className="lowercase">
+          {value}
+        </span>
+      )
     },
     {
       title: "Phone number",

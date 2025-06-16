@@ -79,29 +79,33 @@ const BPDSidebar: React.FC<BPDSidebarProps> = ({ open, onClose, mode, initialDat
         if (file) {
           formData.append('file', file);
 
-          const uploadResponse = await axiosAPIInstance.post(`/users/biz-image/${bizId}`, formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              'Accept': 'application/form-data'
-            },
-          });
+          const uploadResponse = await axiosAPIInstance[mode === 'edit' ? 'put' : 'post'](
+            `/users/biz-image/${bizId}`, 
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+                'Accept': 'application/form-data'
+              },
+            }
+          );
 
           if (uploadResponse?.data?.status === 'ok') {
-            toast.success('File Uploaded Successfully');
+            toast.success(`File ${mode === 'edit' ? 'Updated' : 'Uploaded'} Successfully`);
             mutate?.();
             onFinish?.(bizId);
             onClose();
           } else {
-            toast.error(uploadResponse?.data?.msg || 'Failed to upload');
+            toast.error(uploadResponse?.data?.msg || `Failed to ${mode === 'edit' ? 'update' : 'upload'}`);
           }
         }
       } else {
         const errorMsg = response?.response?.data?.msg;
-        toast.error(errorMsg || 'Failed to create document');
+        toast.error(errorMsg || `Failed to ${mode === 'edit' ? 'update' : 'create'} document`);
       }
     } catch (error: any) {
       console.error('Error saving document:', error);
-      toast.error(error?.response?.data?.msg || 'Failed to upload');
+      toast.error(error?.response?.data?.msg || `Failed to ${mode === 'edit' ? 'update' : 'upload'}`);
     } finally {
       setIsLoading(false);
       setShowOtpModal(false);

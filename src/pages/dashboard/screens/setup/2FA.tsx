@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { IoClose } from 'react-icons/io5';
 import OtpInput from 'react-otp-input';
 import toast from 'react-hot-toast';
@@ -7,11 +7,11 @@ import { Button } from 'antd';
 interface ConfirmOperatorProps {
   onClose: () => void;
   onSuccess: (otp: string, otp_request_id?: string) => void;
+  isLoading?: boolean;
 }
 
-const ConfirmOperator: React.FC<ConfirmOperatorProps> = ({ onClose, onSuccess }) => {
+const ConfirmOperator: React.FC<ConfirmOperatorProps> = ({ onClose, onSuccess, isLoading = false }) => {
   const [otp, setOtp] = React.useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,26 +19,6 @@ const ConfirmOperator: React.FC<ConfirmOperatorProps> = ({ onClose, onSuccess })
       toast.error('Please enter complete OTP');
       return;
     }
-
-    setIsLoading(true);
-    // try {
-    //   // Verify OTP
-    //   const res = await confirmOtp({ otp });
-    //   if (res?.response?.data?.status === 'error') {
-    //     toast.error(res?.response?.data?.msg|| 'Invalid OTP');
-    //     return;
-    //   }
-    //   onSuccess(otp);
-    // } catch (error: any) {
-    //   toast.error(error.message || 'An error occurred');
-    // } finally {
-    //   setIsLoading(false);
-    // }
-    
-    // Simulate API call delay for demonstration
-    await new Promise(resolve => setTimeout(resolve, 1000)); 
-
-    setIsLoading(false);
     onSuccess(otp);
   };
 
@@ -98,7 +78,7 @@ const ConfirmOperator: React.FC<ConfirmOperatorProps> = ({ onClose, onSuccess })
               type="primary"
               htmlType="submit"
               loading={isLoading}
-              disabled={otp.length !== 6 || isLoading} // Disable if OTP is not complete or loading
+              disabled={otp.length !== 6 || isLoading}
               className={
                 `w-full h-[46px]! mt-5 rounded-lg font-medium text-lg transition border-0 ${otp.length === 6 && !isLoading ? 'bg-[#FF6C2D] text-white hover:bg-[#E55B1F] cursor-pointer' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`
               }

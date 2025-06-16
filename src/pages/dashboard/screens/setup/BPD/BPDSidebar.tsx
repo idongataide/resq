@@ -117,8 +117,8 @@ const BPDSidebar: React.FC<BPDSidebarProps> = ({ open, onClose, mode, initialDat
       console.error('Error saving document:', error);
       toast.error(error?.response?.data?.msg || `Failed to ${mode === 'edit' ? 'update' : 'upload'}`);
     } finally {
-      setIsLoading(false);
       setShowOtpModal(false);
+      setIsLoading(false);
     }
   };
 
@@ -204,7 +204,7 @@ const BPDSidebar: React.FC<BPDSidebarProps> = ({ open, onClose, mode, initialDat
                   </div>
                 </div>
                 <button
-                  className="mt-4 px-10 bg-[#FF6C2D] text-white py-3 rounded-md font-medium disabled:opacity-50"
+                  className="mt-4 px-10 bg-[#FF6C2D] cursor-pointer text-white py-3 rounded-md font-medium disabled:opacity-50"
                   onClick={handleSave}
                   disabled={isLoading}
                 >
@@ -220,6 +220,7 @@ const BPDSidebar: React.FC<BPDSidebarProps> = ({ open, onClose, mode, initialDat
         <ConfirmOperator
           onClose={() => setShowOtpModal(false)}
           onSuccess={handleOtpSuccess}
+          isLoading={isLoading}
         />
       )}
     </>

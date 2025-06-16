@@ -73,9 +73,7 @@ const RevenueGrowthChart: React.FC = () => {
   // Get the appropriate endpoint based on selected period
   const getEndpoint = (period: TimePeriod) => {
     const today = moment().format('YYYY-MM-DD');
-    const startOfWeek = moment().startOf('week').format('YYYY-MM-DD');
-    // const startOfMonth = moment().startOf('month').format('YYYY-MM-DD');
-    // const startOfYear = moment().startOf('year').format('YYYY-MM-DD');
+    const startOfWeek = moment().subtract(6, 'days').format('YYYY-MM-DD'); // Last 7 days
 
     const startDate = customDates ? customDates[0].format('YYYY-MM-DD') : '';
     const endDate = customDates ? customDates[1].format('YYYY-MM-DD') : '';
@@ -230,7 +228,15 @@ const RevenueGrowthChart: React.FC = () => {
   const handlePeriodButtonClick = (period: TimePeriod) => {
     setSelectedPeriod(period);
     setShowDatePicker(true);
-    setCustomDates(null);
+    
+    // Set default date ranges based on period
+    if (period === 'weekly') {
+      setCustomDates([moment().subtract(6, 'days'), moment()]);
+    } else if (period === 'monthly') {
+      setCustomDates([moment().subtract(1, 'month'), moment()]);
+    } else if (period === 'yearly') {
+      setCustomDates([moment().subtract(1, 'year'), moment()]);
+    }
   };
 
   const getPickerType = (period: TimePeriod) => {

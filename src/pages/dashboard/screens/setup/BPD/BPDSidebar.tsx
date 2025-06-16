@@ -10,7 +10,7 @@ interface BPDSidebarProps {
   open: boolean;
   onClose: () => void;
   mode: 'add' | 'edit';
-  initialData?: { name: string; size?: string } | null;
+  initialData?: { name: string; size?: string; file?: string } | null;
   onFinish?: (bizId: string) => void;
   mutate?: () => void;
 }
@@ -26,15 +26,25 @@ const BPDSidebar: React.FC<BPDSidebarProps> = ({ open, onClose, mode, initialDat
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (open && mode === 'add') {
-      setDocName('');
-      setFile(null);
-      setFileInfo(null);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+    if (open) {
+      if (mode === 'add') {
+        setDocName('');
+        setFile(null);
+        setFileInfo(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+      } else if (mode === 'edit' && initialData) {
+        setDocName(initialData.name || '');
+        if (initialData.file) {
+          setFileInfo({
+            name: initialData.name,
+            size: 'Existing file'
+          });
+        }
       }
     }
-  }, [open, mode]);
+  }, [open, mode, initialData]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -79,7 +89,7 @@ const BPDSidebar: React.FC<BPDSidebarProps> = ({ open, onClose, mode, initialDat
         if (file) {
           formData.append('file', file);
 
-          const uploadResponse = await axiosAPIInstance[mode === 'edit' ? 'put' : 'post'](
+          const uploadResponse = await axiosAPIInstance[mode === 'edit' ? 'post' : 'post'](
             `/users/biz-image/${bizId}`, 
             formData,
             {
@@ -118,7 +128,7 @@ const BPDSidebar: React.FC<BPDSidebarProps> = ({ open, onClose, mode, initialDat
     <>
       <div className="fixed inset-0 z-[999] flex justify-end bg-[#38383880] p-5 bg-opacity-50" onClick={onClose}>
         <div
-          className="md:w-[58%] lg:w-1/3 w-100 z-[9999] h-full bg-white rounded-xl slide-in overflow-hidden"
+          className="md:w-[48%] lg:w-1/3 w-100 z-[9999] h-full bg-white rounded-xl slide-in overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="h-full bg-white rounded-xl overflow-hidden ">

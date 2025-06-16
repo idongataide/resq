@@ -62,6 +62,10 @@ const EditCompanyProfile: React.FC<EditCompanyProfileProps> = ({
         phone_number: formData.phone,
         state: formData.state,
         lga: formData.lga,
+        bank_name: formData.bankName,
+        account_number: formData.accountNumber,
+        account_name: formData.accountName,
+        bank_code: formData.bankCode,
         otp
       };
 

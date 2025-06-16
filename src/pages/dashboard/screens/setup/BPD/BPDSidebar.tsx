@@ -1,8 +1,8 @@
 import { axiosAPIInstance } from '@/api/interceptor';
 import { getBisProcess } from '@/api/settingsApi';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { FaFilePdf, FaTrash } from 'react-icons/fa';
+import { FaFile, FaTrash } from 'react-icons/fa';
 import { FiUploadCloud } from 'react-icons/fi';
 import ConfirmOperator from '@/pages/dashboard/screens/setup/2FA';
 
@@ -24,6 +24,17 @@ const BPDSidebar: React.FC<BPDSidebarProps> = ({ open, onClose, mode, initialDat
   const [isLoading, setIsLoading] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (open && mode === 'add') {
+      setDocName('');
+      setFile(null);
+      setFileInfo(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  }, [open, mode]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -81,16 +92,16 @@ const BPDSidebar: React.FC<BPDSidebarProps> = ({ open, onClose, mode, initialDat
             onFinish?.(bizId);
             onClose();
           } else {
-            toast.error('Failed to upload file');
+            toast.error(uploadResponse?.data?.msg || 'Failed to upload');
           }
         }
       } else {
         const errorMsg = response?.response?.data?.msg;
         toast.error(errorMsg || 'Failed to create document');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving document:', error);
-      toast.error('Failed to save document');
+      toast.error(error?.response?.data?.msg || 'Failed to upload');
     } finally {
       setIsLoading(false);
       setShowOtpModal(false);
@@ -103,7 +114,7 @@ const BPDSidebar: React.FC<BPDSidebarProps> = ({ open, onClose, mode, initialDat
     <>
       <div className="fixed inset-0 z-[999] flex justify-end bg-[#38383880] p-5 bg-opacity-50" onClick={onClose}>
         <div
-          className="md:w-[48%] lg:w-1/3 w-100 z-[9999] h-full bg-white rounded-xl slide-in overflow-hidden"
+          className="md:w-[58%] lg:w-1/3 w-100 z-[9999] h-full bg-white rounded-xl slide-in overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="h-full bg-white rounded-xl overflow-hidden ">
@@ -138,7 +149,7 @@ const BPDSidebar: React.FC<BPDSidebarProps> = ({ open, onClose, mode, initialDat
                   <div className="border -border-[0.6] border-dashed border-[#FFBB9E] rounded-lg p-4 py-5 flex items-center gap-4 min-h-[60px]">
                     {fileInfo ? (
                       <>
-                        <FaFilePdf className="text-red-500 text-2xl" />
+                        <FaFile className="text-red-500 text-2xl" />
                         <div className="flex-1">
                           <div className="font-medium text-[#475467]">{fileInfo.name}</div>
                           <div className="text-xs text-[#667085]">PDF • {fileInfo.size}</div>

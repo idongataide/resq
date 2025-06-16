@@ -92,11 +92,6 @@ const EditAccountDetails: React.FC<EditAccountDetailsProps> = ({ onBack, onNext,
   const handleBankNameChange = (value: string) => {
     form.setFieldsValue({ bankName: value }); 
     setAccountName(null); 
-
-    const accountNumber = form.getFieldValue('accountNumber');
-    if (accountNumber?.length >= 10) {
-      handleVerifyAccount();
-    }
   };
 
   const handleFinish = (values: any) => {

@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Table, type ColumnDefinition } from '@/components/ui/Table';
 import { useRemittedRevenue } from '@/hooks/useAdmin';
-import { StakeholderItemData } from './StakeholderPayoutTable';
 import LoadingScreen from '@/pages/dashboard/common/LoadingScreen';
 
 interface RemittedRevenueData {
@@ -18,7 +17,7 @@ interface RemittedRevenueTableProps {
 
 type Period = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'all';
 
-const RemittedRevenueTable: React.FC<RemittedRevenueTableProps> = ({ onRowClick }) => {
+const RemittedRevenueTable: React.FC<RemittedRevenueTableProps> = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [selectedPeriod, setSelectedPeriod] = useState<Period>('yearly');
@@ -89,14 +88,15 @@ const RemittedRevenueTable: React.FC<RemittedRevenueTableProps> = ({ onRowClick 
         originalItems: revenue?.items || []
       };
       revenue?.items?.forEach((item: any) => {
-        uniqueStakeholders.add(item.name);
-        rowData[item.name] = item.amount;
+        const normalizedName = item.name.toLowerCase();
+        uniqueStakeholders.add(normalizedName);
+        rowData[normalizedName] = item.amount;
       });
       return rowData;
     });
 
     const dynamicColumns: Array<ColumnDefinition<RemittedRevenueData>> = Array.from(uniqueStakeholders).map(stakeholderName => ({
-      title: stakeholderName,
+      title: stakeholderName.charAt(0).toUpperCase() + stakeholderName.slice(1),
       dataIndex: stakeholderName,
       key: stakeholderName,
       render: (value: number) => `₦${value?.toLocaleString() || 'N/A'}`,
@@ -140,16 +140,7 @@ const RemittedRevenueTable: React.FC<RemittedRevenueTableProps> = ({ onRowClick 
     return tableData.slice(startIndex, startIndex + pageSize);
   }, [currentPage, pageSize, tableData]);
 
-  const handleRowClick = (id: string) => {
-    if (!id) return; // Early return if no id is provided
-    
-    // Find the full row data using the id and assert the type
-    const clickedRowData = tableData?.find((row: RemittedRevenueData & { originalItems: StakeholderItemData[] }): row is RemittedRevenueData & { originalItems: StakeholderItemData[] } => row.id === id);
-    
-    if (clickedRowData && onRowClick) {
-      onRowClick(clickedRowData);
-    }
-  };
+
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -212,7 +203,6 @@ const RemittedRevenueTable: React.FC<RemittedRevenueTableProps> = ({ onRowClick 
           total: tableData?.length,
           onChange: handlePageChange,
         } : undefined}
-        onRowClick={handleRowClick}
       />
     </div>
   );

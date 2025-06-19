@@ -17,7 +17,7 @@ const Login = () => {
     const { setNavPath, setOtpRequestId } = useOnboardingStore();
     const navPath =   useOnboardingStore();
     const navigate = useNavigate();
-
+    const { setEmail } = useOnboardingStore()
     const [loading, setLoading] = React.useState(false);
 
     const onFinish = (values: any) => {
@@ -59,6 +59,7 @@ const Login = () => {
                             toast.success('OTP sent. Please enter the code to reset your password.');
                             navigate('/login/forgot-password');
                             setNavPath("enter-otp");
+                            setEmail(values.email);
                         }
                     })
                     .catch(otpError => {

@@ -65,15 +65,15 @@ const DashboardLayout: React.FC = () => {
                 {greeting.icon}
               </div>
               <div className="hidden md:flex items-center justify-between mt-3 lg:mt-0">
-                <div className="flex items-center border border-[#e5e8ea] md:w-[250px] lg:w-[400px] w-[220px] rounded-full pl-2 bg-[#F9FAFB] md:mr-2 lg:mr-10">
+                {/* <div className="flex items-center border border-[#e5e8ea] md:w-[250px] lg:w-[400px] w-[220px] rounded-full pl-2 bg-[#F9FAFB] md:mr-2 lg:mr-10">
                   <CiSearch className="text-[24px] text-[#B5BDC2] " />
                   <input
                     className="border-0 outline-none h-[45px] w-full pl-1 text-[14px] text-[#B5BDC2] tracking-wide"
                     placeholder="search anything here..."
                   />
-                </div>
+                </div> */}
                 <div className="flex gap-4 justify-center mr-10 items-center text-[20px] text-gray-500">
-                  <FaRegQuestionCircle className="mr-4 text-[15px] cursor-pointer" />
+                  {/* <FaRegQuestionCircle className="mr-4 text-[15px] cursor-pointer" /> */}
                   <IoIosNotificationsOutline onClick={toggleNotifications} className="cursor-pointer" />
                   {notifications && notifications.length > 0 && (
                     <span onClick={toggleNotifications} className="absolute top-7 cursor-pointer right-18 h-5 w-5 text-[11px] inline-flex items-center justify-center px-2 py-1 text-xs leading-none text-[#fff] transform translate-x-1/2 -translate-y-1/2 bg-[#FF6C2D] rounded-full">

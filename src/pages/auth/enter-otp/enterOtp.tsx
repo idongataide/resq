@@ -59,11 +59,11 @@ const EnterOtp = () => {
 
             {/* Welcome Text */}
             <div className="mb-8 text-start ">
-                <h2 className="text-2xl font-bold! text-[#475467] mb-1!">Enter 2FA Code</h2>
-                <p className="text-sm font-medium text-[#667085]">Please enter the six digits we sent to the email {email || 'findi***gmail.com'}</p>
+                <h2 className="text-2xl font-bold! text-[#475467] mb-1!">Enter OTP</h2>
+                <p className="text-sm font-medium text-[#667085]">An Otp was sent to your email {email} address to verify your account. Kindly enter the six digit code to proceed</p>
             </div>
             <form onSubmit={handleSubmit} className="py-8">                
-                <p className="text-[#475467] font-medium mb-4">Input the six digits your 2FA code here </p>
+                <p className="text-[#475467] font-medium mb-4">Input the six digits your OTP code here </p>
                 
                 <div className="mb-6 flex justify-center">
                 <OtpInput

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Table, type ColumnDefinition } from '@/components/ui/Table';
-import Images from '@/components/images';
 import { MdOutlineDeleteOutline as IconDelete } from 'react-icons/md';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
 import toast, { Toaster } from 'react-hot-toast';
 import { axiosAPIInstance } from '@/api/interceptor';
+import { useOnboardingStore } from '@/global/store';
 
 interface TeamMember {
   id: string;
@@ -30,8 +30,10 @@ const AllTeams: React.FC<AllTeamsProps> = ({data}) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [memberToDelete, setMemberToDelete] = useState<TeamMember | null>(null);
 
+  const { role } = useOnboardingStore();
+
+
   const handleDeleteClick = (member: TeamMember) => {
-    console.log('Member to delete:', member); // Debug log
     if (!member.auth_id) {
       toast.error('Invalid member ID');
       return;
@@ -86,6 +88,11 @@ const AllTeams: React.FC<AllTeamsProps> = ({data}) => {
       title: "Email address",
       dataIndex: "email",
       key: "email",
+      render: (value) => (
+        <span className="lowercase">
+          {value}
+        </span>
+      )
     },
     {
       title: "Phone number",
@@ -102,20 +109,22 @@ const AllTeams: React.FC<AllTeamsProps> = ({data}) => {
       dataIndex: "createdAt",
       key: "createdAt",
     },
-    {
-      title: "Actions",
-      dataIndex: "action",
-      key: "actions",
-      render: (_, record) => (
-        <button 
-          onClick={() => handleDeleteClick(record)}
-          className="text-[#667085] text-sm font-medium flex items-center gap-2 cursor-pointer"
-          disabled={isDeleting}
-        >
-          <IconDelete className='w-4 h-4'/> Delete
-        </button>
-      ),
-    },
+    ...(role === 'superadmin'
+      ? [{
+        title: "Actions",
+        key: "actions",
+        dataIndex: "id" as keyof TeamMember,
+        render: (_: unknown, record: TeamMember) => (
+          <button 
+            onClick={() => handleDeleteClick(record)}
+            className="text-[#667085] text-sm font-medium flex items-center gap-2 cursor-pointer"
+            disabled={isDeleting}
+          >
+            <IconDelete className='w-4 h-4'/> Delete
+          </button>
+        ),
+      }      ]
+      : []),
   ];
 
   const handlePageChange = (page: number, size: number) => {

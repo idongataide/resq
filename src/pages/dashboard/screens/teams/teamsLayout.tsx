@@ -5,12 +5,14 @@ import { FaUsers } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useAllTeam, useAllTeamsCount } from "@/hooks/useAdmin";
 import LoadingScreen from "@/pages/dashboard/common/LoadingScreen";
+import { useOnboardingStore } from "@/global/store";
 
 
 const TeamsLayout: React.FC = () => {
 
   const { data : teams, isLoading: teamsLoading } = useAllTeam()
   const { data : teamsCount, isLoading: countLoading } = useAllTeamsCount('count');
+  const { role } = useOnboardingStore();
 
   if (teamsLoading || countLoading) {
     return <LoadingScreen />;
@@ -35,12 +37,14 @@ const TeamsLayout: React.FC = () => {
                     <p className="text-[#667085] text-md font-medium">Team Members</p>
                 </div>
             </div>
+            {role == 'superadmin' && 
             <Link to="/teams/add">
-            <button className="flex cursor-pointer items-center gap-2 px-4 py-2 text-[16px] bg-[#FF6C2D] text-white rounded-lg hover:bg-[#FF6C2D] transition-colors">
-              <FaPlus className="text-white" />
-              <span> Add new</span>
-            </button>
-            </Link>
+              <button className="flex cursor-pointer items-center gap-2 px-4 py-2 text-[16px] bg-[#FF6C2D] text-white rounded-lg hover:bg-[#FF6C2D] transition-colors">
+                <FaPlus className="text-white" />
+                <span> Add new</span>
+              </button>
+              </Link>
+            }
           </div>
         </div>
         

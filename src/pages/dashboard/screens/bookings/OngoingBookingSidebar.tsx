@@ -7,7 +7,19 @@ import { useNavigate } from 'react-router-dom';
 interface OngoingBookingsSidebarProps {
   isOpen: boolean;
   onClose: () => void;
-  booking: any; 
+  booking: any;
+  rating_data?: {
+    _id: string;
+    towing_id: string;
+    receiver_auth_id: string;
+    sender_auth_id: string;
+    receiver_user_type: string;
+    comment: string;
+    rating: number;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+  };
   mutate: () => void;
 }
 
@@ -220,7 +232,7 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
                 </div>
              </div>
           </div>
-
+       
           
         </div>
       </div>

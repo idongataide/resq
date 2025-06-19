@@ -1,4 +1,5 @@
 import BookingInfo from '@/components/BookingInfo';
+import { FaStar } from 'react-icons/fa';
 
 interface CompletedBookingsSidebarProps {
   isOpen: boolean;
@@ -17,6 +18,8 @@ const CompletedBookingsSidebar: React.FC<CompletedBookingsSidebarProps> = ({
   if (!isOpen || !booking) {
     return null;
   }
+
+  console.log(booking,'booking?.rating_data?.comment')
 
   return (
     <div className="fixed inset-0 z-[999] flex justify-end bg-[#38383880] p-5 bg-opacity-50" onClick={onClose}>
@@ -142,6 +145,34 @@ const CompletedBookingsSidebar: React.FC<CompletedBookingsSidebarProps> = ({
                 </div> 
               </div>
             </div>
+          </div>
+
+          <div className=''>
+              <span className='text-[#475467] text-md font-semibold mb-2'>Customer Review</span>
+              <div className='bg-[#F9FAFB] p-4 rounded-lg'>
+                <div className="flex items-center gap-2 mb-2">
+                  <div className='flex items-center mb-1'>
+                      <div className='bg-[#FF8957] me-2 font-bold text-white rounded-full h-9 w-9 flex items-center justify-center '>
+                          MV
+                      </div>
+                      <span className="text-md font-medium text-[#475467]">{booking?.rating_data?.rating}/5</span>
+                  </div>
+
+                  <div className="flex items-center ms-auto">
+                    {[...Array(5)].map((_, index) => (
+                      <FaStar
+                        key={index}
+                        className={`w-4 h-4 ${
+                          index < (booking?.rating_data?.rating || 0) ? 'text-yellow-500' : 'text-gray-300'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+                {booking?.rating_data?.comment && (
+                  <p className="text-md text-[#475467]">"{booking?.rating_data?.comment}"</p>
+                )}
+              </div>
           </div>
 
         </div>

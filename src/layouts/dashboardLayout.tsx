@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
-cimport { IoIosNotificationsOutline } from "react-icons/io";
+import { IoIosNotificationsOutline } from "react-icons/io";
 import { FaSun, FaMoon } from "react-icons/fa";
 import { useOnboardingStore } from "../global/store";
 import SiderScreen from "../pages/dashboard/common/sideBar";

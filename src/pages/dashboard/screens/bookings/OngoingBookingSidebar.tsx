@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { confirmPickupArrival, confirmDestinationArrival } from '@/api/settingsApi';
 import toast from 'react-hot-toast';
 import BookingInfo from '@/components/BookingInfo';
+import { useNavigate } from 'react-router-dom';
 
 interface OngoingBookingsSidebarProps {
   isOpen: boolean;
@@ -16,7 +17,12 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
   booking,
   mutate
 }) => {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [pickupLoading, setPickupLoading] = useState(false);
+  const [destinationLoading, setDestinationLoading] = useState(false);
+  const [pickupConfirming, setPickupConfirming] = useState(false);
+  const [destinationConfirming, setDestinationConfirming] = useState(false);
 
   const steps = [
     {
@@ -36,16 +42,20 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
     {
       key: 'pickup',
       title: 'Arrived pickup location',
-      message: 'Kindly confirm that towing truck has arrived the pickup location',
+      message: booking?.ride_status !== 2 
+        ? 'Kindly confirm that towing truck has arrived the pickup location' 
+        : 'Towing van arrived pickup location',
       time: 'Today, 10:40am',
       confirm: booking?.ride_status !== 2,
     },
     {
       key: 'destination',
       title: 'Arrived destination',
-      message: 'Driver arrived pickup location',
+      message: booking?.ride_status !== 3 
+        ? 'Kindly confirm that towing truck has arrived the destination' 
+        : 'Towing van arrived destination',
       time: 'Today, 10:40am',
-      confirm: true,
+      confirm: booking?.ride_status !== 3,
     },
   ];
 
@@ -53,25 +63,27 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
     return null;
   }
 
-  // Determine the active step based on booking status
   let activeStep = 1; // Default to ongoing
-  if (booking?.ride_status === 2) { // Assuming 2 corresponds to Arrived pickup
+  if (booking?.ride_status === 2) { // Arrived pickup
     activeStep = 2;
+  } else if (booking?.ride_status === 3) { // Arrived destination
+    activeStep = 3;
   }
-  // Add more conditions here for other ride_status values if needed
 
-  const handlePickupConfirmation = async () => {
+  const handlePickupConfirm = async () => {
+    setPickupLoading(true);
     if (!booking?.towing_id) {
       toast.error('Towing ID not found');
+      setPickupLoading(false);
       return;
     }
-
-    setIsLoading(true);
+  
     try {
       const response = await confirmPickupArrival(booking.towing_id);
       if (response?.status === 'ok') {
         toast.success('Pickup location arrival confirmed successfully');
-        mutate();
+        await mutate(); // Wait for the data to be refreshed
+        onClose(); // Close the sidebar after successful confirmation
       } else {
         toast.error(response?.message || 'Failed to confirm pickup arrival');
       }
@@ -79,22 +91,25 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
       console.error('Error confirming pickup arrival:', error);
       toast.error('Failed to confirm pickup arrival');
     } finally {
-      setIsLoading(false);
+      setPickupLoading(false);
     }
   };
-
-  const handleDestinationConfirmation = async () => {
+  
+  const handleDestinationConfirm = async () => {
+    setDestinationLoading(true);
     if (!booking?.towing_id) {
       toast.error('Towing ID not found');
+      setDestinationLoading(false);
       return;
     }
-
-    setIsLoading(true);
+  
     try {
       const response = await confirmDestinationArrival(booking.towing_id);
       if (response?.status === 'ok') {
         toast.success('Destination arrival confirmed successfully');
-        // You might want to refresh the booking data here
+        mutate(); // This will refresh the booking data
+        onClose(); // Close the sidebar
+        navigate('/bookings/completed'); // Navigate to completed bookings screen
       } else {
         toast.error(response?.message || 'Failed to confirm destination arrival');
       }
@@ -102,7 +117,7 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
       console.error('Error confirming destination arrival:', error);
       toast.error('Failed to confirm destination arrival');
     } finally {
-      setIsLoading(false);
+      setDestinationLoading(false);
     }
   };
 
@@ -149,26 +164,26 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
                   </div>
                   <div className="flex-1">
                     <div className="font-[400] text-[#475467] mb-1">{step.title}</div>
-                    <div className="mb-1 w-[70%] border-[#F2F4F7] border px-3">
-                      <div className="mt-3 text-sm font-medium text-[#475467]">{step.message}</div>
+                    <div className="mb-1 py-2 w-[80%] md:w-[80%] lg:w-[70%] border-[#F2F4F7] border px-3">
+                      <div className="mt-2 text-sm font-medium text-[#475467]">{step.message}</div>
                       {step.confirm && step.key === 'pickup' && (
-                        <button 
-                          className="mt-2 px-3 py-1 mb-3 bg-orange-500 text-white rounded disabled:opacity-50" 
+                        <button
+                          className="mt-2 px-3 py-1 mb-2 cursor-pointer bg-orange-500 text-white rounded disabled:opacity-50"
                           style={{ fontSize: 14 }}
-                          onClick={handlePickupConfirmation}
-                          disabled={isLoading}
+                          onClick={handlePickupConfirm}
+                          disabled={pickupLoading}
                         >
-                          {isLoading ? 'Confirming...' : 'Confirm'}
+                          {pickupLoading ? 'Confirming...' : 'Confirm'}
                         </button>
                       )}
                       {step.confirm && step.key === 'destination' && (
-                        <button 
-                          className="mt-2 px-3 py-1 mb-3 bg-orange-500 text-white rounded disabled:opacity-50" 
+                        <button
+                          className="mt-2 px-3 cursor-pointer py-1 mb-3 bg-orange-500 text-white rounded disabled:opacity-50"
                           style={{ fontSize: 14 }}
-                          onClick={handleDestinationConfirmation}
-                          disabled={isLoading}
+                          onClick={handleDestinationConfirm}
+                          disabled={destinationLoading}
                         >
-                          {isLoading ? 'Confirming...' : 'Confirm'}
+                          {destinationLoading ? 'Confirming...' : 'Confirm'}
                         </button>
                       )}
                     </div>

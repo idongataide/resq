@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
-import { CiSearch } from "react-icons/ci";
-import { IoIosNotificationsOutline } from "react-icons/io";
-import { FaRegQuestionCircle, FaSun, FaMoon } from "react-icons/fa";
+cimport { IoIosNotificationsOutline } from "react-icons/io";
+import { FaSun, FaMoon } from "react-icons/fa";
 import { useOnboardingStore } from "../global/store";
 import SiderScreen from "../pages/dashboard/common/sideBar";
 import Images from "@/components/images";

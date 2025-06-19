@@ -145,9 +145,9 @@ const GeneralCostTable: React.FC = () => {
       <Toaster/>
       <div className="py-2 px-4 bg-white rounded-md border-[#E5E9F0] flex justify-between items-center">
         <h1 className="text-lg font-medium mb-0 text-[#344054]">General cost points</h1>
-        <button className="flex items-center gap-2 px-4 py-2 text-[#667085] bg-[#F9FAFB] rounded-lg border border-[#E5E9F0] hover:bg-gray-50">
+        {/* <button className="flex items-center gap-2 px-4 py-2 text-[#667085] bg-[#F9FAFB] rounded-lg border border-[#E5E9F0] hover:bg-gray-50">
           <span>Filters</span>          
-        </button>
+        </button> */}
       </div>
       
       <Table

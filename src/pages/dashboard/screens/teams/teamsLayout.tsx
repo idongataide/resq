@@ -10,7 +10,7 @@ import { useOnboardingStore } from "@/global/store";
 
 const TeamsLayout: React.FC = () => {
 
-  const { data : teams, isLoading: teamsLoading } = useAllTeam()
+  const { data : teams, isLoading: teamsLoading, mutate } = useAllTeam()
   const { data : teamsCount, isLoading: countLoading } = useAllTeamsCount('count');
   const { role } = useOnboardingStore();
 
@@ -48,7 +48,7 @@ const TeamsLayout: React.FC = () => {
           </div>
         </div>
         
-        <AllTeams  data={teams}/>
+        <AllTeams data={teams} mutate={mutate}/>
       </div>
     </main>
   );

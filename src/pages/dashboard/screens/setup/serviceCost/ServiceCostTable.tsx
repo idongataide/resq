@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Table, type ColumnDefinition } from '@/components/ui/Table';
 import { MdOutlineEdit as IconEdit } from 'react-icons/md';
 import { MdOutlineDeleteOutline as IconDelete } from 'react-icons/md';
@@ -35,6 +35,25 @@ const ServiceCostTable: React.FC = () => {
   const [serviceToEdit, setServiceToEdit] = useState<ServiceItem | null>(null); // For Edit functionality
   const { data: servicesList, mutate: mutateServices } = useServices();
   const { mutate: mutateCount } = useServicesCount();
+  const [serviceTypeFilter, setServiceTypeFilter] = useState<'all' | 'private' | 'commercial'>('all');
+  const [filterOpen, setFilterOpen] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+        setFilterOpen(false);
+      }
+    }
+    if (filterOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [filterOpen]);
 
   console.log(servicesList, 'servicesList');
 
@@ -152,21 +171,55 @@ const ServiceCostTable: React.FC = () => {
 
   const paginatedData = useMemo(() => {
     if (!servicesList?.data) return [];
+    let filtered = servicesList.data;
+    if (serviceTypeFilter !== 'all') {
+      filtered = filtered.filter((service: ServiceItem) => service.service_type === serviceTypeFilter);
+    }
     const startIndex = (currentPage - 1) * pageSize;
-    return servicesList.data.map((service: ServiceItem) => ({
+    return filtered.map((service: ServiceItem) => ({
       ...service,
       id: service._id 
     })).slice(startIndex, startIndex + pageSize);
-  }, [currentPage, pageSize, servicesList]);
+  }, [currentPage, pageSize, servicesList, serviceTypeFilter]);
 
   return (
     <div className="mb-6">
       <Toaster/>
       <div className="py-2 px-4 bg-white rounded-md border-[#E5E9F0] flex justify-between items-center">
         <h1 className="text-lg font-medium mb-0 text-[#344054]">Service costs</h1>
-        <button className="flex items-center gap-2 px-4 py-2 text-[#667085] bg-[#F9FAFB] rounded-lg border border-[#E5E9F0] hover:bg-gray-50">
-          <span>Filters</span>          
-        </button>
+        <div className="relative">
+          <button
+            onClick={() => setFilterOpen((prev) => !prev)}
+            className="flex items-center gap-2 px-4 py-2 text-[#667085] bg-[#F9FAFB] rounded-lg border border-[#E5E9F0] hover:bg-gray-50 focus:outline-none"
+          >
+            <span>{serviceTypeFilter === 'all' ? 'All Types' : serviceTypeFilter.charAt(0).toUpperCase() + serviceTypeFilter.slice(1)}</span>
+            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+          </button>
+          {filterOpen && (
+            <div
+              ref={filterRef}
+              className="absolute border border-gray-200 min-h-[80px] w-[180px] bg-white rounded-md right-0 top-full mt-2 z-50 p-2 text-[14px] shadow-lg"
+            >
+              <p className="text-[14px] text-left text-gray-400 mb-2">Filter by type</p>
+              {[
+                { id: 'all', title: 'All Types' },
+                { id: 'private', title: 'Private' },
+                { id: 'commercial', title: 'Commercial' },
+              ].map((el) => (
+                <div
+                  onClick={() => {
+                    setServiceTypeFilter(el.id as 'all' | 'private' | 'commercial');
+                    setFilterOpen(false);
+                  }}
+                  key={el.id}
+                  className={`flex gap-2 items-center mb-1 cursor-pointer hover:bg-gray-500/20 hover:border border-transparent border hover:border-gray-400 transition-all duration-300 p-2 rounded-md font-[500] text-gray-500 ${serviceTypeFilter === el.id && "bg-gray-500/20 border border-gray-400 text-gray-700"}`}
+                >
+                  <div>{el.title}</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
       
       <Table

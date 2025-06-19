@@ -5,6 +5,7 @@ import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
 import toast, { Toaster } from 'react-hot-toast';
 import { axiosAPIInstance } from '@/api/interceptor';
 import { useOnboardingStore } from '@/global/store';
+import type { KeyedMutator } from 'swr';
 
 interface TeamMember {
   id: string;
@@ -21,9 +22,10 @@ interface TeamMember {
 
 interface AllTeamsProps {
   data: TeamMember[];
+  mutate: KeyedMutator<any>;
 }
 
-const AllTeams: React.FC<AllTeamsProps> = ({data}) => {
+const AllTeams: React.FC<AllTeamsProps> = ({data, mutate}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -54,6 +56,7 @@ const AllTeams: React.FC<AllTeamsProps> = ({data}) => {
 
       if (response?.data?.status === 'ok') {
         toast.success('Team member deleted successfully');
+        mutate();
         // You might want to refresh the data here
       } else {
         toast.error('Failed to delete team member');

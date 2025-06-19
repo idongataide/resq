@@ -18,11 +18,8 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
   mutate
 }) => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
   const [pickupLoading, setPickupLoading] = useState(false);
   const [destinationLoading, setDestinationLoading] = useState(false);
-  const [pickupConfirming, setPickupConfirming] = useState(false);
-  const [destinationConfirming, setDestinationConfirming] = useState(false);
 
   const steps = [
     {

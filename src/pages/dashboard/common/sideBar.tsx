@@ -151,10 +151,10 @@ const SiderScreen: React.FC = () => {
           <div className="hidden flex-1 md:flex justify-between items-center ">
             <Link to="/account">
               <div>
-                <p className="text-[12px] text-[#fff] font-semibold  transition-all capitalize duration-500">
+                <p className="text-[13px] text-[#fff] font-semibold  transition-all capitalize duration-500">
                   {data?.firstName + ' ' + data?.lastName }
                 </p>
-                <p className="leading-0 mt-2 font-normal text-[12px] capitalize text-[#fff] transition-all duration-500">
+                <p className="leading-0 mt-2 font-normal text-[12px] text-[#fff] transition-all duration-500">
                   {data?.email}
                 </p>
               </div>

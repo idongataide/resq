@@ -186,7 +186,11 @@ const BPDListing: React.FC = () => {
         open={sidebarOpen}
         onClose={handleCloseSidebar}
         mode={sidebarMode}
-        initialData={editDoc}
+        initialData={
+          editDoc
+            ? { _id: editDoc.biz_id, name: editDoc.name, file: editDoc.file }
+            : null
+        }
         mutate={mutate}
       />
     </div>

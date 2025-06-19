@@ -10,7 +10,7 @@ interface BPDSidebarProps {
   open: boolean;
   onClose: () => void;
   mode: 'add' | 'edit';
-  initialData?: { name: string; size?: string; file?: string } | null;
+  initialData?: { _id: string; name: string; size?: string; file?: string } | null;
   onFinish?: (bizId: string) => void;
   mutate?: () => void;
 }
@@ -49,8 +49,9 @@ const BPDSidebar: React.FC<BPDSidebarProps> = ({ open, onClose, mode, initialDat
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (f) {
+      const ext = f.name.split('.').pop()?.toUpperCase() || 'FILE';
       setFile(f);
-      setFileInfo({ name: f.name, size: `${(f.size / 1024).toFixed(1)}Kb` });
+      setFileInfo({ name: f.name, size: `${ext} • ${(f.size / 1024).toFixed(1)}Kb` });
     }
   };
 
@@ -66,62 +67,91 @@ const BPDSidebar: React.FC<BPDSidebarProps> = ({ open, onClose, mode, initialDat
       return;
     }
 
-    if (!file) {
+    // Only require a file if adding, or if editing and no file exists
+    if (mode === 'add' && !file) {
+      toast.error('Please upload a file');
+      return;
+    }
+    if (mode === 'edit' && !file && !fileInfo) {
       toast.error('Please upload a file');
       return;
     }
 
     setShowOtpModal(true);
   };
-
   const handleOtpSuccess = async (otp: string) => {
     setIsLoading(true);
     try {
-      const response = await getBisProcess({ 
-        doc_name: docName,
-        otp: otp
-      });
+      let bizId = initialData?._id; // Assuming initialData has _id for edit mode
       
-      if (response && response?.status === 'ok') {
-        const bizId = response?.data?._id;
+      // For edit mode, first update the document name using PUT
+      if (mode === 'edit' && bizId) {
+        const updateResponse = await getBisProcess(
+          { doc_name: docName, otp: otp },
+          'edit',
+          bizId
+        );
         
-        const formData = new FormData();
-        if (file) {
-          formData.append('file', file);
-
-          const uploadResponse = await axiosAPIInstance[mode === 'edit' ? 'post' : 'post'](
-            `/users/biz-image/${bizId}`, 
-            formData,
-            {
-              headers: {
-                'Content-Type': 'multipart/form-data',
-                'Accept': 'application/form-data'
-              },
-            }
-          );
-
-          if (uploadResponse?.data?.status === 'ok') {
-            toast.success(`File ${mode === 'edit' ? 'Updated' : 'Uploaded'} Successfully`);
-            mutate?.();
-            onFinish?.(bizId);
-            onClose();
-          } else {
-            toast.error(uploadResponse?.data?.msg || `Failed to ${mode === 'edit' ? 'update' : 'upload'}`);
-          }
+        if (updateResponse && updateResponse?.status === 'ok') {
+          bizId = updateResponse?.data?._id || bizId;
+        } else {
+          throw new Error(updateResponse?.response?.data?.msg || 'Failed to update document name');
         }
-      } else {
-        const errorMsg = response?.response?.data?.msg;
-        toast.error(errorMsg || `Failed to ${mode === 'edit' ? 'update' : 'create'} document`);
+      }
+      // For add mode, create the document first
+      else if (mode === 'add') {
+        const createResponse = await getBisProcess(
+          { doc_name: docName, otp: otp },
+          'add'
+        );
+        
+        if (createResponse && createResponse?.status === 'ok') {
+          bizId = createResponse?.data?._id;
+        } else {
+          throw new Error(createResponse?.response?.data?.msg || 'Failed to create document');
+        }
+      }
+  
+      // If there's a file to upload (for both add and edit modes)
+      if (file && bizId) {
+        const formData = new FormData();
+        formData.append('file', file);
+  
+        // Always use POST for file upload
+        const uploadResponse = await axiosAPIInstance.post(
+          `/users/biz-image/${bizId}`, 
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'Accept': 'application/form-data'
+            },
+          }
+        );
+  
+        if (uploadResponse?.data?.status === 'ok') {
+          toast.success(`File ${mode === 'edit' ? 'Updated' : 'Uploaded'} Successfully`);
+          mutate?.();
+          if (bizId) onFinish?.(bizId);
+          onClose();
+        } else {
+          throw new Error(uploadResponse?.data?.msg || `Failed to ${mode === 'edit' ? 'update' : 'upload'} file`);
+        }
+      } else if (mode === 'edit') {
+        // If in edit mode and no file was selected, just consider it successful
+        toast.success('Document updated successfully');
+        mutate?.();
+        if (bizId) onFinish?.(bizId);
+        onClose();
       }
     } catch (error: any) {
       console.error('Error saving document:', error);
-      toast.error(error?.response?.data?.msg || `Failed to ${mode === 'edit' ? 'update' : 'upload'}`);
+      toast.error(error.message || `Failed to ${mode === 'edit' ? 'update' : 'upload'}`);
     } finally {
       setShowOtpModal(false);
       setIsLoading(false);
     }
   };
-
   if (!open) return null;
 
   return (
@@ -166,7 +196,7 @@ const BPDSidebar: React.FC<BPDSidebarProps> = ({ open, onClose, mode, initialDat
                         <FaFile className="text-red-500 text-2xl" />
                         <div className="flex-1">
                           <div className="font-medium text-[#475467]">{fileInfo.name}</div>
-                          <div className="text-xs text-[#667085]">PDF • {fileInfo.size}</div>
+                          <div className="text-xs text-[#667085]">{fileInfo.size}</div>
                         </div>
                         <button onClick={handleRemoveFile} className="text-[#C21E1E] ml-2">
                           <FaTrash />

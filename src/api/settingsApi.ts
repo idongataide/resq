@@ -306,16 +306,26 @@ export const getBizImage = async () => {
 
 
 
-export const getBisProcess = async (data: { 
-  doc_name: string;
-  otp: string;
-}) => {
+export const getBisProcess = async (
+  data: { doc_name: string; otp: string },
+  mode: 'add' | 'edit' = 'add',
+  bizId?: string
+) => {
   try {
-    return await axiosAPIInstance
-      .post(`/users/biz-process`, data)
-      .then((res) => {
-        return res?.data;
-      });
+    if (mode === 'edit' && bizId) {
+      console.log(mode,'dsdsdsd')
+      return await axiosAPIInstance
+        .put(`/users/biz-process/${bizId}`, data)
+        .then((res) => {
+          return res?.data;
+        });
+    } else {
+      return await axiosAPIInstance
+        .post(`/users/biz-process`, data)
+        .then((res) => {
+          return res?.data;
+        });
+    }
   } catch (error) {
     return error;
   }

@@ -3,93 +3,157 @@ import { ResponsiveLine } from '@nivo/line';
 import moment from 'moment';
 import { HiMiniArrowTrendingUp } from "react-icons/hi2";
 import { useRevenues } from '@/hooks/useAdmin';
-// import type { RangePickerProps } from 'antd/es/date-picker';
-import generatePicker from 'antd/es/date-picker/generatePicker';
-import momentGenerateConfig from 'rc-picker/lib/generate/moment';
-import { Moment } from 'moment';
-import toast, { Toaster } from "react-hot-toast";
-
-const MomentDatePicker = generatePicker<Moment>(momentGenerateConfig);
-const RangePicker = MomentDatePicker.RangePicker;
 
 interface RevenueData {
   date: string;
   amount: number;
 }
 
+interface WeekAmount {
+  week: string;
+  amount: number;
+  count: number;
+}
 
+interface MonthlyResponse {
+  monthly: { date: string; amount: number }[];
+  total: {
+    total: number;
+  };
+}
+
+interface WeeklyResponse {
+  weekly: WeekAmount[];
+  total: {
+    total_earning: number;
+    total_rides: number;
+  };
+}
 
 type TimePeriod = 'weekly' | 'monthly' | 'yearly';
 
 const RevenueGrowthChart: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('yearly');
-  const [customDates, setCustomDates] = useState<[moment.Moment, moment.Moment] | null>(null);
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedYear, setSelectedYear] = useState<number>(2024);
 
-  // Disable dates based on selected period
-  const disabledDate = (current: moment.Moment) => {
-    if (!current) return false;
-    
-    const today = moment().endOf('day');
-    
-    // Can't select dates in the future
-    if (current.isAfter(today)) return true;
-
-    // Additional checks based on selectedPeriod for past dates
-    if (selectedPeriod === 'weekly') {
-      // For weekly view, allow selecting any past date
-      return false;
-    } else if (selectedPeriod === 'monthly') {
-      const twelveMonthsAgo = moment().subtract(12, 'months').startOf('month');
-      if (current.isBefore(twelveMonthsAgo)) return true;
-    } else if (selectedPeriod === 'yearly') {
-      const oneYearAgo = moment().subtract(1, 'year').startOf('year');
-      if (current.isBefore(oneYearAgo)) return true;
+  const formatToKM = (value: number | null | undefined) => {
+    if (value === null || value === undefined) return '₦0';
+    if (value >= 1000000) {
+      return `₦${(value / 1000000).toFixed(1).replace(/\.0$/, '')}M`;
     }
-    
-    return false;
+    if (value >= 1000) {
+      return `₦${(value / 1000).toFixed(0)}k`;
+    }
+    return `₦${value.toLocaleString()}`;
   };
 
-  // Handle date range change for custom period
-  const handleRangePickerChange = (dates: [Moment | null, Moment | null] | null) => {
-    if (dates && dates[0] && dates[1]) {
-      const start = dates[0];
-      const end = dates[1];
-
-      if (selectedPeriod === 'weekly') {
-        // For weekly, ensure range is not more than 10 days
-        if (end.diff(start, 'days') > 14) {
-          toast.error('Date range cannot exceed 10 days for weekly view.');
-          setCustomDates(null);
-          return;
-        }
-      }
-      setCustomDates([start, end]);
-    } else {
-      setCustomDates(null);
-    }
+  // Function to normalize week format
+  const normalizeWeek = (weekStr: string): string => {
+    const [year, rawWeek] = weekStr.split(/-w|-W/); // handle both lowercase and uppercase "w"
+    const weekNum = String(parseInt(rawWeek, 10)).padStart(2, '0');
+    return `${year}-W${weekNum}`;
   };
 
-  // Get the appropriate endpoint based on selected period
+  // Function to create complete weekly data with all 52 weeks
+  const createCompleteWeeklyData = (weeklyData: WeekAmount[]): WeekAmount[] => {
+    const dataMap: Record<string, number> = {};
+    
+    // Create a map of existing data
+    weeklyData.forEach(item => {
+      const normalizedWeek = normalizeWeek(item.week);
+      dataMap[normalizedWeek] = item.amount;
+    });
+
+    // Use the selected year
+    const year = selectedYear.toString();
+    
+    // Create complete 52 weeks data
+    const completeData: WeekAmount[] = [];
+    
+    for (let i = 1; i <= 52; i++) {
+      const weekLabel = `W${String(i).padStart(2, '0')}`; // e.g., W01
+      const fullWeekKey = `${year}-${weekLabel}`;
+      
+      completeData.push({
+        week: fullWeekKey,
+        amount: dataMap[fullWeekKey] || 0,
+        count: 0 // You can map count if needed
+      });
+    }
+    
+    return completeData;
+  };
+
+  // Function to create complete monthly data with all 12 months
+  const createCompleteMonthlyData = (monthlyData: { date: string, amount: number }[]): { date: string, amount: number }[] => {
+    const dataMap: Record<string, number> = {};
+    
+    // Create a map of existing data
+    monthlyData.forEach(item => {
+      // Assuming item.date is "YYYY-MM"
+      dataMap[item.date] = item.amount;
+    });
+
+    // Use the selected year
+    const year = selectedYear.toString();
+    
+    // Create complete 12 months data
+    const completeData: { date: string, amount: number }[] = [];
+    
+    for (let i = 1; i <= 12; i++) {
+      const month = String(i).padStart(2, '0'); // e.g., 01, 02
+      const fullMonthKey = `${year}-${month}`;
+      
+      completeData.push({
+        date: fullMonthKey,
+        amount: dataMap[fullMonthKey] || 0,
+      });
+    }
+    
+    return completeData;
+  };
+
+  // Function to create complete yearly data for a 5-year range
+  const createCompleteYearlyData = (yearlyData: { date: string, amount: number }[], startYear: number, endYear: number): { date: string, amount: number }[] => {
+    const dataMap: Record<string, number> = {};
+    
+    // Create a map of existing data
+    yearlyData.forEach(item => {
+      // Assuming item.date is "YYYY" or "YYYY-MM-DD", we extract the year
+      const year = moment(item.date).format('YYYY');
+      dataMap[year] = item.amount;
+    });
+
+    const completeData: { date: string, amount: number }[] = [];
+    
+    for (let year = startYear; year <= endYear; year++) {
+      const yearStr = year.toString();
+      completeData.push({
+        date: yearStr, // Nivo will parse this as a year
+        amount: dataMap[yearStr] || 0,
+      });
+    }
+    
+    return completeData;
+  };
+
+  // Get the appropriate endpoint based on selected period and year
   const getEndpoint = (period: TimePeriod) => {
-    const today = moment().format('YYYY-MM-DD');
-    const startOfWeek = moment().subtract(6, 'days').format('YYYY-MM-DD'); // Last 7 days
-
-    const startDate = customDates ? customDates[0].format('YYYY-MM-DD') : '';
-    const endDate = customDates ? customDates[1].format('YYYY-MM-DD') : '';
+    if (period === 'yearly') {
+      const startYear = 2024;
+      const endYear = 2030;
+      const yearlyStartDate = `${startYear}-01-01`;
+      const yearlyEndDate = `${endYear}-12-31`;
+      return `revenue-growth-yearly&start_date=${yearlyStartDate}&end_date=${yearlyEndDate}`;
+    }
+    
+    const startDate = `${selectedYear}-01-01`;
+    const endDate = `${selectedYear}-12-31`;
 
     if (period === 'weekly') {
-      return `revenue-growth-weekly&start_date=${startDate || startOfWeek}&end_date=${endDate || today}`;
+      return `revenue-growth-weekly&start_date=${startDate}&end_date=${endDate}`;
     } else if (period === 'monthly') {
-      // For monthly view, show a rolling one-month period
-      const end = endDate ? moment(endDate) : moment();
-      const start = startDate ? moment(startDate).subtract(1, 'month') : moment().subtract(1, 'month');
-      return `revenue-growth-monthly&start_date=${start.format('YYYY-MM-DD')}&end_date=${end.format('YYYY-MM-DD')}`;
-    } else if (period === 'yearly') {
-      // For yearly view, show a rolling one-year period
-      const end = endDate ? moment(endDate) : moment();
-      const start = startDate ? moment(startDate).subtract(1, 'year') : moment().subtract(1, 'year');
-      return `revenue-growth-yearly&start_date=${start.format('YYYY-MM-DD')}&end_date=${end.format('YYYY-MM-DD')}`;
+      return `revenue-growth-monthly&start_date=${startDate}&end_date=${endDate}`;
     }
 
     return 'revenue-growth';
@@ -97,113 +161,157 @@ const RevenueGrowthChart: React.FC = () => {
 
   const { data: graph } = useRevenues(getEndpoint(selectedPeriod));
 
-
   // Transform the API data into the format required by nivo
   const transformedData = React.useMemo(() => {
     if (!graph) return [];
 
-    const revenueData = graph as any[]; // Use 'any' to allow for 'week' or 'date'
-    const data = [{
-      id: 'Revenue',
-      data: revenueData
-        .filter(item => {
-          // Filter out null/undefined dates/weeks and invalid dates/weeks
-          return (item.date !== null && item.date !== undefined && moment(item.date).isValid()) ||
-                 (item.week !== null && item.week !== undefined && moment(item.week, 'YYYY-WW').isValid());
-        })
-        .map(item => {
-          let xValue: string;
-          if (item.week) {
-            // If it's weekly data, convert 'YYYY-Wxx' to the start of the ISO week in YYYY-MM-DD format
-            xValue = moment(item.week, 'YYYY-WW').startOf('isoWeek').format('YYYY-MM-DD');
-          } else {
-            // Otherwise, assume it's a direct date
-            xValue = item.date;
-          }
-          return {
-            x: xValue,
+    if (selectedPeriod === 'weekly') {
+      // Handle weekly data with complete 52 weeks
+      const response = graph as WeeklyResponse;
+      if (response && response.weekly) {
+        const completeWeeklyData = createCompleteWeeklyData(response.weekly);
+        
+        return [{
+          id: 'Revenue',
+          data: completeWeeklyData.map(item => ({
+            x: item.week, // Use the week string directly (e.g., "2025-W24")
             y: item.amount,
-          };
-        }),
-    }];
-    return data;
-  }, [graph]);
+          })),
+        }];
+      }
+    } else if (selectedPeriod === 'monthly') {
+      const response = graph as MonthlyResponse;
+      if (response && response.monthly) {
+          const completeMonthlyData = createCompleteMonthlyData(response.monthly);
+
+          return [{
+              id: 'Revenue',
+              data: completeMonthlyData.map(item => ({
+                  x: item.date,
+                  y: item.amount,
+              })),
+          }];
+      }
+    } else if (selectedPeriod === 'yearly') {
+      const startYear = 2024;
+      const endYear = 2030;
+      const yearlyData = graph as { date: string; amount: number }[];
+      
+      if (Array.isArray(yearlyData)) {
+          const completeYearlyData = createCompleteYearlyData(yearlyData, startYear, endYear);
+          return [{
+              id: 'Revenue',
+              data: completeYearlyData.map(item => ({
+                  x: item.date,
+                  y: item.amount,
+              })),
+          }];
+      }
+    }
+
+    return [];
+  }, [graph, selectedPeriod, selectedYear]);
 
   const maxValue = React.useMemo(() => {
     if (!graph) return 2000;
-    return Math.max(...(graph as RevenueData[]).map(item => item.amount)) * 1.2;
-  }, [graph]);
+
+    let amounts: number[] = [];
+    if (selectedPeriod === 'weekly') {
+      const response = graph as WeeklyResponse;
+      if (response && response.weekly) {
+        amounts = response.weekly.map(item => item.amount);
+      }
+    } else if (selectedPeriod === 'monthly') {
+      const response = graph as MonthlyResponse;
+      if (response && response.monthly) {
+          amounts = response.monthly.map(item => item.amount);
+      }
+    } else {
+        if (Array.isArray(graph)) {
+            amounts = (graph as RevenueData[]).map(item => item.amount);
+        }
+    }
+    
+    if (amounts.length === 0) {
+      return 2000; // Default max value if no amounts
+    }
+
+    const maxAmount = Math.max(...amounts);
+    return maxAmount > 0 ? maxAmount * 1.2 : 2000;
+  }, [graph, selectedPeriod]);
 
   const tickValues = React.useMemo(() => {
-    return [0, Math.ceil(maxValue / 4), Math.ceil(maxValue / 2), Math.ceil(maxValue * 3/4), Math.ceil(maxValue)];
+    const tickCount = 4;
+    if (maxValue <= 0) return [0];
+
+    const step = Math.ceil(maxValue / tickCount);
+    
+    // Create an array of tick values from 0 up to maxValue
+    const ticks = Array.from({ length: tickCount + 1 }, (_, i) => {
+      const value = i * step;
+      // Ensure the last tick is not greater than maxValue, though `ceil` should handle this
+      return value > maxValue ? Math.ceil(maxValue) : value;
+    });
+    
+    // Ensure the highest value is included if it's not already
+    if (ticks[ticks.length - 1] < maxValue) {
+        ticks[ticks.length - 1] = Math.ceil(maxValue)
+    }
+
+    return ticks;
   }, [maxValue]);
 
   // Get the current period's revenue
   const currentPeriodRevenue = React.useMemo(() => {
     if (!graph) return 0;
-    const revenueData = graph as any[];
-
-    let sum = 0;
-
-    if (selectedPeriod === 'weekly' && customDates) {
-      const start = customDates[0];
-      const end = customDates[1];
-      sum = revenueData.reduce((acc, item) => {
-        const itemDate = moment(item.week, 'YYYY-WW').startOf('isoWeek');
-        if (itemDate.isBetween(start, end, 'day', '[]')) {
-          return acc + item.amount;
-        }
-        return acc;
-      }, 0);
-    } else if (selectedPeriod === 'monthly' && customDates) {
-      const start = customDates[0];
-      const end = customDates[1];
-      sum = revenueData.reduce((acc, item) => {
-        const itemDate = moment(item.date);
-        if (itemDate.isBetween(start, end, 'month', '[]')) {
-          return acc + item.amount;
-        }
-        return acc;
-      }, 0);
-    } else if (selectedPeriod === 'yearly' && customDates) {
-      const start = customDates[0];
-      const end = customDates[1];
-      sum = revenueData.reduce((acc, item) => {
-        const itemDate = moment(item.date);
-        if (itemDate.isBetween(start, end, 'year', '[]')) {
-          return acc + item.amount;
-        }
-        return acc;
-      }, 0);
-    } else if (selectedPeriod === 'weekly' || selectedPeriod === 'monthly' || selectedPeriod === 'yearly') {
-      // For non-custom periods, sum all amounts in the graph data as the backend should return the correct range
-      sum = revenueData.reduce((acc, item) => acc + item.amount, 0);
+    
+    if (selectedPeriod === 'weekly') {
+      const response = graph as WeeklyResponse;
+      if (response && response.total) {
+        return response.total.total_earning;
+      }
+      // Fallback: sum all weekly amounts
+      if (response && response.weekly) {
+        return response.weekly.reduce((acc, item) => acc + item.amount, 0);
+      }
+    } else if (selectedPeriod === 'monthly') {
+      const response = graph as MonthlyResponse;
+      if (response && response.total) {
+          return response.total.total;
+      }
+      if (response && response.monthly) {
+          return response.monthly.reduce((acc, item) => acc + item.amount, 0);
+      }
     } else {
-      // Fallback for custom or any other case, sum all amounts in graph
-      sum = revenueData.reduce((acc, item) => acc + item.amount, 0);
+      const revenueData = graph as any[];
+      if (!Array.isArray(revenueData)) {
+        return 0;
+      }
+      // Sum all amounts in the graph data as the backend should return the correct range
+      return revenueData.reduce((acc, item) => acc + item.amount, 0);
     }
     
-    return sum;
-  }, [selectedPeriod, customDates, graph]);
+    return 0;
+  }, [graph, selectedPeriod]);
 
   // Get the period label
   const periodLabel = React.useMemo(() => {
     switch (selectedPeriod) {
       case 'weekly':
-        return 'This week';
+        return `${selectedYear}`;
       case 'monthly':
-        return 'This month';
+        return `${selectedYear}`;
       case 'yearly':
-        return 'This quarter';
+        return `2024 - 2030`;
       default:
-        return 'This week';
+        return `${selectedYear}`;
     }
-  }, [selectedPeriod]);
+  }, [selectedPeriod, selectedYear]);
 
   const getDateFormat = (period: TimePeriod) => {
     switch (period) {
       case 'weekly':
-        return 'MMM D';
+        return 'W[W]'; // Format for week display
       case 'monthly':
         return 'MMM';
       case 'yearly':
@@ -216,6 +324,8 @@ const RevenueGrowthChart: React.FC = () => {
   // Get the xScale format based on selected period
   const getXScaleFormat = (period: TimePeriod) => {
     switch (period) {
+      case 'weekly':
+        return '%Y-W%V'; // Format for week display
       case 'monthly':
         return '%Y-%m';
       case 'yearly':
@@ -225,39 +335,21 @@ const RevenueGrowthChart: React.FC = () => {
     }
   };
 
-  const handlePeriodButtonClick = (period: TimePeriod) => {
-    setSelectedPeriod(period);
-    setShowDatePicker(true);
-    
-    // Set default date ranges based on period
-    if (period === 'weekly') {
-      setCustomDates([moment().subtract(6, 'days'), moment()]);
-    } else if (period === 'monthly') {
-      setCustomDates([moment().subtract(1, 'month'), moment()]);
-    } else if (period === 'yearly') {
-      setCustomDates([moment().subtract(1, 'year'), moment()]);
+  // Generate year options for dropdown (current year and 5 years back)
+  const yearOptions = React.useMemo(() => {
+    const years = [];
+    for (let i = 2030; i >= 2024; i--) {
+      years.push(i);
     }
-  };
-
-  const getPickerType = (period: TimePeriod) => {
-    switch (period) {
-      case 'monthly':
-        return 'month';
-      case 'yearly':
-        return 'year';
-      default:
-        return 'date';
-    }
-  };
+    return years;
+  }, []);
 
   const commonProps = {
     margin: { top: 0, right: 20, bottom: 20, left: 50 },
     xScale: {
-      type: 'time' as const,
-      format: getXScaleFormat(selectedPeriod),
-      precision: selectedPeriod === 'monthly' ? ('month' as const) : 
-                 selectedPeriod === 'yearly' ? ('year' as const) : 
-                 ('day' as const),
+      type: (selectedPeriod === 'weekly' || selectedPeriod === 'yearly') ? 'point' as const : 'time' as const,
+      format: (selectedPeriod === 'weekly' || selectedPeriod === 'yearly') ? undefined : getXScaleFormat(selectedPeriod),
+      precision: selectedPeriod === 'monthly' ? ('month' as const) : ('day' as const),
       useUTC: false,
     },
     yScale: {
@@ -272,11 +364,18 @@ const RevenueGrowthChart: React.FC = () => {
     axisBottom: {
       tickSize: 5,
       tickPadding: 5,
-      tickRotation: 0,
+      tickRotation: selectedPeriod === 'weekly' ? 45 : 0,
       legend: '',
       legendOffset: 36,
       legendPosition: 'middle' as const,
-      format: (value: string) => moment(value).format(getDateFormat(selectedPeriod)),
+      format: selectedPeriod === 'weekly' ? 
+        (value: any) => {
+          if (typeof value === 'string' && value.includes('-W')) {
+            return value.split('-W')[1];
+          }
+          return value;
+        } : // Show only week number
+        (value: string) => moment(value).format(getDateFormat(selectedPeriod)),
       tickValues: selectedPeriod === 'monthly' ? 'every 1 month' : undefined,
     },
     axisLeft: {
@@ -287,7 +386,7 @@ const RevenueGrowthChart: React.FC = () => {
       legend: '',
       legendOffset: -40,
       legendPosition: 'middle' as const,
-      format: (value: number) => `₦${value?.toLocaleString()}`,
+      format: formatToKM,
     },
     enableGridX: false,
     enableGridY: true,
@@ -345,9 +444,18 @@ const RevenueGrowthChart: React.FC = () => {
           fontSize: '0.875rem'
         }}>
           <div style={{ color: point.serieColor }}>
-            {moment(point.data.x as string).format(getDateFormat(selectedPeriod))}
+            {selectedPeriod === 'weekly' ? 
+              (() => {
+                const xValue = point.data.x;
+                if (typeof xValue === 'string' && xValue.includes('-W')) {
+                  return `Week ${xValue.split('-W')[1]}`;
+                }
+                return `Week ${xValue}`;
+              })() :
+              moment(point.data.x as string).format(getDateFormat(selectedPeriod))
+            }
           </div>
-          <strong>₦{point?.data?.y?.toLocaleString()}</strong>
+          <strong>{formatToKM(point?.data?.y)}</strong>
         </div>
       );
     },
@@ -366,18 +474,26 @@ const RevenueGrowthChart: React.FC = () => {
           fontSize: '0.875rem'
         }}>
           <div style={{ color: point.serieColor }}>
-            {moment(point.data.x as string).format(getDateFormat(selectedPeriod))}
+            {selectedPeriod === 'weekly' ? 
+              (() => {
+                const xValue = point.data.x;
+                if (typeof xValue === 'string' && xValue.includes('-W')) {
+                  return `Week ${xValue.split('-W')[1]}`;
+                }
+                return `Week ${xValue}`;
+              })() :
+              moment(point.data.x as string).format(getDateFormat(selectedPeriod))
+            }
           </div>
-          <strong>₦{point?.data?.y?.toLocaleString()}</strong>
+          <strong>{formatToKM(point?.data?.y)}</strong>
         </div>
       );
     }
   };
 
   return (
-    <div className="bg-white rounded-lg p-6 mb-6 border border-[#E5E9F0] min-h-[390px]">
+    <div className="bg-white rounded-lg px-4 py-6 mb-6 border border-[#E5E9F0] min-h-[390px]">
 
-    <Toaster/>
       <div className="flex justify-between items-center mb-4">
         <div>
           <h3 className="text-xs font-medium text-[#667085]">Revenue Growth</h3>
@@ -390,38 +506,36 @@ const RevenueGrowthChart: React.FC = () => {
         <div className="flex items-center gap-2">
           <div className="text-sm text-gray-500 flex">
             <button 
-              onClick={() => handlePeriodButtonClick('weekly')}
+              onClick={() => setSelectedPeriod('weekly')}
               className={`px-3 py-1 text-[#475467] text-xs cursor-pointer border ${selectedPeriod === 'weekly' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'border-[#F2F4F7]'}`}
             >
               Weekly
             </button>
             <button 
-              onClick={() => handlePeriodButtonClick('monthly')}
+              onClick={() => setSelectedPeriod('monthly')}
               className={`px-3 py-1 text-[#475467] text-xs cursor-pointer border ${selectedPeriod === 'monthly' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'border-[#F2F4F7]'}`}
             >
               Monthly
             </button>
             <button 
-              onClick={() => handlePeriodButtonClick('yearly')}
+              onClick={() => setSelectedPeriod('yearly')}
               className={`px-3 py-1 text-[#475467] text-xs cursor-pointer rounded-br-md rounded-tr-md border ${selectedPeriod === 'yearly' ? 'bg-[#FFF3ED] border-[#FF6C2D] text-[#FF6C2D]' : 'border-[#F2F4F7]'}`}
             >
               Yearly
             </button>
           </div>
-          {showDatePicker && (
-            <RangePicker
-              size="small"
-              style={{ width: 220 }}
-              disabledDate={disabledDate}
-              onChange={handleRangePickerChange}
-              value={customDates}
-              picker={getPickerType(selectedPeriod)}
-              ranges={{
-                'This Week': [moment().startOf('week'), moment().endOf('week')],
-                'This Month': [moment().startOf('month'), moment().endOf('month')],
-                'This Year': [moment().startOf('year'), moment().endOf('year')],
-              }}
-            />
+          {selectedPeriod !== 'yearly' && (
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(Number(e.target.value))}
+              className="px-3 py-1 text-[#475467] text-xs border border-[#F2F4F7] rounded-md bg-white focus:outline-none focus:border-[#FF6C2D]"
+            >
+              {yearOptions.map(year => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
           )}
         </div>
       </div>

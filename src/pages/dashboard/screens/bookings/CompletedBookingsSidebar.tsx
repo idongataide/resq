@@ -19,7 +19,6 @@ const CompletedBookingsSidebar: React.FC<CompletedBookingsSidebarProps> = ({
     return null;
   }
 
-  console.log(booking,'booking?.rating_data?.comment')
 
   return (
     <div className="fixed inset-0 z-[999] flex justify-end bg-[#38383880] p-5 bg-opacity-50" onClick={onClose}>

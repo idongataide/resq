@@ -6,7 +6,7 @@ const AccountLayout: React.FC = () => {
   const location = useLocation();
 
   const navLinks = [
-    { name: 'Personal details', path: '/account' }, // Default path for Personal details
+    { name: 'Personal details', path: '/account' }, 
     { name: 'Change Password', path: '/account/change-password' },
     { name: 'Passcode', path: '/account/passcode' },
     // { name: 'Notifications', path: '/account/notifications' },

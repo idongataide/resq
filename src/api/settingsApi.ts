@@ -2,12 +2,12 @@ import { axiosAPIInstance } from "./interceptor";
 
 export const getServices = async (type: any) => {
     try {
-      return await axiosAPIInstance
+      return await axiosAPIInstance 
         .get(`/settings/services${type}`)
         .then((res) => {
           return res?.data;
         });
-    } catch (error) {
+    } catch (error)  {
       return error;
     }
  };

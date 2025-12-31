@@ -191,7 +191,7 @@ const BookingTable: React.FC = () => {
       ),
     },
     {
-      title: "Customer",
+      title: isLastmaMode ? "Driver" : "Customer",
       dataIndex: "user_data",
       key: "customer",
       render: (_: any, record: any) => {

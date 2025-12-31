@@ -3,11 +3,12 @@ import { getCustomerCount, getCustomers, getCustomersDetails } from "@/api/custo
 import { getOperators, getOperatorData, getDrivers, getDriversByOperatorId, getAssetsbyCordinate, getAssets, getOperatorCount, getAssetsByOperatorId } from "@/api/operatorsApi";
 import { getFees, getFeesCategory, getProfile, getServices, getFeesCount, getServicesCount, getStakeholdersCount, getBisProcessList, getNotifications, getStakeholders, getAreas } from "@/api/settingsApi";
 import { getTeams, getTeamsCount } from "@/api/teamsApi";
-import { getTransactionCount, TransactionList } from "@/api/transactionsApi";
+import { getTransactionCount, TransactionList, getTransactionsEndpoint } from "@/api/transactionsApi";
 import { getBanksList } from "@/api/banks";
 import { getStakeholderPayouts } from "@/api/bookingsApi";
 
 import useSWR from "swr";
+import { getLastma, getLastmaCount } from "@/api/lastmaApi";
 
 export const useAllCustomers = () => {
   const { data, isLoading, mutate } = useSWR(
@@ -111,8 +112,8 @@ export const useOperatorCount = (operatorCount: string) => {
 };
 
 export const useAllTeam = () => {
-  const { data, isLoading, mutate } = useSWR(
-    `/accounts/admin-user`,
+  const { data, isLoading, isValidating, mutate } = useSWR(
+    `/accounts/admin-user/teams`,
     () => {
       return getTeams().then((res) => {
         return res?.data;
@@ -124,7 +125,23 @@ export const useAllTeam = () => {
     },
   );
 
-  return { data, isLoading, mutate };
+  return { data, isLoading: isLoading || isValidating, mutate };
+};
+export const useAllLastma = () => {
+  const { data, isLoading, isValidating, mutate } = useSWR(
+    `/accounts/admin-user/lastma`,
+    () => {
+      return getLastma().then((res) => {
+        return res?.data;
+      });
+    },
+
+    {
+      revalidateOnFocus: false,
+    },
+  );
+
+  return { data, isLoading: isLoading || isValidating, mutate };
 };
 
 export const useBanksList = () => {
@@ -299,8 +316,9 @@ export const useAllService = (type: string | undefined) => {
 
 
 export const useTransactions = () => {
+  const endpoint = getTransactionsEndpoint();
   const { data, isLoading, mutate } = useSWR(
-    '/payments/get-transactions',
+    endpoint,
     () => {
       return TransactionList().then((res) => {
         return res?.data;
@@ -381,8 +399,8 @@ export const useGetNotification = () => {
   };
 
 export const useAllTeamsCount = (countStatus: string = '0') => {
-  const { data, isLoading, mutate } = useSWR(
-    `/accounts/admin-user?component=${countStatus}`,
+  const { data, isLoading, isValidating, mutate } = useSWR(
+    `/accounts/admin-user/teams?component=${countStatus}`,
     () => {
       return getTeamsCount(countStatus).then((res) => {
         return res?.data;
@@ -393,7 +411,22 @@ export const useAllTeamsCount = (countStatus: string = '0') => {
     },
   );
 
-  return { data, isLoading, mutate };
+  return { data, isLoading: isLoading || isValidating, mutate };
+};
+export const useAllLastmaCount = (countStatus: string = '0') => {
+  const { data, isLoading, isValidating, mutate } = useSWR(
+    `/accounts/admin-user/lastma?component=${countStatus}`,
+    () => {
+      return getLastmaCount(countStatus).then((res) => {
+        return res?.data;
+      });
+    },
+    {
+      revalidateOnFocus: false,
+    },
+  );
+
+  return { data, isLoading: isLoading || isValidating, mutate };
 };
 
 export const useAllTransCount = (countStatus: string = '0') => {

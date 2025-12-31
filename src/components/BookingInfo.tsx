@@ -1,6 +1,7 @@
 import InfoRow from './InfoRow';
 import { useState } from 'react';
 import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
+import { useOnboardingStore } from '@/global/store';
 
 interface BookingInfoProps {
   booking: any;
@@ -9,6 +10,12 @@ interface BookingInfoProps {
 
 const BookingInfo: React.FC<BookingInfoProps> = ({ booking, showCancellationDetails = false }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const {  userType, role } = useOnboardingStore();
+  
+  const isLastmaMode = userType === 'lastma' || role === 'lastma_admin';
+
+
+  console.log(booking,'info')
 
   const handlePrevious = () => {
     setCurrentImageIndex((prev) => 
@@ -79,22 +86,57 @@ const BookingInfo: React.FC<BookingInfoProps> = ({ booking, showCancellationDeta
 
       {/* Customer Details */}
       <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">
-        <div className="text-sm text-[#475467] space-y-3">
+          <div className="text-sm text-[#475467] space-y-3">
           <InfoRow 
-            label="Customer Name"
-            value={`${booking?.user_data?.first_name} ${booking?.user_data?.last_name}`}
-            capitalize
-          />
-          <InfoRow 
-            label="Email"
-            value={booking?.user_data?.email}
-          />
-          <InfoRow 
-            label="Phone number"
-            value={booking?.user_data?.phone_number}
-          />
+              label="Customer Name"
+              value={
+                !isLastmaMode
+                  ? `${booking?.user_data?.first_name} ${booking?.user_data?.last_name}`
+                  : `${booking?.first_name} ${booking?.last_name}`
+              }
+              capitalize
+            />
+
+            <InfoRow 
+              label="Email"
+              value={
+                !isLastmaMode
+                  ? booking?.user_data?.email
+                  : booking?.email
+              }
+            />
+
+            <InfoRow 
+              label="Phone number"
+              value={
+                !isLastmaMode
+                  ? booking?.user_data?.phone_number
+                  : booking?.phone_number
+              }
+            />
+
         </div>
       </div>
+      
+      {isLastmaMode && (
+        <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">
+          <div className="text-sm text-[#475467] space-y-3">
+            <InfoRow 
+              label="Latsma Name"
+              value={`${booking?.lastma_data?.first_name} ${booking?.lastma_data?.last_name}`}
+              capitalize
+            />
+            <InfoRow 
+              label="Latsma Email"
+              value={booking?.lastma_data?.email}
+            />
+            <InfoRow 
+              label="Latsma Phone number"
+              value={booking?.lastma_data?.phone_number}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Vehicle Details */}
       <div className="mb-3 p-4 border border-[#E5E9F0] rounded-lg">
@@ -175,6 +217,7 @@ const BookingInfo: React.FC<BookingInfoProps> = ({ booking, showCancellationDeta
           </div>
         </div>
       )}
+    
     </>
   );
 };

@@ -19,6 +19,7 @@ const Login = () => {
     const navigate = useNavigate();
     const { setEmail } = useOnboardingStore()
     const [loading, setLoading] = React.useState(false);
+    const { setUserType } = useOnboardingStore();
 
     const onFinish = (values: any) => {
         setLoading(true);
@@ -28,7 +29,7 @@ const Login = () => {
         };
 
         login(data)
-          .then((res) => {
+          .then((res:any) => {
             if (res?.error) {
               toast.error(res.message);
               return;
@@ -36,6 +37,7 @@ const Login = () => {
             if (res.status === ResponseValue.SUCCESS) {
                 toast.success('Login Successful');
                 setNavData(navPath, values.email, res);
+                setUserType(res?.data?.user_type);
 
                 localStorage.setItem(
                   "adminToken",
@@ -89,7 +91,7 @@ const Login = () => {
             </Helmet>
             {/* Logo */}
             <div className="flex justify-center m-auto mb-6">
-                <img src={Images.logo} alt="RESQ Logo" className="h-10" />
+                <img src={Images.logodark} alt="RESQ Logo" className="h-10" />
             </div>
             {/* Welcome Text */}
             <div className="mb-8 text-start ">

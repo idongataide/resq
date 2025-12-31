@@ -103,17 +103,11 @@ const AllTeams: React.FC<AllTeamsProps> = ({data, mutate}) => {
       dataIndex: "phone_number",
       key: "phone_number",
     },
-    ...(!isLastmaAdmin ? [{
+    {
         title: "Role",
         dataIndex: "role" as keyof TeamMember,
         key: "role",      
-    }] : []),  
-
-    ...(isLastmaAdmin ? [{
-        title: "Command",
-        dataIndex: "command" as keyof TeamMember,
-        key: "command",      
-    }] : []),   
+    },
     {
       title: "Date onboarded",
       dataIndex: "createdAt" as keyof TeamMember,

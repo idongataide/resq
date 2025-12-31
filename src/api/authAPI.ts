@@ -23,6 +23,18 @@ export const logout = async () => {
   });
 };
 
+export const changePassword = async (data:any) => {
+  try {
+    return await requestClient
+      .post(`/auths/forgot-password`, data)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};
+
 export const forgetPassword = async (data: { otp_request_id: string; otp: string; new_password: string }) => {
   try {
     return await requestClient

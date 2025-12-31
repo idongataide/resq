@@ -9,6 +9,22 @@ const getAuthTokens = () => {
   return null;
 };
 
+// Helper function to get userType from store
+const getUserType = () => {
+  if (typeof window !== 'undefined') {
+    try {
+      const storeData = localStorage.getItem("navPaths");
+      if (storeData) {
+        const parsed = JSON.parse(storeData);
+        return parsed?.state?.userType || "";
+      }
+    } catch (e) {
+      console.error("Error reading userType from store:", e);
+    }
+  }
+  return "";
+};
+
 export const axiosAPIInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/admins',
   headers: {
@@ -19,6 +35,29 @@ export const axiosAPIInstance = axios.create({
 axiosAPIInstance.interceptors.request.use(
   async (req) => {
     const authTokens = getAuthTokens();
+    const userType = getUserType();
+    
+    // Check if role is lastma_admin from localStorage
+    let role = "";
+    try {
+      const storeData = localStorage.getItem("navPaths");
+      if (storeData) {
+        const parsed = JSON.parse(storeData);
+        role = parsed?.state?.role || "";
+      }
+    } catch (e) {
+      // Ignore errors
+    }
+
+    // Update baseURL if in lastma mode
+    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+    if (userType === 'lastma' || role === 'lastma_admin') {
+      // If VITE_API_BASE_URL is set, append /lastmadmins, otherwise use proxy path
+      req.baseURL = baseUrl ? `${baseUrl.replace(/\/$/, '')}/lastmadmins` : '/lastmadmins';
+    } else {
+      // If VITE_API_BASE_URL is set, append /admins, otherwise use proxy path
+      req.baseURL = baseUrl ? `${baseUrl.replace(/\/$/, '')}/admins` : '/admins';
+    }
 
     if (authTokens?.access) {
       req.headers.Authorization = `Bearer ${authTokens?.access}`;

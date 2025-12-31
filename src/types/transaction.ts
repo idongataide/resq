@@ -10,6 +10,7 @@ export interface Transaction {
   };
   booking_data?: { 
     vehicle_model?: string; 
+    service_type?: string;
   };
   vehicle_model?: string;
   status?: number;
@@ -24,4 +25,5 @@ export interface Transaction {
   end_address?: string;
   action?: string;
   service_fee?: number;
+  service_type?: string;
 } 

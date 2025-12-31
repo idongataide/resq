@@ -1,20 +1,9 @@
 import { axiosAPIInstance } from "./interceptor";
-import { getUserType } from "./transactionsApi";
-import { getRole } from "./transactionsApi";
 
-const getTeamsEndpoint = () => {
-  const userType = getUserType();
-  const role = getRole();
-  return (userType === 'lastma' || role === 'lastma_admin') 
-    ? '/users' 
-    : '/accounts/admin-user';
-};
-
-export const getTeams = async () => {
+export const getLastma = async () => {
   try {
-    const endpoint = getTeamsEndpoint();
     return await axiosAPIInstance
-      .get(endpoint)
+      .get('/accounts/admin-user')
       .then((res) => {
         return res?.data;
       });
@@ -25,9 +14,8 @@ export const getTeams = async () => {
 
 export const addTeams = async (data: any) => {
   try {
-    const endpoint = getTeamsEndpoint();
     return await axiosAPIInstance
-      .post(endpoint, data)
+      .post('/accounts/admin-user', data)
       .then((res) => {
         return res?.data;
       });
@@ -36,11 +24,29 @@ export const addTeams = async (data: any) => {
   }
 };
 
-export const getTeamsCount = async (countStatus: string) => {
+export const getLastmaCount = async (countStatus: string) => {
   try {
-    const endpoint = getTeamsEndpoint();
     return await axiosAPIInstance
-      .get(`${endpoint}?component=${countStatus}`)
+      .get(`/accounts/admin-user?component=${countStatus}`)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};
+
+
+export const bulkUploadLatsma = async (formData: FormData) => {
+  try {
+    return await axiosAPIInstance
+      .post(`/users/bulk-lastma-upload`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          // 'Accept' : 'application/form-data',
+          'upload' : 'yes'
+        },
+      })
       .then((res) => {
         return res?.data;
       });
@@ -51,9 +57,8 @@ export const getTeamsCount = async (countStatus: string) => {
 
 export const deleteTeams = async (id: string) => {
   try {
-    const endpoint = getTeamsEndpoint();
     return await axiosAPIInstance
-      .delete(`${endpoint}/${id}`)
+      .delete(`/accounts/admin-user/${id}`)
       .then((res) => {
         return res?.data;
       });

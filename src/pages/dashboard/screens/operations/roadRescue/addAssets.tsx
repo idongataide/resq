@@ -177,7 +177,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ showModal, setShowModal, onAssetAdd
 
     try {
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyBHlJ9KQFnRZMz5jV6bZh-OQuS9iw16kGA`
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyC6OO39gLvWbZpMzBiLSs1pGNehjJbr2Vg`
       );
       
       if (!response.ok) {
@@ -195,7 +195,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ showModal, setShowModal, onAssetAdd
       }
       
       const result = data.results[0];
-      const location = result.geometry.location;
+      const location = result.geometry.location;      
       const coordinates = { 
         longitude: location.lng, 
         latitude: location.lat 
@@ -233,10 +233,10 @@ const AddAsset: React.FC<AddAssetProps> = ({ showModal, setShowModal, onAssetAdd
       return;
     }
 
-    if (!fetchedCoordinates) {
-      toast.error('Please enter a valid address and wait for coordinates to be fetched.');
-      return;
-    }
+    // if (!fetchedCoordinates) {
+    //   toast.error('Please enter a valid address and wait for coordinates to be fetched.');
+    //   return;
+    // }
 
     const plateNumberRegex = /^[A-Za-z0-9]{3}-[A-Za-z0-9]+$/;
     if (!plateNumberRegex.test(values.numberPlate)) {
@@ -391,7 +391,7 @@ const AddAsset: React.FC<AddAssetProps> = ({ showModal, setShowModal, onAssetAdd
                   type="primary"
                   htmlType="submit"
                   loading={loading}
-                  disabled={loading || !fetchedCoordinates}
+                  // disabled={loading || !fetchedCoordinates}
                   className="h-[46px]! px-10! mt-5! rounded-lg bg-[#FF6C2D] text-white font-medium text-lg hover:bg-[#E55B1F] transition border-0"
                 >
                   Save

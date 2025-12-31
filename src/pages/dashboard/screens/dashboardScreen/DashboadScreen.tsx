@@ -4,8 +4,11 @@ import PerformanceRateChart from "./PerformanceRateChart";
 import RevenueGrowthChart from "./RevenueGrowthChart";
 import LagosHotspotsMap from "./LagosHotspotsMap";
 import TopOperatorsTable from "./TopOperatorsTable";
+import { useOnboardingStore } from "@/global/store";
 
 const DashboadScreen: React.FC = () => {
+  const { userType, role } = useOnboardingStore();
+  const isLastmaMode = userType === 'lastma' || role === 'lastma_admin';
   return (
     <div className="w-full p-6">
       {/* Metrics Boxes */}
@@ -27,7 +30,9 @@ const DashboadScreen: React.FC = () => {
         </div>         
       
        <div className="col-span-1 mt-7">
+        {!isLastmaMode && (
           <TopOperatorsTable />
+        )}
        </div>
     </div>
   );

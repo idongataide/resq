@@ -15,6 +15,7 @@ import CancelledBookingsSidebar from './CancelledBookingsSidebar';
 import OngoingBookingsSidebar from './OngoingBookingSidebar';
 import LoadingScreen from '../../common/LoadingScreen';
 import { Toaster } from 'react-hot-toast';
+import { useOnboardingStore } from '@/global/store';
 
 
 interface BookingData {
@@ -88,7 +89,9 @@ const BookingTable: React.FC = () => {
   const [selected, setSelected] = useState<{ id: string; title: string; icon: React.ReactNode } | null>(null);
   const [startDate, setStartDate] = useState<string | undefined>(undefined);
   const [endDate, setEndDate] = useState<string | undefined>(undefined);
-
+  const {  userType, role } = useOnboardingStore();    
+  const isLastmaMode = userType === 'lastma' || role === 'lastma_admin';
+  
 
   
   useEffect(() => {
@@ -150,7 +153,7 @@ const BookingTable: React.FC = () => {
     switch(status) {
       case 'pending': return '0';
       case 'accepted': return '1';
-      case 'ongoing': return '2';
+      case 'ongoing': return isLastmaMode ? '1' : '2';
       case 'completed': return '3';
       case 'rejected': return '4';
       default: return '0'; 

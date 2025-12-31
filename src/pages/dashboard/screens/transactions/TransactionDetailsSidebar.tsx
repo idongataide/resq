@@ -49,6 +49,32 @@ const TransactionDetailsSidebar: React.FC<TransactionDetailsSidebarProps> = ({
     doc.save(`receipt-${transaction.booking_ref || 'transaction'}.pdf`);
   };
 
+  const statusLabel = transaction.status === 0 ? 'Pending' :
+    transaction.status === 1 ? 'Success' :
+    transaction.status === 2 ? 'Failed' :
+    'Abandoned';
+
+  const paymentStatus =
+    transaction.status === 1 ? 'Payment successful' :
+    transaction.status === 2 ? 'Payment failed' :
+    transaction.status === 0 ? 'Pending' :
+    'Abandoned';
+
+  const serviceType =
+    transaction?.booking_data?.service_type ||
+    transaction?.service_type ||
+    'N/A';
+
+  const formattedDate = transaction.createdAt
+    ? new Date(transaction.createdAt).toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    : 'N/A';
+
   return (
     <div className="fixed inset-0 z-[999] flex justify-end bg-[#38383880] p-5 bg-opacity-50" onClick={onClose}>
       <div className="md:w-[48%] lg:w-1/3 w-100 z-[9999] h-full bg-white rounded-xl slide-in overflow-hidden" onClick={e => e.stopPropagation()}>
@@ -84,11 +110,7 @@ const TransactionDetailsSidebar: React.FC<TransactionDetailsSidebarProps> = ({
                   transaction.status === 2 ? 'text-[#B11B1B]' :
                   'text-[#667085]'
                 }`}>
-                  {
-                   transaction.status === 0 ? 'Pending' :
-                   transaction.status === 1 ? 'Success' : 
-                   transaction.status === 2 ? 'Failed' :
-                   'Abandoned'}
+                  {statusLabel}
                 </span>
               </div>
             </div>
@@ -102,11 +124,19 @@ const TransactionDetailsSidebar: React.FC<TransactionDetailsSidebarProps> = ({
               </div>
                <div className="flex justify-between items-center">
                 <span className="text-[#667085] text-md">Status</span>
-                <span className="text-[#475467] text-sm font-medium">{transaction.status === 1 ? 'Payment successful' : transaction.status === 2 ? 'Payment failed' : transaction.status === 0 ? 'Pending' : 'Abandoned'}</span>
+                <span className="text-[#475467] text-sm font-medium">{paymentStatus}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-[#667085] text-md">Customer</span>
+                <span className="text-[#667085] text-md">Driver</span>
                 <span className="text-[#475467] text-sm font-medium">{transaction.user_data?.first_name} {transaction.user_data?.last_name}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-[#667085] text-md">Driver's Phone no.</span>
+                <span className="text-[#475467] text-sm font-medium">{transaction.user_data?.phone_number || 'N/A'}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-[#667085] text-md">Driver's Email</span>
+                <span className="text-[#475467] text-sm font-medium">{transaction.user_data?.email || 'N/A'}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-[#667085] text-md">Vehicle model</span>
@@ -114,7 +144,7 @@ const TransactionDetailsSidebar: React.FC<TransactionDetailsSidebarProps> = ({
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-[#667085] text-md">Service type</span>
-                <span className="text-[#475467] text-sm font-medium">{'N/A'}</span>
+                <span className="text-[#475467] text-sm font-medium">{serviceType}</span>
               </div>
                <div className="flex justify-between items-center">
                 <span className="text-[#667085] text-md">Total Km</span>
@@ -122,9 +152,9 @@ const TransactionDetailsSidebar: React.FC<TransactionDetailsSidebarProps> = ({
               </div>
                <div className="flex justify-between items-center">
                 <span className="text-[#667085] text-md">Date</span>
-                 <span className="text-[#475467] text-sm font-medium">{transaction.createdAt ? new Date(transaction.createdAt).toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A'}</span>
+                 <span className="text-[#475467] text-sm font-medium">{formattedDate}</span>
               </div>
-              {transaction.status === 1 && (
+              {(transaction.operator?.name || transaction.start_address || transaction.end_address) && (
                 <>
                   <div className="flex justify-between items-center">
                     <span className="text-[#667085] text-md">Towing operator</span>

@@ -1,15 +1,71 @@
 "use client";
+import React from "react";
 import { Helmet } from "react-helmet-async";
 import { Form, Input, Button } from "antd";
 import Images from "../../../components/images";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { changePassword } from "@/api/authAPI";
+import toast from "react-hot-toast";
+import { useOnboardingStore } from "@/global/store";
+import { sendOtp } from "@/api/otpApi";
 
 
 const EnterEmail = () => {
+    const navigate = useNavigate();
+    const [loading, setLoading] = React.useState(false);
+    const { setEmail, setOtpRequestId, setNavPath } = useOnboardingStore();
     
-    const onFinish = (values: any) => {
-        // Handle login logic here
-        console.log('Login values:', values);
+    const onFinish = async (values: any) => {
+        setLoading(true);
+        try {
+            const response = await changePassword({ email: values.email });
+            
+            if (response?.error || response?.status === 'error') {
+                toast.error(response?.message || response?.msg || 'Failed to send OTP. Please try again.');
+            } else {
+                // Store email and otpRequestId in the store
+                setEmail(values.email);
+                let otpRequestId = null;
+                if (response?.data?.otp_request_id) {
+                    otpRequestId = response.data.otp_request_id;
+                    setOtpRequestId(otpRequestId);
+                } else if (response?.otp_request_id) {
+                    otpRequestId = response.otp_request_id;
+                    setOtpRequestId(otpRequestId);
+                }
+                
+                // Call sendOtp function
+                if (otpRequestId) {
+                    const otpData = {
+                        otp_request_id: otpRequestId,
+                        otp_mode: 'email'
+                    };
+
+                    sendOtp(otpData)
+                        .then(otpRes => {
+                            if(otpRes?.error) {
+                                toast.error(otpRes.message || 'Failed to send OTP');
+                            } else {
+                                if (otpRes?.data?.otp_request_id) {
+                                    setOtpRequestId(otpRes.data.otp_request_id);
+                                }
+                                toast.success('OTP sent successfully to your email!');
+                                navigate('/login/forgot-password');
+                                setNavPath("enter-otp");
+                            }
+                        })
+                        .catch(otpError => {
+                            toast.error(otpError.message || "An error occurred while sending OTP");
+                        });
+                } else {
+                    toast.error('OTP request ID not found. Please try again.');
+                }
+            }
+        } catch (error: any) {
+            toast.error(error?.message || 'An error occurred. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -21,7 +77,7 @@ const EnterEmail = () => {
             </Helmet> 
           
             <div className="flex justify-center m-auto mb-6">
-                <img src={Images.logo} alt="RESQ Logo" className="h-10" />
+                <img src={Images.logodark} alt="RESQ Logo" className="h-10" />
             </div>
 
             {/* Welcome Text */}
@@ -48,6 +104,7 @@ const EnterEmail = () => {
                     <Button
                         type="primary"
                         htmlType="submit"
+                        loading={loading}
                         className="w-full h-[46px]! mt-3!  rounded-lg bg-[#FF6C2D] text-[#FF6C2D] font-medium text-lg hover:bg-gray-300 transition border-0"
                     >
                         Send reset OTP

@@ -24,6 +24,7 @@ interface iData {
     setLastName: (lastName: string) => void;
     setIsVerified: (isVerified: boolean) => void;
     setIsCompleted: (isCompleted: boolean) => void;
+    setUserType?: (userType: string) => void;
   }
   
   export const setNavData = (
@@ -44,5 +45,10 @@ interface iData {
     navPath.setLastName(res.data.last_name || "");
     navPath.setIsCompleted(res.data.has_complete_profile || false);
     navPath.setIsVerified(res.data.is_email_verified || false);
+    
+    // Auto-detect lastma_admin role and set userType
+    if (res.data.role === 'lastma_admin' && navPath.setUserType) {
+      navPath.setUserType('lastma');
+    }
   };
   

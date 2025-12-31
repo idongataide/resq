@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import Images from '@/components/images';
-import UploadOperatorsForm from './UploadOperatorsForm';
-import AddOperatorsForm from './AddOperatorsForm';
+import AddLastmaMembersForm from './addLastmaForm';
 import { FaAngleLeft, FaCloudUploadAlt, FaPlus } from "react-icons/fa";
 import { useOnboardingStore } from '@/global/store';
 import  { Toaster } from "react-hot-toast";
+import UploadLastmaMembersForm from "./uploadLatsma";
 
-const AddOperatorLayout: React.FC = () => {
+const AddLastmaLayout: React.FC = () => {
   const [selected, setSelected] = useState<'upload' | 'add'>('upload');
   const navPath = useOnboardingStore();
 
@@ -24,8 +24,8 @@ const AddOperatorLayout: React.FC = () => {
 
         <main className="flex flex-col lg:flex-row min-h-screen bg-[#F9FAFB] gap-5 p-5">
         {/* Left Navigation - Full width on md, 45% on xl */}
-          <div className="w-full lg:w-[30%] xl:w-[45%] flex flex-col">
-            <div className="mb-5">
+        <div className="w-full lg:w-[30%] xl:w-[45%] flex flex-col">
+           <div className="mb-5">
               <img src={Images[selected === 'upload' ? 'ads' : 'ads2']} alt='' className="w-full"/>
             </div>
             <div>
@@ -37,8 +37,8 @@ const AddOperatorLayout: React.FC = () => {
                   <FaCloudUploadAlt className="text-[#FF6C2D]" />
                 </span>
                 <span>
-                  <div className="font-medium text-[16px] text-[#475467]">Upload Operators</div>
-                  <div className="text-md text-[#667085]">Upload an csv file to add operators</div>
+                  <div className="font-medium text-[16px] text-[#475467]">Upload Lastma Members</div>
+                  <div className="text-md text-[#667085]">Upload an csv file to add lastma members</div>
                 </span>
               </button>
               <button
@@ -49,8 +49,8 @@ const AddOperatorLayout: React.FC = () => {
                   <FaPlus className="text-[#FF6C2D]" />
                 </span>
                 <span>
-                  <div className="font-medium text-[16px] text-[#475467]">Add Operators</div>
-                  <div className="text-md text-[#667085]">Manually add up operators to your directory</div>
+                  <div className="font-medium text-[16px] text-[#475467]">Add Lastma Members</div>
+                  <div className="text-md text-[#667085]">Manually add up lastma members to your directory</div>
                 </span>
               </button>
             </div>
@@ -59,7 +59,7 @@ const AddOperatorLayout: React.FC = () => {
           {/* Right Content - Full width on md, 55% on xl */}
           <div className="w-full lg:w-[70%] xl:w-[55%]">
             <div className="bg-white rounded-lg border-[0.6px] border-[#E5E9F0] min-h-[425px]">
-              {selected === 'upload' ? <UploadOperatorsForm /> : <AddOperatorsForm />}
+              {selected === 'upload' ? <UploadLastmaMembersForm /> : <AddLastmaMembersForm />}
             </div>
           </div>
         </main>
@@ -68,4 +68,4 @@ const AddOperatorLayout: React.FC = () => {
   );
 };
 
-export default AddOperatorLayout;
+export default AddLastmaLayout;

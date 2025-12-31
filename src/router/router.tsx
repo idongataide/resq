@@ -31,8 +31,19 @@ const RoadRescue = lazy(() =>
 const TeamsLayout = lazy(() => 
   import("@/pages/dashboard/screens/teams/teamsLayout")
 );    
+
+const AdminsLayout = lazy(() => 
+  import("@/pages/dashboard/screens/lastmadmin/adminsLayout")
+);    
+
 const AddTeams = lazy(() => 
   import("@/pages/dashboard/screens/teams/addTeams")
+);    
+const AddLatsmaAdmin = lazy(() => 
+  import("@/pages/dashboard/screens/lastmadmin/addTeams")
+);    
+const AddLastmaLayout = lazy(() => 
+  import("@/pages/dashboard/screens/teams/addLastma")
 );    
 const CustomersLayout = lazy(() => 
   import("@/pages/dashboard/screens/customers/customersLayout")
@@ -167,6 +178,14 @@ export const routes = createBrowserRouter([
         ),
       },
       {
+        path: "/admins",
+        element: (
+          <Suspense fallback={<LoadingScreen />}>
+            <AdminsLayout />
+          </Suspense>
+        ),
+      },
+      {
         path: "/setup",
         children: [
           {
@@ -224,6 +243,22 @@ export const routes = createBrowserRouter([
         element: (
           <Suspense fallback={<LoadingScreen />}>
             <AddTeams />
+          </Suspense>
+            ),
+      },
+      {
+        path: "/teams/add-lastma",
+        element: (
+          <Suspense fallback={<LoadingScreen />}>
+            <AddLastmaLayout />
+          </Suspense>
+            ),
+      },
+      {
+        path: "/admins/add",
+        element: (
+          <Suspense fallback={<LoadingScreen />}>
+            <AddLatsmaAdmin />
           </Suspense>
             ),
       },

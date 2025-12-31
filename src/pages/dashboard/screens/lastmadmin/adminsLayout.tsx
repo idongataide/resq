@@ -3,27 +3,30 @@ import AllTeams from "./allTeams";
 import { FaPlus } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { useAllTeam, useAllTeamsCount } from "@/hooks/useAdmin";
+import { useAllLastma, useAllLastmaCount } from "@/hooks/useAdmin";
 import LoadingScreen from "@/pages/dashboard/common/LoadingScreen";
 import { useOnboardingStore } from "@/global/store";
 
 
-const TeamsLayout: React.FC = () => {
+const AdminsLayout: React.FC = () => {
 
-  const { data : teams, isLoading: teamsLoading, mutate } = useAllTeam()
-  const { data : teamsCount, isLoading: countLoading } = useAllTeamsCount('count');
+  const { data : latsmadmin, isLoading: latsmaLoading, mutate } = useAllLastma()
+  const { data : latsmaCount, isLoading } = useAllLastmaCount('count');
   const { role, userType } = useOnboardingStore();
   const isLastmaMode = userType === 'lastma' || role === 'lastma_admin';
 
-  if (teamsLoading || countLoading) {
-    return <LoadingScreen />;
+
+  if (isLoading || latsmaLoading) {
+    return (
+      <LoadingScreen/>
+    );
   }
 
   return (
     <main>
       <div className="py-1 px-6 mt-10">
         <div className="flex px-4 justify-between mb-6 items-center">
-          <h1 className="text-[18px] text-[#667085] font-[700]">Team</h1>        
+          <h1 className="text-[18px] text-[#667085] font-[700]">Lastma Admins</h1>        
         </div>
         
         {/* Active Operators Card */}
@@ -34,20 +37,19 @@ const TeamsLayout: React.FC = () => {
                     <FaUsers className="text-[#FF6C2D]" />
                 </div>
                 <div className="ml-2">
-                    <h2 className="text-[26px] font-bold text-[#475467] mb-1">{teamsCount?.total}</h2>
-                    <p className="text-[#667085] text-md font-medium">Team Members</p>
+                    <h2 className="text-[26px] font-bold text-[#475467] mb-1">{latsmaCount?.total}</h2>
+                    <p className="text-[#667085] text-md font-medium">Lastma Admins</p>
                 </div>
             </div>
             {isLastmaMode ?  
                <>
-                <div className="flex gap-2 ">
-                    <Link to="/teams/add-lastma">
-                      <button className="flex cursor-pointer items-center gap-2 px-4 py-2 text-[16px] bg-[#FF6C2D] text-white rounded-lg hover:bg-[#FF6C2D] transition-colors">
-                        <FaPlus className="text-white" />
-                        <span> Add new officer</span>
+                <div className="flex gap-2 ">                 
+                    <Link to="/admins/add">
+                      <button className="flex cursor-pointer items-center gap-2 px-4 py-2 text-[16px] bg-[#fff] border border-[#FF6C2D] text-black rounded-lg hover:bg-[#FF6C2D] transition-colors">
+                        <FaPlus className="text-[#FF6C2D]" />
+                        <span> Add Latsma Admin</span>
                       </button>
                     </Link>
-                   
                 </div>
               </>
               : 
@@ -62,10 +64,10 @@ const TeamsLayout: React.FC = () => {
           </div>
         </div>
         
-        <AllTeams data={teams} mutate={mutate}/>
+        <AllTeams data={latsmadmin} mutate={mutate}/>
       </div>
     </main>
   );
 };
 
-export default TeamsLayout;
+export default AdminsLayout;

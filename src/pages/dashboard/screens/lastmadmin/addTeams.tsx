@@ -2,13 +2,13 @@ import React from 'react';
 import { Form, Input, Button, Select } from 'antd';
 import Images from '@/components/images';
 import { FaAngleLeft } from 'react-icons/fa';
-import { addTeams } from '@/api/teamsApi';
+import { addTeams } from '@/api/lastmaApi';
 import { ResponseValue } from '@/interfaces/enums';
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 const { Option } = Select;
 
-const AddTeams: React.FC = () => {
+const AddLatsmaAdmin: React.FC = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = React.useState(false);
     const [form] = Form.useForm();
@@ -21,7 +21,8 @@ const AddTeams: React.FC = () => {
             email: values.email,
             phone_number: values.phone,
             role: values.role,
-        };      
+        };
+      
        
         addTeams(data)
             .then((res) => {
@@ -30,10 +31,10 @@ const AddTeams: React.FC = () => {
                     return;
                 }
                 if (res.status === ResponseValue.SUCCESS) {
-                    toast.success('Team member added successfully');
-                    navigate("/teams"); 
+                    toast.success('Admin added successfully');
+                    navigate("/admins"); 
                 } else {
-                    const errorMsg = res?.response?.data?.msg || 'Failed to add team member';
+                    const errorMsg = res?.response?.data?.msg || 'Failed to add admin';
                     toast.error(errorMsg);
                 }
             })
@@ -68,7 +69,7 @@ const AddTeams: React.FC = () => {
 
                     {/* Form */}
                     <div className="bg-white w-full rounded-2xl border border-[#E5E9F0] px-8 py-8">
-                        <h2 className="text-[#667085] text-xl font-medium mb-6">Add Team members</h2>
+                        <h2 className="text-[#667085] text-xl font-medium mb-6">Add Admin Officer</h2>
                         <Form 
                             form={form}
                             layout="vertical" 
@@ -118,4 +119,4 @@ const AddTeams: React.FC = () => {
     );
 };
 
-export default AddTeams;
+export default AddLatsmaAdmin;

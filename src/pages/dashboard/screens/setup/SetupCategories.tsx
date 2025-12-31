@@ -5,6 +5,7 @@ import { MdMenu as IconMenu } from "react-icons/md";
 import { MdOutlineTrackChanges as IconTarget } from "react-icons/md"; 
 import { MdOutlineAccountBalanceWallet as IconBag } from "react-icons/md"; 
 import { PiBriefcaseThin } from "react-icons/pi";
+import { useOnboardingStore } from "@/global/store";
 
 
 interface SetupCategory {
@@ -18,9 +19,9 @@ interface SetupCategory {
 const SetupCategories: React.FC = () => {
   const navigate = useNavigate();
 
-  // The original useAllBookingsCount hook is likely not needed for this setup page
-  // const { data: bookingsCount, isLoading } = useAllBookingsCount('count-status');
-  const isLoading = false; // Assume not loading for now, replace with actual loading state if needed
+  const { userType, role } = useOnboardingStore();
+  const isLastmaAdmin = userType === 'lastma' || role === 'lastma_admin';
+  const isLoading = false; 
 
   const setupCategories: SetupCategory[] = [
     {
@@ -41,12 +42,13 @@ const SetupCategories: React.FC = () => {
       iconName: "bag", 
       path: "stakeholder-disbursement" 
     },
-    {
+    ...(!isLastmaAdmin ? [{    
       title: "Business process documentation",
       description: "Manage business documentation",
       iconName: "document", 
       path: "business-process-documentation" 
-    },
+    
+    }] : []),
   ];
 
   const handleCategoryClick = (path: string) => {

@@ -37,6 +37,8 @@ interface StoreState {
     setOtpRequestId: (id: string | null) => void;
     otpValue: string | null;
     setOtpValue: (otp: string | null) => void;
+    userType: string;
+    setUserType: (userType: string) => void;
 }
 
 // this middleware handler is responsible for handling data persistency
@@ -95,6 +97,8 @@ const myMiddlewares = <T,>(
             setOtpRequestId: (id) => set({ otpRequestId: id }),
             otpValue: null,
             setOtpValue: (otp) => set({ otpValue: otp }),
+            userType: "",
+            setUserType: (userType) => set({ userType }),
 
 
         })),

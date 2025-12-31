@@ -2,12 +2,16 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAllBookingsCount } from "@/hooks/useAdmin";
 import LoadingScreen from '@/pages/dashboard/common/LoadingScreen';
+import { useOnboardingStore } from "@/global/store";
+
 
 const BookingCategory: React.FC = () => {
   const navigate = useNavigate();
 
   const { data: bookingsCount, isLoading } = useAllBookingsCount('count-status');
-
+  const {  userType, role } = useOnboardingStore();    
+  const isLastmaMode = userType === 'lastma' || role === 'lastma_admin';
+  
 
   const bookingCategories = [
     {
@@ -17,13 +21,13 @@ const BookingCategory: React.FC = () => {
       action: "View →",
       path: "pending"
     },
-    {
+    ... (!isLastmaMode ? [{
       count: bookingsCount?.approved || '00',
       title: "Accepted request",
       description: "Manage and assign operators to customer requests",
       action: "View →",
       path: "accepted"
-    },
+    }] : []),
     {
       count: bookingsCount?.ongoing || '00',
       title: "Ongoing request",

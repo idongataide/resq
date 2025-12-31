@@ -1,11 +1,50 @@
 import axios from 'axios';
 
-// Get the token from localStorage at the time of instance creation
 const authTokens = localStorage.getItem("adminToken")
   ? JSON.parse(localStorage.getItem("adminToken")!)
   : null;
 
-// Create a new axios instance for the wallet service
+// Helper function to get userType from store
+export const getUserType = () => {
+  if (typeof window !== 'undefined') {
+    try {
+      const storeData = localStorage.getItem("navPaths");
+      if (storeData) {
+        const parsed = JSON.parse(storeData);
+        return parsed?.state?.userType || "";
+      }
+    } catch (e) {
+      console.error("Error reading userType from store:", e);
+    }
+  }
+  return "";
+};
+
+
+// Helper function to get role from store
+export const getRole = () => {
+  if (typeof window !== 'undefined') {
+    try {
+      const storeData = localStorage.getItem("navPaths");
+      if (storeData) {
+        const parsed = JSON.parse(storeData);
+        return parsed?.state?.role || "";
+      }
+    } catch (e) {
+      // Ignore errors
+    }
+  }
+  return "";
+};
+
+export const getTransactionsEndpoint = () => {
+  const userType = getUserType();
+  const role = getRole();
+  return (userType === 'lastma' || role === 'lastma_admin') 
+    ? '/payments/get-lastma-transactions' 
+    : '/payments/get-transactions';
+};
+
 const walletAPIInstance = axios.create({
   baseURL: import.meta.env.VITE_WALLET_API_BASE_URL,
   headers: {
@@ -16,8 +55,10 @@ const walletAPIInstance = axios.create({
 
 export const TransactionList = async () => {
     try {
+      const endpoint = getTransactionsEndpoint();
+      
       return await walletAPIInstance
-        .get(`/payments/get-transactions`)
+        .get(endpoint)
         .then((res) => {
           return res?.data;
         });
@@ -30,8 +71,10 @@ export const TransactionList = async () => {
 
 export const getTransactionCount = async (operatorCount: string) => {
   try {
+    const endpoint = getTransactionsEndpoint();
+    
     return await walletAPIInstance
-      .get(`/payments/get-transactions?component=${operatorCount}`)
+      .get(`${endpoint}?component=${operatorCount}`)
       .then((res) => {
         return res?.data;
       });

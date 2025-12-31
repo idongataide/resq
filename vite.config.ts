@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
     ],
     define: {
       "process.env": env,
-      'import.meta.env.VITE_GMAPS_API_KEY': JSON.stringify('AIzaSyBHlJ9KQFnRZMz5jV6bZh-OQuS9iw16kGA')
+      'import.meta.env.VITE_GMAPS_API_KEY': JSON.stringify('AIzaSyC6OO39gLvWbZpMzBiLSs1pGNehjJbr2Vg')
     },
 
     server: {
@@ -21,10 +21,16 @@ export default defineConfig(({ mode }) => {
         allowedHosts: [""],
         proxy: {
           '/admins': {
-            target: 'https://resq-user.onrender.com/',
+            target: 'https://towing-app-user-api-service.onrender.com/',
             changeOrigin: true,
             secure: false,
             rewrite: (path) => path
+          },
+          '/lastmadmins': {
+            target: 'https://towing-app-user-api-service.onrender.com/',
+            changeOrigin: true,
+            secure: false,
+            rewrite: (path) => path.replace(/^\/lastmadmins/, '/lastmadmins')
           },
         '/maps': {
           target: 'https://maps.googleapis.com',
@@ -36,7 +42,7 @@ export default defineConfig(({ mode }) => {
           }
         },
         '/wallet': {
-          target: 'https://resq-wallet.onrender.com/',
+          target: 'https://towing-app-booking-service.onrender.com',
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/wallet/, '/admins')

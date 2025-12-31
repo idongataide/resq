@@ -66,7 +66,7 @@ const EnterPasspord = () => {
                 <title>RESQ: Set New Password</title>
             </Helmet>
             <div className="flex justify-center m-auto mb-6">
-                <img src={Images.logo} alt="RESQ Logo" className="h-10" />
+                <img src={Images.logodark} alt="RESQ Logo" className="h-10" />
             </div>
             <div className="mb-8 text-start ">
                 <h2 className="text-2xl font-bold! text-[#475467] mb-1!">Set New Password</h2>

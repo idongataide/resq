@@ -8,6 +8,7 @@ import { useTransactions } from '@/hooks/useAdmin';
 import TransactionDetailsSidebar from './TransactionDetailsSidebar';
 import LoadingScreen from '@/pages/dashboard/common/LoadingScreen';
 import { Transaction } from '@/types/transaction';
+import { useOnboardingStore } from '@/global/store';
 
 const getStatusText = (status: number) => {
   switch(status) {
@@ -27,6 +28,8 @@ const AllTransactions: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   const { data: transactionsData, isLoading } = useTransactions();
+  const { userType, role } = useOnboardingStore();
+  const isLastmaAdmin = userType === 'lastma' || role === 'lastma_admin';
 
   
   const handleViewTransaction = (transaction: Transaction) => {
@@ -40,7 +43,7 @@ const AllTransactions: React.FC = () => {
     setIsSidebarOpen(false);
   };
 
-  const columns: Array<ColumnDefinition<Transaction & { id: string | number }>> = [
+  const baseColumns: Array<ColumnDefinition<Transaction & { id: string | number }>> = [
     {
         title: "Booking ID",
         dataIndex: "booking_ref",
@@ -55,13 +58,35 @@ const AllTransactions: React.FC = () => {
         ),
     },
     {
-      title: "Customer",
+      title: isLastmaAdmin ? "Officer Name" : "Customer",
       dataIndex: "user_data",
-      key: "customer",
+      key: isLastmaAdmin ? "officer_name" : "customer",
       render: (_, record) => (
         <span>{record?.user_data?.first_name} {record?.user_data?.last_name || 'N/A'}</span>
       ),
     },
+  ];
+
+  const lastmaColumns: Array<ColumnDefinition<Transaction & { id: string | number }>> = isLastmaAdmin ? [
+    {
+      title: "Driver",
+      dataIndex: ["user_data", "first_name"] as any,
+      key: "driver",
+      render: (_, record) => (
+        <span>{record?.user_data?.first_name} {record?.user_data?.last_name || 'N/A'}</span>
+      ),
+    },
+    {
+      title: "Driver Phone, no.",
+      dataIndex: ["user_data", "phone_number"] as any,
+      key: "driver_phone",
+      render: (_, record) => (
+        <span>{record?.user_data?.phone_number || 'N/A'}</span>
+      ),
+    },
+  ] : [];
+
+  const commonColumns: Array<ColumnDefinition<Transaction & { id: string | number }>> = [
     {
       title: "Vehicle model",
       dataIndex: "vehicle_model",
@@ -106,7 +131,7 @@ const AllTransactions: React.FC = () => {
     },
     {
       title: "Actions",
-      dataIndex: "action",
+      dataIndex: ["action"] as any,
       key: "actions",
       render: (_, record) => (
         <div className="relative">
@@ -120,6 +145,8 @@ const AllTransactions: React.FC = () => {
       ),
     },
   ];
+
+  const columns = [...baseColumns, ...lastmaColumns, ...commonColumns];
 
   const handlePageChange = (page: number, size: number) => {
     setCurrentPage(page);

@@ -6,11 +6,13 @@ import Images from "../../../components/images";
 
 
 
-const SiderScreen: React.FC = () => {
+const   SiderScreen: React.FC = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { siderBarView, setSiderBarView } = useOnboardingStore();
+  const { siderBarView, setSiderBarView, userType, role } = useOnboardingStore();
   const data = useOnboardingStore()
+  
+  const isLastmaMode = userType === 'lastma' || role === 'lastma_admin';
   
   const navData = [
     {
@@ -30,9 +32,8 @@ const SiderScreen: React.FC = () => {
       title: "bookings",
       URL: "bookings",
       icon: Images.icon?.bookings,
-    },   
-    {
-      id: 5,
+    },  
+     { id: 5,
       title: "operators",
       URL: "operators",
       icon: Images.icon?.operations,
@@ -51,10 +52,16 @@ const SiderScreen: React.FC = () => {
     },
     {
       id: 8,
+      title: "Admins",
+      URL: "admins",
+      icon: Images.icon?.teams,
+    },
+    ...(!isLastmaMode ? [{    
+      id: 8,
       title: "customers",
       URL: "customers",
       icon: Images.icon?.customers,
-    },
+    }] : []),
     {
       id: 9,
       title: "setup",
@@ -114,17 +121,16 @@ const SiderScreen: React.FC = () => {
             <NavLink
               to={`/${item?.URL}`}
               key={item.id}
-              className={({ isActive }) =>
-                `flex items-center mx-8 px-2 rounded-xl py-3 my-2 capitalize  transition-all duration-500 overflow-hidden
-               ${
-                 isActive
-                   ? "text-[#fff] bg-[#FF6C2D]"
-                   : "hover:bg-[#ff6c2dea] hover:[#fff]"
-               }
-               ${handleStart && "first:text-[#fff] first:bg-[#FF6C2D]"}
+              className={({ isActive }) => {
+                const activeBg = isLastmaMode ? "bg-[#FF6C2D]" : "bg-[#FF6C2D]";
+                const hoverBg = isLastmaMode ? "hover:bg-[#ff6c2d]" : "hover:bg-[#ff6c2dea]";
+                const firstActive = handleStart ? `first:text-[#fff] first:${activeBg}` : "";
                 
-                `
-              }
+                return `flex items-center mx-8 px-2 rounded-xl py-3 my-2 capitalize transition-all duration-500 overflow-hidden
+                  ${isActive ? `text-[#fff] ${activeBg}` : `${hoverBg} hover:text-[#fff]`}
+                  ${firstActive}
+                `;
+              }}
             >
               <img src={item?.icon} className="h-[15px] text-red-400" />
               <span className="ml-2 text-[#fff] text-md font-medium">{siderBarView && item.title}</span>

@@ -180,7 +180,7 @@ const   SiderScreen: React.FC = () => {
               
                 navigate("/login");
               }}   
-              className="text-lg me-2 text-[#ff]"/>
+              className="text-lg me-2 text-[#fff]"/>
           </div>
         )}
       </div>

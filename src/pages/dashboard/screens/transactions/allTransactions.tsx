@@ -73,7 +73,7 @@ const AllTransactions: React.FC = () => {
       dataIndex: ["user_data", "first_name"] as any,
       key: "driver",
       render: (_, record) => (
-        <span>{record?.user_data?.first_name} {record?.user_data?.last_name || 'N/A'}</span>
+        <span>{record?.booking_data?.first_name} {record?.booking_data?.last_name || 'N/A'}</span>
       ),
     },
     {
@@ -81,7 +81,7 @@ const AllTransactions: React.FC = () => {
       dataIndex: ["user_data", "phone_number"] as any,
       key: "driver_phone",
       render: (_, record) => (
-        <span>{record?.user_data?.phone_number || 'N/A'}</span>
+        <span>{record?.booking_data?.phone_number || 'N/A'}</span>
       ),
     },
   ] : [];

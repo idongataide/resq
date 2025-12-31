@@ -4,6 +4,8 @@ import { FaRegCheckCircle, FaClock, FaTimes } from "react-icons/fa";
 import { GiCancel } from "react-icons/gi";
 import jsPDF from 'jspdf';
 import { Transaction } from '@/types/transaction';
+import { useOnboardingStore } from '@/global/store';
+
 
 interface TransactionDetailsSidebarProps {
   isOpen: boolean;
@@ -75,6 +77,9 @@ const TransactionDetailsSidebar: React.FC<TransactionDetailsSidebarProps> = ({
       })
     : 'N/A';
 
+  const { userType, role } = useOnboardingStore();
+  const isLastmaAdmin = userType === 'lastma' || role === 'lastma_admin';
+  
   return (
     <div className="fixed inset-0 z-[999] flex justify-end bg-[#38383880] p-5 bg-opacity-50" onClick={onClose}>
       <div className="md:w-[48%] lg:w-1/3 w-100 z-[9999] h-full bg-white rounded-xl slide-in overflow-hidden" onClick={e => e.stopPropagation()}>
@@ -128,16 +133,23 @@ const TransactionDetailsSidebar: React.FC<TransactionDetailsSidebarProps> = ({
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-[#667085] text-md">Driver</span>
-                <span className="text-[#475467] text-sm font-medium">{transaction.user_data?.first_name} {transaction.user_data?.last_name}</span>
+                <span className="text-[#475467] text-sm font-medium">
+                  {isLastmaAdmin ? transaction.user_data?.first_name : transaction.booking_data?.first_name} 
+                  {isLastmaAdmin ? transaction.user_data?.last_name : transaction.booking_data?.last_name}
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-[#667085] text-md">Driver's Phone no.</span>
-                <span className="text-[#475467] text-sm font-medium">{transaction.user_data?.phone_number || 'N/A'}</span>
+                <span className="text-[#475467] text-sm font-medium">
+                  {isLastmaAdmin ? transaction.user_data?.phone_number : transaction.booking_data?.phone_number || 'N/A'}
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-[#667085] text-md">Driver's Email</span>
-                <span className="text-[#475467] text-sm font-medium">{transaction.user_data?.email || 'N/A'}</span>
-              </div>
+                <span className="text-[#475467] text-sm font-medium">
+                  {isLastmaAdmin ? transaction.user_data?.email : transaction.booking_data?.email || 'N/A'}
+                </span>
+              </div>             
               <div className="flex justify-between items-center">
                 <span className="text-[#667085] text-md">Vehicle model</span>
                 <span className="text-[#475467] text-sm font-medium">{transaction?.booking_data?.vehicle_model || 'N/A'}</span>

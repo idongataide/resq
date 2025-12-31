@@ -11,6 +11,10 @@ export interface Transaction {
   booking_data?: { 
     vehicle_model?: string; 
     service_type?: string;
+    first_name?:string;
+    last_name?:string;
+    phone_number?:string;
+    email?:string;
   };
   vehicle_model?: string;
   status?: number;

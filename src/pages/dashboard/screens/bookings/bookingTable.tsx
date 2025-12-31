@@ -193,10 +193,11 @@ const BookingTable: React.FC = () => {
     {
       title: "Customer",
       dataIndex: "user_data",
-      key: "user_data",
-      render: (_, record) => (
-        <span>{record.user_data?.first_name} {record.user_data?.last_name}</span>
-      ),
+      key: "customer",
+      render: (_: any, record: any) => {
+        const data = isLastmaMode ? record.lastma_data : record.user_data;
+        return <span>{data?.first_name || 'N/A'} {data?.last_name || ''}</span>;
+      },
     },
     {
       title: "Vehicle model",

@@ -134,8 +134,10 @@ const TransactionDetailsSidebar: React.FC<TransactionDetailsSidebarProps> = ({
               <div className="flex justify-between items-center">
                 <span className="text-[#667085] text-md">Driver</span>
                 <span className="text-[#475467] text-sm font-medium">
-                  {isLastmaAdmin ? transaction.user_data?.first_name : transaction.booking_data?.first_name} 
-                  {isLastmaAdmin ? transaction.user_data?.last_name : transaction.booking_data?.last_name}
+                  {(isLastmaAdmin 
+                    ? (transaction.user_data?.first_name || '') + ' ' + (transaction.user_data?.last_name || '')
+                    : (transaction.booking_data?.first_name || '') + ' ' + (transaction.booking_data?.last_name || '')
+                  ).trim()}
                 </span>
               </div>
               <div className="flex justify-between items-center">

@@ -454,7 +454,7 @@ const BookingTable: React.FC = () => {
       </div>
    
                 
-      {status === 'completed' || status === 'ongoing' ? (
+      {isLastmaMode && status === 'completed' || status === 'ongoing' ? (
         <>
           {/* Date Range Filter */}
           <div className='flex items-center gap-4 p-3 bg-[#FFFFFF] border-[#E5E9F0] border-t border-b'>

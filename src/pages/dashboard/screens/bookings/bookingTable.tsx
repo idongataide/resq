@@ -153,7 +153,7 @@ const BookingTable: React.FC = () => {
     switch(status) {
       case 'pending': return '0';
       case 'accepted': return '1';
-      case 'ongoing': return isLastmaMode ? '1' : '2';
+      case 'ongoing': return '2';
       case 'completed': return '3';
       case 'rejected': return '4';
       default: return '0'; 

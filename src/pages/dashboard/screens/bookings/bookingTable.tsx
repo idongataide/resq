@@ -86,12 +86,13 @@ const BookingTable: React.FC = () => {
   const [activeSidebar, setActiveSidebar] = useState<'approve' | 'reject' | 'accepted' | 'completed' | 'cancelled' | 'ongoing' | null>(null);
   const [cancelledByFilter, setCancelledByFilter] = useState<string | undefined>(undefined);
   const [toggle1, setToggle1] = useState(false);
-  const [selected, setSelected] = useState<{ id: string; title: string; icon: React.ReactNode } | null>(null);
+  const [selected, setSelected] = useState<{ id: string; title: string } | null>(null);
   const [startDate, setStartDate] = useState<string | undefined>(undefined);
   const [endDate, setEndDate] = useState<string | undefined>(undefined);
   const {  userType, role } = useOnboardingStore();    
   const isLastmaMode = userType === 'lastma' || role === 'lastma_admin';
-  
+  const [paidStatusFilter, setPaidStatusFilter] = useState<number | undefined>(undefined);
+
 
   
   useEffect(() => {
@@ -171,8 +172,13 @@ const BookingTable: React.FC = () => {
   };
  
 
-  const { data: bookingData, isLoading, mutate } = useAllBookings(getRideStatus(status), cancelledByFilter, startDate, endDate);
-
+  const { data: bookingData, isLoading, mutate } = useAllBookings(
+    getRideStatus(status), 
+    cancelledByFilter, 
+    startDate, 
+    endDate,
+    paidStatusFilter  // Add this new parameter
+  );
   
   if (isLoading) {
     return (
@@ -445,6 +451,39 @@ const BookingTable: React.FC = () => {
           )}
         </div>
       </div>
+    
+      <div className='flex p-3 bg-[#FFFFFF] border-[#E5E9F0] border-t border-b'>
+          {[
+            { id: null, title: 'All', value: undefined},
+            { id: 'paid', title: 'Paid', value: 1},
+            { id: 'unpaid', title: 'Unpaid', value: 0}
+          ].map((el, index) => (
+            <button
+              key={el.id || 'all'}
+              onClick={() => {
+                if (el.id === null) {
+                  setSelected(null);
+                } else {
+                  setSelected({ id: el.id, title: el.title });
+                }
+                setPaidStatusFilter(el.value);
+              }}
+              className={`px-6 py-2 text-xs cursor-pointer border border-[#F2F4F7] ${
+                selected?.id === el.id 
+                  ? (el.id === null ? 'text-[red] bg-[#F2F4F7]' : 'text-[#fff] bg-[#E86229]')
+                  : 'text-[#667085]'
+              } ${
+                index === 0 ? 'rounded-l-md' : 
+                index === 2 ? 'rounded-r-md' : 
+                ''
+              }`}
+            >
+              {el.title}
+            </button>
+          ))}
+        </div>
+    
+      
       
       <Table
         columns={columns}

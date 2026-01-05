@@ -214,29 +214,43 @@ const BookingTable: React.FC = () => {
       dataIndex: "vehicle_type",
       key: "vehicle_type",
     },
-    {
-      title: "Status",
-      dataIndex: "ride_status",
-      key: "ride_status",
-      render: (value: any, record: BookingData) => 
-        record.ride_status === 1 && record.charge_status === 1 ?  (
-          <span className={getStatusStyle('Ongoing')}>
-             Ongoing
-          </span>
-        ) : record.ride_status === 4 ? (
-          <div className="">          
-            {record.cancel_data?.cancel_by && (
+    isLastmaMode
+    ? {
+        title: "Status",
+        dataIndex: "charge_status",
+        key: "charge_status",
+        render: (value: number) =>
+          value === 1 ? (
+            <span className="text-[#2FA270] bg-[#EBF7F2] px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap">
+              Paid
+            </span>
+          ) : (
+            <span className="text-[#D2930C] bg-[#FDF6E7] px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap">
+              Unpaid
+            </span>
+          ),
+      }
+    : {
+        title: "Status",
+        dataIndex: "ride_status",
+        key: "ride_status",
+        render: (_: any, record: BookingData) =>
+          record.ride_status === 1 && record.charge_status === 1 ? (
+            <span className={getStatusStyle("Ongoing")}>
+              Ongoing
+            </span>
+          ) : record.ride_status === 4 ? (
+            record.cancel_data?.cancel_by && (
               <span className="text-[#B11B1B] bg-[#FFEFEF] px-2 py-1 rounded-full whitespace-nowrap text-xs font-medium">
                 Cancelled by: {record.cancel_data.cancel_by}
               </span>
-            )}
-          </div>
-        ) : (
-          <span className={getStatusStyle(getStatusText(value))}>
-            {getStatusText(value)}
-          </span>
-        ),
-    },
+            )
+          ) : (
+            <span className={getStatusStyle(getStatusText(record.ride_status))}>
+              {getStatusText(record.ride_status)}
+            </span>
+          ),
+      },
     ...(status !== 'pending' && status !== 'rejected' ? [{
       title: "Amount",
       dataIndex: "est_fare" as keyof BookingData,

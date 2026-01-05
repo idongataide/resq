@@ -16,7 +16,8 @@ import OngoingBookingsSidebar from './OngoingBookingSidebar';
 import LoadingScreen from '../../common/LoadingScreen';
 import { Toaster } from 'react-hot-toast';
 import { useOnboardingStore } from '@/global/store';
-
+import { DatePicker } from 'antd';
+import dayjs from 'dayjs';
 
 interface BookingData {
   id: string;
@@ -451,38 +452,70 @@ const BookingTable: React.FC = () => {
           )}
         </div>
       </div>
-    
-      <div className='flex p-3 bg-[#FFFFFF] border-[#E5E9F0] border-t border-b'>
-          {[
-            { id: null, title: 'All', value: undefined},
-            { id: 'paid', title: 'Paid', value: 1},
-            { id: 'unpaid', title: 'Unpaid', value: 0}
-          ].map((el, index) => (
+   
+                
+      {status === 'completed' || status === 'ongoing' ? (
+        <>
+          {/* Date Range Filter */}
+          <div className='flex items-center gap-4 p-3 bg-[#FFFFFF] border-[#E5E9F0] border-t border-b'>
+            <div className='flex items-center gap-2'>
+              <DatePicker.RangePicker
+                value={startDate && endDate ? [dayjs(startDate), dayjs(endDate)] : undefined}
+                onChange={(dates) => {
+                  if (dates && dates[0] && dates[1]) {
+                    setStartDate(dates[0].format('YYYY-MM-DD'));
+                    setEndDate(dates[1].format('YYYY-MM-DD'));
+                  } else {
+                    setStartDate(undefined);
+                    setEndDate(undefined);
+                  }
+                }}
+                format="DD-MM-YYYY"
+                className="custom-datepicker"
+                placeholder={['Start Date', 'End Date']}
+              />
+            </div>
             <button
-              key={el.id || 'all'}
               onClick={() => {
-                if (el.id === null) {
-                  setSelected(null);
-                } else {
-                  setSelected({ id: el.id, title: el.title });
-                }
-                setPaidStatusFilter(el.value);
+                // Apply the date filter
+                console.log('Applying date filter:', { startDate, endDate });
               }}
-              className={`px-6 py-2 text-xs cursor-pointer border border-[#F2F4F7] ${
-                selected?.id === el.id 
-                  ? (el.id === null ? 'text-[red] bg-[#F2F4F7]' : 'text-[#fff] bg-[#E86229]')
-                  : 'text-[#667085]'
-              } ${
-                index === 0 ? 'rounded-l-md' : 
-                index === 2 ? 'rounded-r-md' : 
-                ''
-              }`}
+              className="px-4 py-2 text-xs bg-[#E86229] text-white rounded-md hover:bg-[#d4531f] transition-colors"
             >
-              {el.title}
+              Apply
             </button>
-          ))}
-        </div>
-    
+        
+            {[
+              { id: null, title: 'All', value: undefined},
+              { id: 'paid', title: 'Paid', value: 1},
+              { id: 'unpaid', title: 'Unpaid', value: 0}
+            ].map((el, index) => (
+              <button
+                key={el.id || 'all'}
+                onClick={() => {
+                  if (el.id === null) {
+                    setSelected(null);
+                  } else {
+                    setSelected({ id: el.id, title: el.title });
+                  }
+                  setPaidStatusFilter(el.value);
+                }}
+                className={`px-6 py-2 text-xs cursor-pointer border border-[#F2F4F7] ${
+                  (el.id === null && (selected === null || selected === undefined)) || selected?.id === el.id
+                    ? (el.id === null ? 'text-[#667085] bg-[#E5E9F0]' : 'text-[#fff] bg-[#E86229]')
+                    : 'text-[#667085]'
+                } ${
+                  index === 0 ? 'rounded-l-md' : 
+                  index === 2 ? 'rounded-r-md' : 
+                  ''
+                }`}
+              >
+                {el.title}
+              </button>
+            ))}
+          </div>
+        </>
+      ) : null}
       
       
       <Table

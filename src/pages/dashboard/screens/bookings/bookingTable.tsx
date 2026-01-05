@@ -101,23 +101,33 @@ const BookingTable: React.FC = () => {
   }, [status]);
 
   const handleViewRequest = (request: BookingData) => {
-    if (request.ride_status === 1 && request.charge_status === 1) {
-      setSelectedBooking(request);
-      setActiveSidebar('ongoing');
-    } else if (request.ride_status === 2 ){
-      setSelectedBooking(request);
-      setActiveSidebar('ongoing');
-    } else if (request.ride_status === 1) {
-      setSelectedBooking(request);
-      setActiveSidebar('accepted');
-    } else if (request.ride_status === 3) {
-      setSelectedBooking(request);
-      setActiveSidebar('completed');
-    } else if (request.ride_status === 4) {
-      setSelectedBooking(request);
-      setActiveSidebar('cancelled');
+    setSelectedBooking(request);
+
+    if (isLastmaMode) {
+      // LASTMA MODE LOGIC
+      if (request.ride_status === 1 || request.ride_status === 2) {
+        setActiveSidebar('ongoing');
+      } else if (request.ride_status === 3) {
+        setActiveSidebar('completed');
+      } else if (request.ride_status === 4) {
+        setActiveSidebar('cancelled');
+      } else {
+        handleCloseSidebar();
+      }
     } else {
-      handleCloseSidebar();
+      if (request.ride_status === 1 && request.charge_status === 1) {
+        setActiveSidebar('ongoing');
+      } else if (request.ride_status === 2) {
+        setActiveSidebar('ongoing');
+      } else if (request.ride_status === 1) {
+        setActiveSidebar('accepted');
+      } else if (request.ride_status === 3) {
+        setActiveSidebar('completed');
+      } else if (request.ride_status === 4) {
+        setActiveSidebar('cancelled');
+      } else {
+        handleCloseSidebar();
+      }
     }
   };
 

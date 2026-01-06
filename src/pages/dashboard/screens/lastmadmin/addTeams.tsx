@@ -6,12 +6,17 @@ import { addTeams } from '@/api/lastmaApi';
 import { ResponseValue } from '@/interfaces/enums';
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { useOnboardingStore } from '@/global/store';
 const { Option } = Select;
+
 
 const AddLatsmaAdmin: React.FC = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = React.useState(false);
     const [form] = Form.useForm();
+    const { role, userType } = useOnboardingStore();
+    const isLastmaMode = userType === 'lastma' || role === 'lastma_admin';
+
 
     const onFinish = (values: any) => {
         setLoading(true);
@@ -92,10 +97,16 @@ const AddLatsmaAdmin: React.FC = () => {
                                 />
                             </Form.Item>
                             <Form.Item label="Role" name="role" rules={[{ required: true, message: 'Select role' }]}>
-                                <Select placeholder="Select" className='!h-[46px]'>
-                                    <Option value="superadmin">Super Admin</Option>
-                                    <Option value="admin">Admin</Option>
-                                    <Option value="lastma_admin">Lastma Admin</Option>
+                               <Select placeholder="Select" className="!h-[46px]">
+                                    {isLastmaMode ? (
+                                        <Option value="lastma_admin">Lastma Admin</Option>
+                                    ) : (
+                                        <>
+                                        <Option value="superadmin">Super Admin</Option>
+                                        <Option value="admin">Admin</Option>
+                                        <Option value="lastma_admin">Lastma Admin</Option>
+                                        </>
+                                    )}
                                 </Select>
                             </Form.Item>
                             <Form.Item label="Email address" name="email" rules={[{ required: true, message: 'Enter email address' }]}>

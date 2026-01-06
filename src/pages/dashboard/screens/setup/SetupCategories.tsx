@@ -6,7 +6,6 @@ import { MdOutlineTrackChanges as IconTarget } from "react-icons/md";
 import { MdOutlineAccountBalanceWallet as IconBag } from "react-icons/md"; 
 import { PiBriefcaseThin, PiBuilding } from "react-icons/pi";
 import { useOnboardingStore } from "@/global/store";
-import { FaBuilding } from "react-icons/fa";
 
 
 interface SetupCategory {

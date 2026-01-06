@@ -3,21 +3,20 @@ import AllTeams from "./allTeams";
 import { FaPlus } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { useAllTeam, useAllTeamsCount } from "@/hooks/useAdmin";
+import { useAllTeam } from "@/hooks/useAdmin";
 import LoadingScreen from "@/pages/dashboard/common/LoadingScreen";
 import { useOnboardingStore } from "@/global/store";
 
 
 const TeamsLayout: React.FC = () => {
 
-  const { data : teamsCount, isLoading: countLoading } = useAllTeamsCount('count');
   const { role, userType } = useOnboardingStore();
   const isLastmaMode = userType === 'lastma' || role === 'lastma_admin';
 
   const { data : teams, isLoading: teamsLoading, mutate } = useAllTeam(isLastmaMode ? 'lastma' : 'user')
 
 
-  if (teamsLoading || countLoading) {
+  if (teamsLoading) {
     return <LoadingScreen />;
   }
 
@@ -36,7 +35,7 @@ const TeamsLayout: React.FC = () => {
                     <FaUsers className="text-[#FF6C2D]" />
                 </div>
                 <div className="ml-2">
-                    <h2 className="text-[26px] font-bold text-[#475467] mb-1">{teamsCount?.total}</h2>
+                    <h2 className="text-[26px] font-bold text-[#475467] mb-1">{teams?.length}</h2>
                     <p className="text-[#667085] text-md font-medium">Team Members</p>
                 </div>
             </div>

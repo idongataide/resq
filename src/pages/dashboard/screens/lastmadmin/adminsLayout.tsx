@@ -3,14 +3,13 @@ import AllTeams from "./allTeams";
 import { FaPlus } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { useAllLastma, useAllLastmaCount } from "@/hooks/useAdmin";
+import { useAllLastma } from "@/hooks/useAdmin";
 import LoadingScreen from "@/pages/dashboard/common/LoadingScreen";
 import { useOnboardingStore } from "@/global/store";
 
 
 const AdminsLayout: React.FC = () => {
 
-  const { data : latsmaCount, isLoading } = useAllLastmaCount('count');
   const { role, userType } = useOnboardingStore();
   const isLastmaMode = userType === 'lastma' || role === 'lastma_admin';
 
@@ -18,7 +17,7 @@ const AdminsLayout: React.FC = () => {
     isLastmaMode ? 'lastma' : 'user'
   );
 
-  if (isLoading || latsmaLoading) {
+  if (latsmaLoading) {
     return (
       <LoadingScreen/>
     );
@@ -28,7 +27,7 @@ const AdminsLayout: React.FC = () => {
     <main>
       <div className="py-1 px-6 mt-10">
         <div className="flex px-4 justify-between mb-6 items-center">
-          <h1 className="text-[18px] text-[#667085] font-[700]">Lastma Admins</h1>        
+          <h1 className="text-[18px] text-[#667085] font-[700]">Admins</h1>        
         </div>
         
         {/* Active Operators Card */}
@@ -39,8 +38,8 @@ const AdminsLayout: React.FC = () => {
                     <FaUsers className="text-[#FF6C2D]" />
                 </div>
                 <div className="ml-2">
-                    <h2 className="text-[26px] font-bold text-[#475467] mb-1">{latsmaCount?.total}</h2>
-                    <p className="text-[#667085] text-md font-medium">Lastma Admins</p>
+                    <h2 className="text-[26px] font-bold text-[#475467] mb-1">{latsmadmin?.length}</h2>
+                    <p className="text-[#667085] text-md font-medium">Admins</p>
                 </div>
             </div>
             {isLastmaMode ?  

@@ -154,7 +154,7 @@ input:-internal-autofill-selected {
 }
 
 .fixed.inset-0{
-  z-index: 9900 !important;
+  z-index: 1000 !important;
 }
 
 

@@ -2,12 +2,22 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Form, Input, Button, InputNumber, AutoComplete, Spin } from 'antd';
 import toast from 'react-hot-toast';
 import { useSWRConfig } from 'swr';
-import { addCommandCenter } from '@/api/settingsApi';
+import { updateCommandCenter } from '@/api/settingsApi';
 
-interface AddCommandCenterFormProps {
+interface EditCommandCenterFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onCommandCenterAdded?: () => void;
+  onCommandCenterUpdated?: () => void;
+  commandCenterData: {
+    _id: string;
+    name: string;
+    address: string;
+    location: {
+      type: string;
+      coordinates: [number, number]; // [longitude, latitude]
+    };
+    command_id: string;
+  };
 }
 
 interface FormValues {
@@ -35,10 +45,11 @@ interface AutocompleteOption {
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GMAPS_API_KEY || '';
 
-const AddCommandCenterForm: React.FC<AddCommandCenterFormProps> = ({
+const EditCommandCenterForm: React.FC<EditCommandCenterFormProps> = ({
   isOpen,
   onClose,
-  onCommandCenterAdded,
+  onCommandCenterUpdated,
+  commandCenterData,
 }) => {
   const [form] = Form.useForm<FormValues>();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,7 +59,24 @@ const AddCommandCenterForm: React.FC<AddCommandCenterFormProps> = ({
   const { mutate: globalMutate } = useSWRConfig();
   const autocompleteTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Reset form when component opens/closes
+  // Initialize form with existing data
+  useEffect(() => {
+    if (isOpen && commandCenterData) {
+      const coordinates = commandCenterData.location?.coordinates || [];
+      const longitude = coordinates.length > 0 ? coordinates[0].toString() : '';
+      const latitude = coordinates.length > 1 ? coordinates[1].toString() : '';
+      
+      form.setFieldsValue({
+        command_name: commandCenterData.name || '',
+        address: commandCenterData.address || '',
+        longitude: longitude,
+        latitude: latitude,
+      });
+      setAddressSearch(commandCenterData.address || '');
+    }
+  }, [isOpen, commandCenterData, form]);
+
+  // Reset form when component closes
   useEffect(() => {
     if (!isOpen) {
       form.resetFields();
@@ -142,7 +170,6 @@ const AddCommandCenterForm: React.FC<AddCommandCenterFormProps> = ({
         };
       }
 
-      // fallback – no coordinates
       return {
         address,
         fullAddress: address,
@@ -165,15 +192,13 @@ const AddCommandCenterForm: React.FC<AddCommandCenterFormProps> = ({
     setAddressSearch(value);
     form.setFieldValue('address', value);
     
-    // Clear previous timeout
     if (autocompleteTimeoutRef.current) {
       clearTimeout(autocompleteTimeoutRef.current);
     }
     
-    // Set new timeout for debouncing
     autocompleteTimeoutRef.current = setTimeout(() => {
       fetchAutocompleteSuggestions(value);
-    }, 500); // 500ms debounce delay
+    }, 500);
   };
 
   // Handle address selection from autocomplete
@@ -217,10 +242,31 @@ const AddCommandCenterForm: React.FC<AddCommandCenterFormProps> = ({
       return;
     }
 
-    // Submit directly without 2FA
+    // Check if any changes were made
+    const currentValues = form.getFieldsValue();
+    const originalValues = {
+      command_name: commandCenterData.name,
+      address: commandCenterData.address,
+      longitude: commandCenterData.location?.coordinates?.[0]?.toString() || '',
+      latitude: commandCenterData.location?.coordinates?.[1]?.toString() || '',
+    };
+
+    const hasChanges = 
+      currentValues.command_name !== originalValues.command_name ||
+      currentValues.address !== originalValues.address ||
+      currentValues.longitude !== originalValues.longitude ||
+      currentValues.latitude !== originalValues.latitude;
+
+    if (!hasChanges) {
+      toast('No changes detected.');
+      onClose();
+      return;
+    }
+
+    // Submit the form directly without 2FA
     try {
       setIsSubmitting(true);
-      const response = await addCommandCenter({
+      const response = await updateCommandCenter(commandCenterData.command_id, {
         command_name: values.command_name,
         address: values.address,
         longitude: values.longitude,
@@ -229,21 +275,21 @@ const AddCommandCenterForm: React.FC<AddCommandCenterFormProps> = ({
       });
 
       if (response?.status === 'ok') {
-        toast.success('Command center added successfully');
+        toast.success('Command center updated successfully');
         globalMutate('/settings/command-centers');
         globalMutate('/settings/command-centers?component=count');
-        onCommandCenterAdded?.();
+        onCommandCenterUpdated?.();
         onClose();
         form.resetFields();
         setAddressSearch('');
         setAutocompleteOptions([]);
       } else {
         const errorMsg = response?.response?.data?.msg || response?.message;
-        toast.error(errorMsg || 'Failed to add command center');
+        toast.error(errorMsg || 'Failed to update command center');
       }
     } catch (error: any) {
       console.error('Form submission error:', error);
-      toast.error(error.message || 'An error occurred while adding command center');
+      toast.error(error.message || 'An error occurred while updating command center');
     } finally {
       setIsSubmitting(false);
     }
@@ -273,7 +319,7 @@ const AddCommandCenterForm: React.FC<AddCommandCenterFormProps> = ({
       >
         <div className="h-full bg-white rounded-xl overflow-hidden">
           <div className="flex justify-between items-center py-3 px-6 border-b border-[#D6DADD]">
-            <h2 className="text-md font-semibold text-[#1C2023]">Add Zonal Office</h2>
+            <h2 className="text-md font-semibold text-[#1C2023]">Edit Zonal Office</h2>
             <button
               onClick={onClose}
               className="text-[#7D8489] bg-[#EEF0F2] cursor-pointer py-2 px-3 rounded-3xl hover:text-black"
@@ -290,7 +336,7 @@ const AddCommandCenterForm: React.FC<AddCommandCenterFormProps> = ({
             >
               <div>
                 <div className="form-section mb-4">
-                  <h3 className="text-md font-medium text-[#475467] mb-3">Enter required details</h3>
+                  <h3 className="text-md font-medium text-[#475467] mb-3">Edit command center details</h3>
                   <div className='border border-[#F2F4F7] p-3 rounded-lg'>
                     <Form.Item
                       name="command_name"
@@ -441,7 +487,7 @@ const AddCommandCenterForm: React.FC<AddCommandCenterFormProps> = ({
                   loading={isSubmitting}
                   className="rounded-md h-[46px]! px-10! border border-transparent bg-[#FF6C2D] py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
                 >
-                  Save
+                  Update
                 </Button>
               </div>
             </Form>
@@ -452,4 +498,4 @@ const AddCommandCenterForm: React.FC<AddCommandCenterFormProps> = ({
   );
 };
 
-export default AddCommandCenterForm;
+export default EditCommandCenterForm;

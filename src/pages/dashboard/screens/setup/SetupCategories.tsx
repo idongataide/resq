@@ -43,8 +43,8 @@ const SetupCategories: React.FC = () => {
     },
     ...(isLastmaAdmin ? [
       {
-        title: "Command Center",
-        description: "Manage command center settings",
+        title: "Zonal Office",
+        description: "Manage zonal office details",
         iconName: "building", 
         path: "command-center" 
       }

@@ -154,6 +154,18 @@ export const addCommandCenter = async (data: any) => {
   }
 };
 
+export const updateCommandCenter = async (commandId: string, data: any) => {
+  try {
+    return await axiosAPIInstance
+      .put(`/settings/commands/${commandId}`, data)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};
+
 
 export const deleteCommandCenter = async (command_id: string) => {
   try {

@@ -20,6 +20,7 @@ const CommandCenter: React.FC = () => {
     mutateCommandCenters();
     mutateCount();
   };
+  
 
   return (
     <main>
@@ -40,7 +41,7 @@ const CommandCenter: React.FC = () => {
               </div>
               <div className="ml-2">
                   <h2 className="text-[26px] font-bold text-[#475467] mb-1">{countData?.data?.length}</h2>
-                  <p className="text-[#667085] text-md font-medium">Command Centers</p>
+                  <p className="text-[#667085] text-md font-medium">Zonal Office</p>
               </div>
           </div>
           <button

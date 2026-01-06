@@ -105,8 +105,8 @@ const AllTeams: React.FC<AllTeamsProps> = ({data, mutate}) => {
     },
     {
         title: "Role",
-        dataIndex: "role_type" as keyof TeamMember,
-        key: "role_type",      
+        dataIndex: "role" as keyof TeamMember,
+        key: "role",      
     },
     {
       title: "Date onboarded",

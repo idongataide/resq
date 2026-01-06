@@ -104,7 +104,7 @@ const AddLatsmaAdmin: React.FC = () => {
                                         <>
                                         <Option value="superadmin">Super Admin</Option>
                                         <Option value="admin">Admin</Option>
-                                        <Option value="lastma_admin">Lastma Admin</Option>
+                                        {/* <Option value="lastma_admin">Lastma Admin</Option> */}
                                         </>
                                     )}
                                 </Select>

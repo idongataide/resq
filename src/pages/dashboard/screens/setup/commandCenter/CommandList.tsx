@@ -22,7 +22,7 @@ interface CommandCenterItem {
   updatedAt: string;
   command_id: string; // Changed from command_center_id to command_id
   status?: string; // Added status property
-  id?: string; // Keep as optional if still needed
+  id: string; // Make id required and always a string
 }
 
 
@@ -98,10 +98,10 @@ const CommandCenterTable: React.FC = () => {
     setShowEditModal(true);
   };
 
-  const handleCloseEditModal = () => {
-    setShowEditModal(false);
-    setCommandCenterToEdit(null);
-  };
+  // const handleCloseEditModal = () => {
+  //   setShowEditModal(false);
+  //   setCommandCenterToEdit(null);
+  // };
 
  const columns: Array<ColumnDefinition<CommandCenterItem>> = [
   {
@@ -238,7 +238,7 @@ const CommandCenterTable: React.FC = () => {
         </div>
       </div>
       
-      <Table
+      <Table<CommandCenterItem>
         columns={columns}
         data={paginatedData}
         pagination={commandCentersList?.length > pageSize ? {
@@ -251,7 +251,7 @@ const CommandCenterTable: React.FC = () => {
 
       {showDeleteModal && commandCenterToDelete && (
         <DeleteConfirmationModal
-          itemName={commandCenterToDelete?.command_name}
+          itemName={commandCenterToDelete?.name}
           onConfirm={handleConfirmDelete}
           onCancel={handleCancelDelete}
           loading={isDeleting}
@@ -259,10 +259,11 @@ const CommandCenterTable: React.FC = () => {
       )}
 
       {showEditModal && commandCenterToEdit && (
-        <EditCommandCenterForm
-          onClose={handleCloseEditModal}
-          commandCenterData={commandCenterToEdit}
-        />
+        <></>
+        // <EditCommandCenterForm
+        //   onClose={handleCloseEditModal}
+        //   commandCenterData={commandCenterToEdit}
+        // />
       )}
     </div>
   );

@@ -140,7 +140,7 @@ const AllTeams: React.FC<AllTeamsProps> = ({data, mutate}) => {
     <div className="mb-6">
       <Toaster/>
       <div className="py-2 px-4 bg-white rounded-md border-[#E5E9F0] flex justify-between items-center">
-        <h1 className="text-lg font-medium mb-0 text-[#344054]">Team Members {isLastmaAdmin ? ' (Admins)' : ''}</h1>
+        <h1 className="text-lg font-medium mb-0 text-[#344054]">Team Members {isLastmaAdmin ? ' (Lastma Admins)' : ''}</h1>
         {/* <button className="flex items-center gap-2 px-4 py-2 text-[#667085] bg-[#F9FAFB] rounded-lg border border-[#E5E9F0] hover:bg-gray-50">
           <img src={Images.icon.filter} alt="Filter" className="w-4 h-4" />
           <span>Filters</span>          

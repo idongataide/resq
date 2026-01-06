@@ -39,7 +39,6 @@ const OngoingBookingsSidebar: React.FC<OngoingBookingsSidebarProps> = ({
   const [isSendingLink, setIsSendingLink] = useState(false);
   const [form] = Form.useForm();
   
-  // Generate the payment URL
   const paymentUrl = `${window.location.origin}/payment/search?plate=${booking?.plate_number}`;
 
   const steps = [

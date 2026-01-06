@@ -15,7 +15,7 @@ interface TeamMember {
   last_name:string;
   email: string;
   phone_number: string;
-  role: string;
+  role_type: string;
   command: string;
   createdAt: string;
   action?: string;
@@ -105,8 +105,8 @@ const AllTeams: React.FC<AllTeamsProps> = ({data, mutate}) => {
     },
     {
         title: "Role",
-        dataIndex: "role" as keyof TeamMember,
-        key: "role",      
+        dataIndex: "role_type" as keyof TeamMember,
+        key: "role_type",      
     },
     {
       title: "Date onboarded",

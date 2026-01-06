@@ -4,7 +4,7 @@ import { MdOutlineEdit as IconEdit } from 'react-icons/md';
 import { MdOutlineDeleteOutline as IconDelete } from 'react-icons/md';
 import { useCommandCenters, useCommandCentersCount } from '@/hooks/useAdmin';
 import { deleteCommandCenter } from '@/api/settingsApi';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
 import EditCommandCenterForm from './EditCommand';
 

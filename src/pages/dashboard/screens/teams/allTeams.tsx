@@ -115,9 +115,21 @@ const AllTeams: React.FC<AllTeamsProps> = ({data, mutate}) => {
         key: "command",      
     }] : []),   
     {
-      title: "Date onboarded",
+      title: "Date & time",
       dataIndex: "createdAt" as keyof TeamMember,
       key: "createdAt",
+      render: (value: string) => {
+        if (!value) return 'N/A';
+        const date = new Date(value);
+        if (isNaN(date.getTime())) return 'N/A';
+        return date?.toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      },
     },
     ...(role === 'superadmin'
       ? [{

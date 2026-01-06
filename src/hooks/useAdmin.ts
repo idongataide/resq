@@ -1,7 +1,7 @@
 import { getBookings, getBookingsCount, getDailyPayout, getDashboardOperators, getRemittedRevenue, getRevenues } from "@/api/bookingsApi";
 import { getCustomerCount, getCustomers, getCustomersDetails } from "@/api/customersApi";
 import { getOperators, getOperatorData, getDrivers, getDriversByOperatorId, getAssetsbyCordinate, getAssets, getOperatorCount, getAssetsByOperatorId } from "@/api/operatorsApi";
-import { getFees, getFeesCategory, getProfile, getServices, getFeesCount, getServicesCount, getStakeholdersCount, getBisProcessList, getNotifications, getStakeholders, getAreas } from "@/api/settingsApi";
+import { getFees, getFeesCategory, getProfile, getServices, getFeesCount, getServicesCount, getStakeholdersCount, getBisProcessList, getNotifications, getStakeholders, getAreas, getCommandCenters, getCommandsCount } from "@/api/settingsApi";
 import { getTeams, getTeamsCount } from "@/api/teamsApi";
 import { getTransactionCount, TransactionList, getTransactionsEndpoint } from "@/api/transactionsApi";
 import { getBanksList } from "@/api/banks";
@@ -111,11 +111,11 @@ export const useOperatorCount = (operatorCount: string) => {
   return { data, isLoading, mutate };
 };
 
-export const useAllTeam = () => {
+export const useAllTeam = (type:any) => {
   const { data, isLoading, isValidating, mutate } = useSWR(
-    `/accounts/admin-user/teams`,
+    `/accounts/admin-user/teams?type=${type}`,
     () => {
-      return getTeams().then((res) => {
+      return getTeams(type).then((res) => {
         return res?.data;
       });
     },
@@ -127,15 +127,16 @@ export const useAllTeam = () => {
 
   return { data, isLoading: isLoading || isValidating, mutate };
 };
-export const useAllLastma = () => {
+
+export const useAllLastma = (type:any) => {
   const { data, isLoading, isValidating, mutate } = useSWR(
-    `/accounts/admin-user/lastma`,
+    // Use the type parameter in the key or fetch logic
+    type ? `/accounts/admin-user/lastma?type=${type}` : `/accounts/admin-user/lastma`,
     () => {
-      return getLastma().then((res) => {
+      return getLastma(type).then((res) => {
         return res?.data;
       });
     },
-
     {
       revalidateOnFocus: false,
     },
@@ -143,6 +144,7 @@ export const useAllLastma = () => {
 
   return { data, isLoading: isLoading || isValidating, mutate };
 };
+
 
 export const useBanksList = () => {
   const { data, isLoading, mutate } = useSWR(
@@ -680,3 +682,36 @@ export const useGetArea = () => {
   return { data, isLoading, mutate };
 };
 
+
+
+export const useCommandCenters = () => {
+  const { data, isLoading, mutate } = useSWR(
+    `/settings/commands/`,
+    () => {
+      return getCommandCenters().then((res) => {
+        return res?.data;
+      });
+    },
+    {
+      revalidateOnFocus: false,
+    },
+  );
+
+  return { data, isLoading, mutate };
+};
+
+
+export const useCommandCentersCount = () => {
+  const { data, isLoading, mutate } = useSWR(
+    `/settings/commands?component=count`,
+    () => {
+      return getCommandsCount().then((res) => {
+        return res;
+      });
+    },
+    {
+      revalidateOnFocus: false,
+    }
+  );
+  return { data, isLoading, mutate };
+};

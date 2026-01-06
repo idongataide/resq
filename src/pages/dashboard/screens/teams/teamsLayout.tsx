@@ -10,10 +10,12 @@ import { useOnboardingStore } from "@/global/store";
 
 const TeamsLayout: React.FC = () => {
 
-  const { data : teams, isLoading: teamsLoading, mutate } = useAllTeam()
   const { data : teamsCount, isLoading: countLoading } = useAllTeamsCount('count');
   const { role, userType } = useOnboardingStore();
   const isLastmaMode = userType === 'lastma' || role === 'lastma_admin';
+
+  const { data : teams, isLoading: teamsLoading, mutate } = useAllTeam(isLastmaMode ? 'lastma' : 'user')
+
 
   if (teamsLoading || countLoading) {
     return <LoadingScreen />;

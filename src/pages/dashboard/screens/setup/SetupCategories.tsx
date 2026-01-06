@@ -4,15 +4,15 @@ import LoadingScreen from '@/pages/dashboard/common/LoadingScreen';
 import { MdMenu as IconMenu } from "react-icons/md"; 
 import { MdOutlineTrackChanges as IconTarget } from "react-icons/md"; 
 import { MdOutlineAccountBalanceWallet as IconBag } from "react-icons/md"; 
-import { PiBriefcaseThin } from "react-icons/pi";
+import { PiBriefcaseThin, PiBuilding } from "react-icons/pi";
 import { useOnboardingStore } from "@/global/store";
+import { FaBuilding } from "react-icons/fa";
 
 
 interface SetupCategory {
   title: string;
   description: string;
-  // icon: React.ElementType; // Use React.ElementType for icon components if available
-  iconName: string; // Placeholder if using string names
+  iconName: string; 
   path: string;
 }
 
@@ -27,7 +27,7 @@ const SetupCategories: React.FC = () => {
     {
       title: "General cost points",
       description: "Manage incoming requests for customer tow booking",
-      iconName: "menu", // Placeholder
+      iconName: "menu", 
       path: "general-cost-points" 
     },
     {
@@ -36,19 +36,28 @@ const SetupCategories: React.FC = () => {
       iconName: "target",
       path: "services-cost" 
     },
-    {
+   {
       title: "Stakeholder disbursement",
       description: "Manage incoming requests for customer tow booking",
       iconName: "bag", 
       path: "stakeholder-disbursement" 
     },
-    ...(!isLastmaAdmin ? [{    
-      title: "Business process documentation",
-      description: "Manage business documentation",
-      iconName: "document", 
-      path: "business-process-documentation" 
-    
-    }] : []),
+    ...(isLastmaAdmin ? [
+      {
+        title: "Command Center",
+        description: "Manage command center settings",
+        iconName: "building", 
+        path: "command-center" 
+      }
+    ] : []),
+    ...(!isLastmaAdmin ? [    
+      {
+        title: "Business process documentation",
+        description: "Manage business documentation",
+        iconName: "document", 
+        path: "business-process-documentation" 
+      }
+    ] : []),
   ];
 
   const handleCategoryClick = (path: string) => {
@@ -73,6 +82,12 @@ const SetupCategories: React.FC = () => {
               <IconTarget className="text-[#FF6C2D]" />
           </div>
         );
+        case 'building':
+         return (
+          <div className="w-8 h-8 bg-[#FFECE3] rounded-full flex items-center justify-center">    
+              <PiBuilding  className="text-[#FF6C2D]" />
+          </div>
+         );
       case 'bag':
          return (
           <div className="w-8 h-8 bg-[#FFECE3] rounded-full flex items-center justify-center">

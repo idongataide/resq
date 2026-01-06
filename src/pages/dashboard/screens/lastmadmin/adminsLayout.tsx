@@ -10,11 +10,13 @@ import { useOnboardingStore } from "@/global/store";
 
 const AdminsLayout: React.FC = () => {
 
-  const { data : latsmadmin, isLoading: latsmaLoading, mutate } = useAllLastma()
   const { data : latsmaCount, isLoading } = useAllLastmaCount('count');
   const { role, userType } = useOnboardingStore();
   const isLastmaMode = userType === 'lastma' || role === 'lastma_admin';
 
+  const { data: latsmadmin, isLoading: latsmaLoading, mutate } = useAllLastma(
+    isLastmaMode ? 'lastma' : 'user'
+  );
 
   if (isLoading || latsmaLoading) {
     return (

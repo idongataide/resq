@@ -1,9 +1,9 @@
 import { axiosAPIInstance } from "./interceptor";
 
-export const getLastma = async () => {
+export const getLastma = async (type:any) => {
   try {
     return await axiosAPIInstance
-      .get('/accounts/admin-user')
+      .get(`/accounts/admin-user?type=${type}`)
       .then((res) => {
         return res?.data;
       });

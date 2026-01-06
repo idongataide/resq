@@ -44,12 +44,14 @@ const   SiderScreen: React.FC = () => {
       URL: "revenue",
       icon: Images.icon?.revenue,
     },
+     ...(isLastmaMode ? [
     {
       id: 7,
       title: "teams",
       URL: "teams",
-      icon: Images.icon?.teams,
-    },
+      icon: Images.icon?.teams,    
+     }] : []),
+
     {
       id: 8,
       title: "Admins",

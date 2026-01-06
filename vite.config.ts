@@ -35,7 +35,7 @@ export default defineConfig(({ mode }) => {
         '/maps': {
           target: 'https://maps.googleapis.com',
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/maps/, ''),
+          rewrite: (path) => path.replace(/^\/maps/, 'maps'),
           secure: false,
           headers: {
             'Access-Control-Allow-Origin': '*'

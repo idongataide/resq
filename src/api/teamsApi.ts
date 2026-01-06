@@ -2,17 +2,18 @@ import { axiosAPIInstance } from "./interceptor";
 import { getUserType } from "./transactionsApi";
 import { getRole } from "./transactionsApi";
 
-const getTeamsEndpoint = () => {
+const getTeamsEndpoint = (type: string = '') => {
   const userType = getUserType();
   const role = getRole();
+  
   return (userType === 'lastma' || role === 'lastma_admin') 
     ? '/users' 
-    : '/accounts/admin-user';
+    : `/accounts/admin-user?type=${type}`;
 };
 
-export const getTeams = async () => {
+export const getTeams = async (type: string = '') => {
   try {
-    const endpoint = getTeamsEndpoint();
+    const endpoint = getTeamsEndpoint(type);
     return await axiosAPIInstance
       .get(endpoint)
       .then((res) => {
@@ -23,9 +24,9 @@ export const getTeams = async () => {
   } 
 };
 
-export const addTeams = async (data: any) => {
+export const addTeams = async (data: any, type: string = '') => {
   try {
-    const endpoint = getTeamsEndpoint();
+    const endpoint = getTeamsEndpoint(type);
     return await axiosAPIInstance
       .post(endpoint, data)
       .then((res) => {
@@ -36,11 +37,15 @@ export const addTeams = async (data: any) => {
   }
 };
 
-export const getTeamsCount = async (countStatus: string) => {
+export const getTeamsCount = async (countStatus: string, type: string = '') => {
   try {
-    const endpoint = getTeamsEndpoint();
+    const endpoint = getTeamsEndpoint(type);
+    const url = endpoint.includes('?') 
+      ? `${endpoint}&component=${countStatus}`
+      : `${endpoint}?component=${countStatus}`;
+    
     return await axiosAPIInstance
-      .get(`${endpoint}?component=${countStatus}`)
+      .get(url)
       .then((res) => {
         return res?.data;
       });
@@ -49,9 +54,9 @@ export const getTeamsCount = async (countStatus: string) => {
   }
 };
 
-export const deleteTeams = async (id: string) => {
+export const deleteTeams = async (id: string, type: string = '') => {
   try {
-    const endpoint = getTeamsEndpoint();
+    const endpoint = getTeamsEndpoint(type);
     return await axiosAPIInstance
       .delete(`${endpoint}/${id}`)
       .then((res) => {

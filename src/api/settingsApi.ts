@@ -118,7 +118,54 @@ export const getAreas = async () => {
     return error;
   }
 };
+export const getCommandCenters = async () => {
+  try {
+    return await axiosAPIInstance
+      .get(`/settings/commands`)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};
 
+export const getCommandsCount = async () => {
+  try {
+    return await axiosAPIInstance
+      .get(`/settings/commands?component=count`)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};
+
+export const addCommandCenter = async (data: any) => {
+  try {
+    return await axiosAPIInstance
+      .post(`/settings/commands`, data)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};
+
+
+export const deleteCommandCenter = async (command_id: string) => {
+  try {
+    return await axiosAPIInstance
+      .delete(`/settings/commands/${command_id}`)
+      .then((res) => {
+        return res?.data;
+      });
+  } catch (error) {
+    return error;
+  }
+};
 export const addFees = async (data: any) => {
   try {
     return await axiosAPIInstance

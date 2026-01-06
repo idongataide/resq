@@ -9,6 +9,10 @@
       "destination": "https://towing-app-booking-service.onrender.com/wallet/:path*"
     },
     {
+      "source": "/maps/:path*",
+      "destination": "https://maps.googleapis.com/maps/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
     }

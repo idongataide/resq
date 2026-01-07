@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => {
 
     server: {
       port: 5173,
-        allowedHosts: [""],
+        allowedHosts: ["188.226.136.7"],
         proxy: {
           '/admins': {
             target: 'https://towing-app-user-api-service.onrender.com/',

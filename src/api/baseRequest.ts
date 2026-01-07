@@ -37,19 +37,15 @@ export const requestClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/admins',
 });
 
-// Add interceptor to dynamically change baseURL
 requestClient.interceptors.request.use(
   async (config) => {
     const userType = getUserType();
     const role = getRole();
     const baseUrl = import.meta.env.VITE_API_BASE_URL;
     
-    // Update baseURL if in lastma mode
     if (userType === 'lastma' || role === 'lastma_admin') {
-      // If VITE_API_BASE_URL is set, append /lastmadmins, otherwise use proxy path
       config.baseURL = baseUrl ? `${baseUrl.replace(/\/$/, '')}/lastmadmins` : '/lastmadmins';
     } else {
-      // If VITE_API_BASE_URL is set, append /admins, otherwise use proxy path
       config.baseURL = baseUrl ? `${baseUrl.replace(/\/$/, '')}/admins` : '/admins';
     }
     

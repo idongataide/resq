@@ -56,7 +56,6 @@ const AddLastmaLayout: React.FC = () => {
             </div>
           </div>
           
-          {/* Right Content - Full width on md, 55% on xl */}
           <div className="w-full lg:w-[70%] xl:w-[55%]">
             <div className="bg-white rounded-lg border-[0.6px] border-[#E5E9F0] min-h-[425px]">
               {selected === 'upload' ? <UploadLastmaMembersForm /> : <AddLastmaMembersForm />}

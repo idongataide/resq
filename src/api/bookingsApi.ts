@@ -5,7 +5,7 @@ export const getBookings = async (
   cancelled_by?: string, 
   start_date?: string, 
   end_date?: string,
-  charge_status?: number  // Add this new parameter
+  charge_status?: number  
 ) => {
     try {
       const response = await axiosAPIInstance.get(

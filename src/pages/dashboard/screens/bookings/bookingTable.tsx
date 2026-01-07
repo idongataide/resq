@@ -582,4 +582,6 @@ const BookingTable: React.FC = () => {
   );
 };
 
+
+
 export default BookingTable;

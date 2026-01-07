@@ -30,7 +30,7 @@ const CompletedBookingsSidebar: React.FC<CompletedBookingsSidebarProps> = ({
   const [isSendingLink, setIsSendingLink] = useState(false);
   const [form] = Form.useForm();
   
-  const paymentUrl = `${window.location.origin}/payment/search?plate=${booking?.plate_number}`;
+  const paymentUrl = `https://app-lastma.resque.ng/payment/search?plate=${booking?.plate_number}`;
 
     const handleCopyLink = async () => {
       try {

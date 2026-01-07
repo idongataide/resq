@@ -86,7 +86,7 @@ const Login = () => {
             <Toaster />
             <Helmet>
                 <meta charSet="utf-8" />
-                <title>RESQ: Sign in as an Admin</title>
+                <title>Resque: Sign in as an Admin</title>
                 <link rel="canonical" href={`${URL}`} />
             </Helmet>
             {/* Logo */}

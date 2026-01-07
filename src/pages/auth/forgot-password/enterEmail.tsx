@@ -72,7 +72,7 @@ const EnterEmail = () => {
         <div className="flex flex-col items-start w-full">
             <Helmet>
                 <meta charSet="utf-8" />
-                <title>RESQ: Forgot Password</title>
+                <title>Resque: Forgot Password</title>
                 <link rel="canonical" href={`${URL}`} />
             </Helmet> 
           

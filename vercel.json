@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://towing-app-user-api-service.onrender.com/api/:path*"
+      "destination": "https://user-api.resque.ng/api/:path*"
     },
     {
       "source": "/wallet/:path*",
-      "destination": "https://towing-app-booking-service.onrender.com/wallet/:path*"
+      "destination": "⁠https://booking-service.resque.ng/wallet/:path*"
     },
     {
       "source": "/maps/:path*",

@@ -36,7 +36,7 @@ export default defineConfig(({ mode }) => {
           target: 'https://maps.googleapis.com',
           changeOrigin: true,
           secure: false,
-          rewrite: (path) => path.replace(/^\/maps\//, '/maps/api/'), // Fixed this line
+          rewrite: (path) => path.replace(/^\/maps\//, '/maps/'), // Fixed this line
         },
         '/wallet': {
           target: 'https://booking-service.resque.ng',

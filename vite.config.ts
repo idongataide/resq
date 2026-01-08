@@ -18,34 +18,31 @@ export default defineConfig(({ mode }) => {
 
     server: {
       port: 5173,
-        allowedHosts: ["188.226.136.7"],
-        proxy: {
-          '/admins': {
-            target: 'https://towing-app-user-api-service.onrender.com/',
-            changeOrigin: true,
-            secure: false,
-            rewrite: (path) => path
-          },
-          '/lastmadmins': {
-            target: 'https://towing-app-user-api-service.onrender.com/',
-            changeOrigin: true,
-            secure: false,
-            rewrite: (path) => path.replace(/^\/lastmadmins/, '/lastmadmins')
-          },
-        '/maps': {
-          target: 'https://maps.googleapis.com',
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/maps/, 'maps'),
-          secure: false,
-          headers: {
-            'Access-Control-Allow-Origin': '*'
-          }
-        },
-        '/wallet': {
-          target: 'https://towing-app-booking-service.onrender.com',
+      allowedHosts: ["188.226.136.7"],
+      proxy: {
+        '/admins': {
+          target: 'https://user-api.resque.ng/',
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path
+        },
+        '/lastmadmins': {
+          target: 'https://user-api.resque.ng/',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/lastmadmins/, '/lastmadmins')
+        },
+        '/maps': {
+          target: 'https://maps.googleapis.com',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/maps\//, '/maps/api/'), // Fixed this line
+        },
+        '/wallet': {
+          target: 'https://booking-service.resque.ng',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/wallet/, '/admins') // This is correct for your use case
         }
       }
     },

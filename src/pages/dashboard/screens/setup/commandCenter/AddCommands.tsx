@@ -33,8 +33,7 @@ interface AutocompleteOption {
   label: React.ReactNode;
 }
 
-const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GMAPS_API_KEY  || '';
-const GOOGLE_MAPS_BASE_URL = import.meta.env.VITE_MAP_BASE_URL || 'https://maps.googleapis.com';
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GMAPS_API_KEY || '';
 
 const AddCommandCenterForm: React.FC<AddCommandCenterFormProps> = ({
   isOpen,
@@ -66,9 +65,9 @@ const AddCommandCenterForm: React.FC<AddCommandCenterFormProps> = ({
 
     setLoadingAddress(true);
 
-    try {  
+    try {
       const response = await fetch(
-        `${GOOGLE_MAPS_BASE_URL}/maps/api/place/autocomplete/json?input=${encodeURIComponent(
+        `/maps/api/place/autocomplete/json?input=${encodeURIComponent(
           input
         )}&key=${GOOGLE_MAPS_API_KEY}`
       );

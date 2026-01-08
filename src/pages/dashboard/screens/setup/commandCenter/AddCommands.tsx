@@ -326,7 +326,7 @@ const AddCommandCenterForm: React.FC<AddCommandCenterFormProps> = ({
                           form.setFieldValue('address', value);
                         }}
                         className="w-full"
-                        placeholder="Enter address (start typing for suggestions)"
+                        // placeholder="Enter address (start typing for suggestions)"
                         size="large"
                         notFoundContent={loadingAddress ? 
                           <div className="flex items-center justify-center p-2">

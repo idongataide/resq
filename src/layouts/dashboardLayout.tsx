@@ -67,7 +67,7 @@ const DashboardLayout: React.FC = () => {
     const hour = new Date().getHours();
     if (hour >= 5 && hour < 12) {
       return {
-        text: 'Good morning',
+        text: 'Good mornings',
         icon: <img src={Images.greetings} alt="user" className="w-7 h-7" />
       };
     } else if (hour >= 12 && hour < 17) {

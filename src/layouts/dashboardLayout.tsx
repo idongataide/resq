@@ -85,20 +85,26 @@ const DashboardLayout: React.FC = () => {
 
   const greeting = getGreeting();
 
-  const dropdownMenuItems = useMemo(() => [
-    {
+  const dropdownMenuItems = useMemo(() => {
+  const items = [];
+
+  if (userType !== 'lastma' || role !== 'lastma_admin') {
+    items.push({
       id: 1,
-      label: userType === 'lastma' ? "User Admin Mode" : "Lastma mode",
+      label: "Lastma mode",
       icon: <FaUser className="text-[#667085]" />,
       onClick: () => {
-        setUserType(userType === 'lastma' ? '' : 'lastma');
+        setUserType('lastma');
         setIsUserDropdownOpen(false);
         navigate('/home');
         setTimeout(() => {
           window.location.reload();
         }, 100);
       }
-    },
+    });
+  }
+
+  items.push(
     {
       id: 2,
       label: "Change Password",
@@ -122,7 +128,11 @@ const DashboardLayout: React.FC = () => {
       icon: <FaSignOutAlt className="text-[#667085]" />,
       onClick: handleLogout
     }
-  ], [userType, setUserType]);
+  );
+
+  return items;
+}, [userType, setUserType]);
+
 
   return (
     <main className="overflow-hidden bg-black">

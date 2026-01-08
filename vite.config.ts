@@ -45,7 +45,7 @@ export default defineConfig(({ mode }) => {
           target: 'https://towing-app-booking-service.onrender.com',
           changeOrigin: true,
           secure: false,
-          rewrite: (path) => path.replace(/^\/wallet/, '/admins')
+          rewrite: (path) => path.replace(/^\/wallet/, '/admxins')
         }
       }
     },

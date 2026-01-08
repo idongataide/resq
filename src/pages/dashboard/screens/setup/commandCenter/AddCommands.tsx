@@ -273,7 +273,7 @@ const AddCommandCenterForm: React.FC<AddCommandCenterFormProps> = ({
       >
         <div className="h-full bg-white rounded-xl overflow-hidden">
           <div className="flex justify-between items-center py-3 px-6 border-b border-[#D6DADD]">
-            <h2 className="text-md font-semibold text-[#1C2023]">Add Zonal Office</h2>
+            <h2 className="text-md font-semibold text-[#1C2023]">Add Zonal Offices</h2>
             <button
               onClick={onClose}
               className="text-[#7D8489] bg-[#EEF0F2] cursor-pointer py-2 px-3 rounded-3xl hover:text-black"

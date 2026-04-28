@@ -91,10 +91,10 @@ const DashboardLayout: React.FC = () => {
   if (userType !== 'lastma' || role !== 'lastma_admin') {
     items.push({
       id: 1,
-      label: "Lastma mode",
+      label: userType === 'lastma' ? "User Admin Mode" : "Lastma mode",
       icon: <FaUser className="text-[#667085]" />,
       onClick: () => {
-        setUserType('lastma');
+        setUserType(userType === 'lastma' ? '' : 'lastma');
         setIsUserDropdownOpen(false);
         navigate('/home');
         setTimeout(() => {
